@@ -7,8 +7,8 @@ import styles from './styles';
 import TextInput from "../../components/TextInput/TextInput";
 import { emailValidator } from "../../helpers/emailValidator";
 import { passwordValidator } from "../../helpers/passwordValidator";
-import { Button } from "react-native-paper";
-import PhoneInput from "react-native-phone-number-input";
+// import { Button } from "react-native-paper";
+// import PhoneInput from "react-native-phone-number-input";
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { CreatNewUser } from '../../config/RealTimeDB';
