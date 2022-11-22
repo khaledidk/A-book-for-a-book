@@ -76,12 +76,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 20,
     },
-    test: {
-        flex: 1,
-        backgroundColor: 'red',
-
-
-    },
+    ButtonLoginFont : {
+        fontSize: 18,
+        fontWeight : '800'
+    }
 
 });
 

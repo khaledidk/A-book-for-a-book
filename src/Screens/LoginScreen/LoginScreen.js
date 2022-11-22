@@ -9,8 +9,10 @@ import KeyboardAvoidingWrapper from "../../components/KeyboardAvoidingWrapper/Ke
 import TextInput from "../../components/TextInput/TextInput";
 import styles from "./styles";
 import Icon from 'react-native-vector-icons/FontAwesome';
-import  {emailValidator}  from "../../helpers/emailValidator";
-import  {passwordValidator}  from "../../helpers/passwordValidator";
+import { emailValidator } from "../../helpers/emailValidator";
+import { passwordValidator } from "../../helpers/passwordValidator";
+import { signInWithEmailAndPassword } from "firebase/auth";
+
 
 export default function LoginScreen(props) {
   const [email, setEmail] = useState({ value: "", error: "" });
@@ -34,7 +36,18 @@ export default function LoginScreen(props) {
       setPassword({ ...password, error: passwordError });
       return;
     }
-    navigation.navigate("Home")
+    // signInWithEmailAndPassword(email.value, password.value).catch(error => {
+    //   setErrorState(error.message);
+
+    //   setAlertTitle("שגיאה");
+    //   setAlertContent("* נא לוודא דוא״ל וסיסמה");
+    //   // setIsProcessing(false);
+    //   setIsAlertVisible(true);
+    // });
+
+    if (!isAleretVisible) {
+      navigation.navigate("Home")
+    }
 
     // setIsProcessing(true);
 
@@ -50,15 +63,8 @@ export default function LoginScreen(props) {
 
     //   } else {
 
-    //     signInWithEmailAndPassword(auth, email.value, password.value).catch(error => {
-    //       setErrorState(error.message);
 
-    //       setAlertTitle("שגיאה");
-    //       setAlertContent("* נא לוודא דוא״ל וסיסמה");
-    //       setIsProcessing(false);
-    //       setIsAlertVisible(true);
-    //     });
-    //   }
+
     // });
 
 
@@ -94,14 +100,14 @@ export default function LoginScreen(props) {
             <View style={styles.WelcomeView} >
 
               <Text style={styles.WelcomeFont}>בורכים הבאים</Text>
-              <View style = {styles.RegisterAndQustionFont}>
-              <Text style={styles.QustionFontFont} > אין לך חשבון עדיין?</Text>
-              <TouchableOpacity
-                    onPress={() => navigation.navigate("Register")}
-                  >
-                <Text style={styles.RegisterFont}> יצירה חשבון</Text>
+              <View style={styles.RegisterAndQustionFont}>
+                <Text style={styles.QustionFontFont} > אין לך חשבון עדיין?</Text>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("Register")}
+                >
+                  <Text style={styles.RegisterFont}> יצירה חשבון</Text>
                 </TouchableOpacity>
-              
+
               </View>
               {/* // input View  */}
 
@@ -141,10 +147,12 @@ export default function LoginScreen(props) {
                   </TouchableOpacity>
 
                 </View>
+                {isAleretVisible ? <Text>{AbortController}</Text> : null}
               </View>
 
               <Button
                 style={styles.ButtonLogin}
+                labelStyle={styles.ButtonLoginFont}
                 mode="contained"
                 onPress={onLoginPressed}
 
@@ -157,7 +165,7 @@ export default function LoginScreen(props) {
 
           </View>
         </View>
-
+   
 
       </ScrollView>
     </KeyboardAvoidingView>

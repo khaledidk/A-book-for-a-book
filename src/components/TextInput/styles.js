@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
         right: 10,
         top: 10,
         fontSize: 15,
-        
+
     },
     IconEmail: {
         position: "absolute",
@@ -33,21 +33,28 @@ const styles = StyleSheet.create({
 
 
     },
+    IconUser : {
+        position: "absolute",
+        zIndex: 1,
+        left: 15,
+        top: 10,
+        color: "#ff914d",
+    },
     input: {
         paddingLeft: 50,
         backgroundColor: "#ffffff",
 
     },
-    inputError : {
-        
-        borderColor :'#f14757',
+    inputError: {
+
+        borderColor: '#f14757',
 
 
     },
 
     description: {
         fontSize: 15,
-        color: '#f14757',
+        color: '#ff914d',
         paddingTop: 8,
         textAlign: "right"
     },
@@ -55,6 +62,7 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: '#f13a59',
         paddingTop: 8,
+        alignSelf: 'flex-end'
     },
 })
 export default styles;

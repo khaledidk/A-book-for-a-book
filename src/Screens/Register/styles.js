@@ -6,9 +6,11 @@ const styles = StyleSheet.create({
         flexGrow: 1,
 
 
+
     },
     ImageBackGround: {
-        height: Dimensions.get('window').height / 2.5,
+        height: Dimensions.get('window').height / 5,
+
     },
     Icon: {
         color: '#fffffff',
@@ -28,17 +30,15 @@ const styles = StyleSheet.create({
     WelcomeView: {
         padding: 40,
 
-
-
-
     },
     WelcomeFont: {
         color: "#ff914d",
-        fontSize: 25,
+        fontSize: 18,
         alignSelf: "flex-end",
+        fontWeight : '800'
     },
-    RegisterAndQustionFont : {
-     flexDirection : 'row-reverse'
+    RegisterAndQustionFont: {
+        flexDirection: 'row-reverse'
 
     },
     QustionFontFont: {
@@ -67,21 +67,85 @@ const styles = StyleSheet.create({
     },
     CheckBox: {
         flex: 1,
-        mardinLeft: -20,
+        marginLeft: -20,
     },
-    ButtonLogin: {
+    
+    PhoneInput: {
+
+        borderColor: "#ddb07f",
+        borderWidth: 1.5,
+        backgroundColor: "#ffffff",
+        borderRadius: 5,
+        marginTop: 20,
+    
+    
+    },
+    PhoneInputButton: {
+        borderEndWidth: 1,
+        borderEndColor: "#ddb07f",
+    
+    },
+    PhoneInputerror : {
+        fontSize: 13,
+        color: '#f13a59',
+        paddingTop: 8,
+        alignSelf: 'flex-end'
+
+    },
+    PhoneInputBorderError : {
+        borderColor: '#f14757',
+        borderWidth: 1.5,
+        backgroundColor: "#ffffff",
+        borderRadius: 5,
+        marginTop: 20,
+    
+    },
+    DropDown: {
+        borderColor: "#ddb07f",
+        borderWidth: 1,
+        borderRadius: 10,
+
+
+
+    },
+ 
+    DatePicker: {
+        flexDirection: 'row-reverse',
+        
+        
+
+    },
+    DateFont: {
+        display: Platform.OS === 'ios' ? 'none' : 'flex',
+        color: "#ff914d",
+        fontSize: 20,
+        fontWeight: "600",
+        paddingTop: 20,
+        alignSelf : 'center',
+      
+ 
+
+
+    },
+    IconDate: {
+
+        color: "#ff914d",
+        paddingTop : 10,
+        paddingLeft : 50,
+
+    },
+    ButtonRegister: {
         backgroundColor: "#ff914d",
         height: 50,
         width: "100%",
         justifyContent: 'center',
         borderRadius: 20,
+        marginTop : 50,
     },
-    test: {
-        flex: 1,
-        backgroundColor: 'red',
-
-
-    },
+    ButtonRegisterFont : {
+        fontSize: 18,
+        fontWeight : '800'
+    }
 
 });
 

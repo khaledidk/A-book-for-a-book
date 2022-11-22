@@ -1,4 +1,4 @@
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc , setDoc , doc } from "firebase/firestore";
 import { DBFire } from "./firebase";
 // Add a new document with a generated id.
 export async function addNewItem(bookName) {
@@ -10,3 +10,20 @@ export async function addNewItem(bookName) {
     })
         .catch(alert);
 }
+
+
+export default async function addNewUser(userID, UserName, userEmail,  userPhoneNumber) {
+ 
+     console.log("enter yesssssssssssss")
+    await setDoc(doc(DBFire, "users", userID), {
+      name: UserName,
+      email: userEmail,
+      phoneNumber: userPhoneNumber,
+
+    }).catch((error) => {
+  console.log(error)
+    });
+  
+   
+  }
+  

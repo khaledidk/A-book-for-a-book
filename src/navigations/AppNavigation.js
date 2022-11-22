@@ -8,6 +8,7 @@ import CategoriesScreen from '../Screens/Categories/CategoriesScreen';
 import ForgetPasswordScreen from '../Screens/ForgotPassword/ForgotPassword';
 import RegisterScreen from '../Screens/Register/Register'
 import SearchScreen from '../Screens/Search/SearchScreen';
+import RegisterOptionalScreen from '../Screens/RegisterOptional/RegisterOptional'
 
 
 
@@ -27,6 +28,7 @@ function MainNavigator() {
       <Stack.Screen name='ForgetPassword' component={ForgetPasswordScreen}/>
       <Stack.Screen name='Categories' component={CategoriesScreen} />
       <Stack.Screen name='Register' component={RegisterScreen} />
+      <Stack.Screen name='RegisterOptional' component={RegisterOptionalScreen} />
 
       <Stack.Screen name='Search' component={SearchScreen} />
 

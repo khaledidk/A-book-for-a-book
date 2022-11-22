@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { TextInput as Input } from "react-native-paper";
-import { EvilIcons, MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
+import { Entypo, MaterialCommunityIcons, AntDesign , FontAwesome } from '@expo/vector-icons';
+
 
 import styles from "./styles";
-export default function TextInput({ errorText, description, emailicon, lockicon, label, error, ...props }) {
+export default function TextInput({ errorText, description, userIcon , emailicon, lockicon, label, error, ...props }) {
 
     return (
 
@@ -13,6 +14,7 @@ export default function TextInput({ errorText, description, emailicon, lockicon,
 
             <MaterialCommunityIcons style={styles.IconEmail} name={emailicon} size={50} />
             <AntDesign style={styles.IconLock} name={lockicon} size={50} />
+            <FontAwesome style={styles.IconUser} name={userIcon} size={40} />
             <Text style={styles.FontLabel}>{label}</Text>
 
             {!error ? (<Input
