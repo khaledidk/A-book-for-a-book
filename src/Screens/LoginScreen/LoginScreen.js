@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { emailValidator } from "../../helpers/emailValidator";
 import { passwordValidator } from "../../helpers/passwordValidator";
 import { signInWithEmailAndPassword } from "firebase/auth";
-
+import { signIn } from '../../config/AuthDB';
 
 export default function LoginScreen(props) {
   const [email, setEmail] = useState({ value: "", error: "" });
@@ -36,18 +36,9 @@ export default function LoginScreen(props) {
       setPassword({ ...password, error: passwordError });
       return;
     }
-    // signInWithEmailAndPassword(email.value, password.value).catch(error => {
-    //   setErrorState(error.message);
+    signIn(email.value, password.value)
 
-    //   setAlertTitle("שגיאה");
-    //   setAlertContent("* נא לוודא דוא״ל וסיסמה");
-    //   // setIsProcessing(false);
-    //   setIsAlertVisible(true);
-    // });
-
-    if (!isAleretVisible) {
-      navigation.navigate("Home")
-    }
+   
 
     // setIsProcessing(true);
 
@@ -165,7 +156,7 @@ export default function LoginScreen(props) {
 
           </View>
         </View>
-   
+
 
       </ScrollView>
     </KeyboardAvoidingView>

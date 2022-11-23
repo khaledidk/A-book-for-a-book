@@ -12,13 +12,14 @@ export async function addNewItem(bookName) {
 }
 
 
-export default async function addNewUser(userID, UserName, userEmail,  userPhoneNumber) {
+export default async function addNewUser(userID, UserName, userEmail,  userPhoneNumber , date) {
  
      console.log("enter yesssssssssssss")
     await setDoc(doc(DBFire, "users", userID), {
       name: UserName,
       email: userEmail,
       phoneNumber: userPhoneNumber,
+      date : date,
 
     }).catch((error) => {
   console.log(error)

@@ -18,6 +18,7 @@ import { CreatNewUser } from '../../config/RealTimeDB';
 import { addNewItem } from '../../config/FireStoreDB';
 
 import DropDownPicker from 'react-native-dropdown-picker'
+import { set } from 'firebase/database';
 
 
 
@@ -29,17 +30,18 @@ export default function Register(props) {
     const [UserName, setUserName] = useState({ value: "", error: "" });
     const [date, setDate] = useState(new Date());
     const [FormattedDate, setFormattedDate] = useState('');
+    const [IsDateEmpty, setIsDateEmpty] = useState(false);
     const [ShowDatePicker, setShowDatePicker] = useState(false);
     const [ConfirmPassowrd, setConfirmPassowrd] = useState({ value: "", error: "" });
 
- 
-    
+
+
 
     const ConfirmPassowrdFunc = (FirstPassword, SecondPassword) => {
 
-       
 
-        if ( FirstPassword.normalize() === SecondPassword.normalize()) {
+
+        if (FirstPassword.normalize() === SecondPassword.normalize()) {
             //strings are equal.
             return true
         } else {
@@ -56,6 +58,7 @@ export default function Register(props) {
         let tempeDate = new Date(currentDate)
         let fDate = tempeDate.getDate() + '/' + (tempeDate.getMonth() + 1) + '/' + tempeDate.getFullYear();
         setFormattedDate(fDate)
+
     };
 
 
@@ -67,10 +70,13 @@ export default function Register(props) {
         const passwordError = passwordValidator(password.value);
         const ConfirmPasswordError = passwordValidator(ConfirmPassowrd.value, equalPassword);
         const NameError = nameValidator(UserName.value)
+      
 
 
-
-        if (emailError || passwordError || NameError || ConfirmPasswordError) {
+        if (emailError || passwordError || NameError || ConfirmPasswordError || !FormattedDate) {
+        
+                setIsDateEmpty(true)
+          
             setEmail({ ...email, error: emailError });
             setPassword({ ...password, error: passwordError });
             setConfirmPassowrd({ ...ConfirmPassowrd, error: ConfirmPasswordError });
@@ -79,8 +85,8 @@ export default function Register(props) {
 
 
         }
-   
-        navigation.navigate("RegisterOptional",{UserName : UserName ,Email : email , Password : password})
+        setIsDateEmpty(false)
+        navigation.navigate("RegisterOptional", { UserName: UserName, Email: email, Password: password, Date: FormattedDate })
 
         // CreatNewUser(email.value, password.value)
         // addNewItem(UserName)
@@ -167,7 +173,7 @@ export default function Register(props) {
                                     emailicon="email-outline"
                                 />
 
-   
+
 
                                 <View style={styles.DatePicker}>
                                     <Text style={styles.DateFont}>{FormattedDate}</Text>
@@ -184,6 +190,7 @@ export default function Register(props) {
 
                                             />)}
                                         </Entypo>
+                                        {IsDateEmpty ? <Text> * לבחור תאריך חובה</Text> : null}
                                     </TouchableOpacity>
 
                                 </View>
@@ -215,7 +222,7 @@ export default function Register(props) {
 
                             <Button
                                 style={styles.ButtonRegister}
-                                labelStyle = {styles.ButtonRegisterFont}
+                                labelStyle={styles.ButtonRegisterFont}
                                 mode="contained"
                                 onPress={onRegisterPressed}
 

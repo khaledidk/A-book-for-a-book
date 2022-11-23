@@ -2,7 +2,8 @@ import React, { useLayoutEffect } from "react";
 import { FlatList, Text, View, TouchableHighlight, Image } from "react-native";
 import styles from "./styles";
 
-
+import { Button } from "react-native-paper";
+import { SignOut } from "../../config/AuthDB";
 
 
 export default function HomeScreen(props) {
@@ -13,8 +14,13 @@ export default function HomeScreen(props) {
 
 
   return (
-    <View>
-      {/* //   <FlatList vertical showsVerticalScrollIndicator={false} numColumns={2} data={recipes} renderItem={renderRecipes} keyExtractor={(item) => `${item.recipeId}`} /> */}
+    <View style = {{flex : 1 , justifyContent : 'center' , alignItems : 'center'}}>
+     <Text>dfsdfsdfsdfsdf</Text>
+     <Button 
+     style ={{backgroundColor : 'red'}}
+     onPress = {SignOut}
+     >התנתק
+     </Button>
     </View>
   );
 }

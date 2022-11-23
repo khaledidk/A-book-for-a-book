@@ -73,7 +73,7 @@ export default function RegisterOptional(props) {
             return;
         }
         console.log(" this is formateed : " + FormattedNumber)
-        createUser(props.route.params.Email.value, props.route.params.Password.value, props.route.params.UserName.value , FormattedNumber).then(() => {
+        createUser(props.route.params.Email.value, props.route.params.Password.value, props.route.params.UserName.value, FormattedNumber, props.route.params.Date).then(() => {
 
 
             setAlertContent("נרשמת בהצלחה")
