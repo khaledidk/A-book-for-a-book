@@ -1,24 +1,51 @@
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendEmailVerification, getIdToken } from "firebase/auth";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, PhoneAuthProvider, signInWithCredential, signOut, sendEmailVerification, sendPasswordResetEmail, signInWithPhoneNumber } from "firebase/auth";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import addNewUser from './FireStoreDB'
-import { db, auth, storage, app, } from "./firebase";
+import { DBFire, auth } from "./firebase";
 import { Alert } from "react-native";
-// import { auth } from "./firebase";
-export async function signIn(email, password) {
+
+
+
+
+// sign in by email and password
+export async function SignIn(email, password) {
 
 
     await signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             // Signed in 
             const user = userCredential.user;
+            if (!user.emailVerified) {
+                console.log("aaaaaaaaaaaaaaaaaaaaaaaa")
+                throw new Error('* דוא״ל לא אומת.');
+
+            }
 
         })
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
+            console.log('errror code:' + error.code)
+            console.log('errror massage:' + error.message)
+            if (errorMessage == '* דוא״ל לא אומת.') {
+                throw errorMessage;
+
+            }
+            if (errorCode == "auth/user-not-found") {
+                throw "* דוא״ל לא נמצא."
+
+            } else if (errorCode == "auth/wrong-password") {
+                throw "* סיסמה אינו נכונה."
+            } else {
+                throw "* דוא״ל או סיסמה לא חוקי "
+            }
+
         });
 
 
 }
+
+// sign out
 export async function SignOut() {
 
     await signOut(auth).then(() => {
@@ -28,20 +55,22 @@ export async function SignOut() {
     });
 }
 
-export default async function createUser(email, password, name, number , date) {
-  
+// creat user by email and password
+export default async function createUser(email, password, name, number, date) {
+
 
     await createUserWithEmailAndPassword(auth, email, password)
 
         .then((userCredential) => {
             // Signed in 
             console.log("Signed in")
-            sendEmailVerification(auth.currentUser )
+            sendEmailVerification(auth.currentUser)
+
 
             const userID = userCredential.user.uid;
 
-            addNewUser(userID, name, email, number , date)
-            console.log(userID)
+            addNewUser(userID, name, email, number, date)
+
             //  addNewUser(userID, name, email, phoneNumber);
 
         }).catch((error) => {
@@ -49,51 +78,66 @@ export default async function createUser(email, password, name, number , date) {
             const errorMessage = error.message;
             console.log(error.message)
             if (errorCode == "auth/email-already-in-use") {
-                throw "דוא״ל כבר בשימוש"
+                throw "* דוא״ל כבר בשימוש"
 
             } else {
-                throw "דוא״ל או סיסמה לא חוקי "
+                throw "* דוא״ל או סיסמה לא חוקי "
+            }
+
+        });
+
+}
+
+// reset password 
+export async function resetEmailPassword(email) {
+    await sendPasswordResetEmail(auth, email)
+        .then(() => {
+            console.log("wow")
+
+        }).catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+
+            if (errorCode == "auth/user-not-found") {
+                throw "* דוא״ל לא נמצא."
+
+            } else {
+                throw "* דוא״ל לא חוקי."
             }
 
 
+
         });
-
-
-
 
 }
 
+// creat user by phone
+export async function createUserbyPhone(userID, name, PhoneNumber, date, verificationId, code) {
 
-export function resetEmailPassword(email) {
-    sendPasswordResetEmail(auth, email)
-        .then(() => {
-            Alert.alert("Password reset email has been sent to " + email);
-        }, (error) => {
-            Alert.alert(error.message);
-        });
+    await addNewUser(userID, name, 'None', PhoneNumber, date, verificationId, code)
+
 }
+// sign in with phone number
 
-// document.addEventListener('DOMContentLoaded', () => {
-//     // TODO: Implement getParameterByName()
-  
-//     // Get the action to complete.
-//     const mode = getParameterByName('mode');
-//     // Get the one-time code from the query parameter.
-//     const actionCode = getParameterByName('oobCode');
-//     // (Optional) Get the continue URL from the query parameter if available.
-//     const continueUrl = getParameterByName('continueUrl');
-//     // (Optional) Get the language code if available.
-//     const lang = getParameterByName('lang') || 'en';
-  
-//     // Configure the Firebase SDK.
-//     // This is the minimum configuration required for the API to be used.
-//     const config = {
-//       'apiKey': "YOU_API_KEY" // Copy this key from the web initialization
-//                               // snippet found in the Firebase console.
-//     };
+export async function SignInWithPhoneNumber(phoneNumber) {
+
+    let verificationId;
+    let code;
 
     
-//         handleVerifyEmail(auth, actionCode, continueUrl, lang);
-     
+   
+    let docId = null;
+     await getDocs(collection(DBFire, 'users')).then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            if (doc.data()['phoneNumber'] == phoneNumber) {
+                console.log(doc.id)
+                docId = doc.id;
+            }
+
+        })
+    })
     
-//   }, false);
+    return docId;
+
+
+}

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { ScrollView, View, ImageBackground, TouchableOpacity, KeyboardAvoidingView, SafeAreaView, Keyboard, Platform } from "react-native";
 import BackButton from '../../components/BackButton/BackButton'
 import styles from './styles';
-import { Octicons, Entypo } from '@expo/vector-icons';
+import { Octicons, Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { Button, Modal, Text } from "react-native-paper";
 import PhoneInput from 'react-native-phone-number-input';
@@ -18,9 +18,6 @@ import addNewUser from '../../config/FireStoreDB'
 import createUser from '../../config/AuthDB'
 import DropDownPicker from 'react-native-dropdown-picker'
 
-import ExampleDropDown from '../../components/depug'
-import { set } from 'firebase/database';
-
 
 export default function RegisterOptional(props) {
     // const { navigation } = navigation;
@@ -29,8 +26,7 @@ export default function RegisterOptional(props) {
     const [FormattedNumber, setFormattedNumber] = useState("");
     const [ModelIcon, setModelIcon] = useState(false);
     const [isAleretVisible, setIsAlertVisible] = useState(false);
-    const [ErrorOrSucsses, setErrorOrSucsses] = useState(true);
-    const [ArrayData, setArrayData] = useState([]);
+
 
     const [alertContent, setAlertContent] = useState("");
 
@@ -56,30 +52,23 @@ export default function RegisterOptional(props) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-
-
     const onRegisterOptionalPressed = () => {
 
 
 
         const CheckValidPhoneNumber = phoneInput.current?.isValidNumber(NumberValue);
         setValidNumber(CheckValidPhoneNumber ? CheckValidPhoneNumber : false);
-        if (!NumberValue) {
-            setFormattedNumber(-1)
 
-        }
-        else if (!CheckValidPhoneNumber) {
+        if (!CheckValidPhoneNumber && FormattedNumber) {
             setPhoneInputerror("* מספר טלפון אינו נכון")
             return;
         }
         console.log(" this is formateed : " + FormattedNumber)
         createUser(props.route.params.Email.value, props.route.params.Password.value, props.route.params.UserName.value, FormattedNumber, props.route.params.Date).then(() => {
-
-
-            setAlertContent("נרשמת בהצלחה")
-            setModelIcon(true)
+            setAlertContent("שלחנו אליך הודעת אימות, נא לוודא לדוא״ל שלך.")
             setIsAlertVisible(true)
-            sleep(2000).then(() => { props.navigation.navigate('login') });
+            setModelIcon(true)
+
 
         }).catch((error) => {
             setAlertContent(error)
@@ -89,41 +78,6 @@ export default function RegisterOptional(props) {
 
         });
 
-
-
-
-
-
-
-
-        // CreatNewUser(email.value, password.value)
-        // addNewItem(UserName)
-
-
-        // setIsProcessing(true);
-
-        // getUserByEmail(email.value.toLowerCase()).then((currUserInfo) => {
-        //   console.log(currUserInfo);
-
-        //   if (currUserInfo === undefined || currUserInfo.isActive === false) {
-
-        //     setAlertTitle("שגיאה");
-        //     setAlertContent("* נא לוודא דוא״ל וסיסמה");
-        //     setIsProcessing(false);
-        //     setIsAlertVisible(true);
-
-        //   } else {
-
-        //     signInWithEmailAndPassword(auth, email.value, password.value).catch(error => {
-        //       setErrorState(error.message);
-
-        //       setAlertTitle("שגיאה");
-        //       setAlertContent("* נא לוודא דוא״ל וסיסמה");
-        //       setIsProcessing(false);
-        //       setIsAlertVisible(true);
-        //     });
-        //   }
-        // });
 
     };
 
@@ -310,7 +264,7 @@ export default function RegisterOptional(props) {
                         onPress={onRegisterOptionalPressed}
 
                     >
-                        צור חשבון עכשיו
+                        לדלג וצור חשבון
                     </Button>
 
                 </View>
@@ -324,19 +278,19 @@ export default function RegisterOptional(props) {
                     <View style={styles.alertContentContainer}>
 
                         {/* <Text style={styles.alertTitleTextStyle}>{alertTitle}</Text> */}
-                        {ModelIcon ? <Octicons style={styles.IconSucsess} name='issue-closed' size={100} /> : null}
+                        {ModelIcon ? <MaterialCommunityIcons style={styles.IconSucsess} name='email-send-outline' size={100} /> : null}
                         {ModelIcon ? <Text style={styles.alertContentTextSucsess}>{alertContent}</Text> : null}
                         {!ModelIcon ? <Entypo style={styles.IconError} name='circle-with-cross' size={100} /> : null}
                         {!ModelIcon ? <Text style={styles.alertContentTextError}>{alertContent}</Text> : null}
-                        {!ModelIcon ? <Button
+                        <Button
                             style={styles.ButtonRegister}
                             labelStyle={styles.ButtonRegisterFont}
                             mode="contained"
-                            onPress={() => setIsAlertVisible(false)}
+                            onPress={() => setIsAlertVisible(false) || props.navigation.navigate('login')}
                         >
 
                             סגור
-                        </Button> : null}
+                        </Button>
 
 
 

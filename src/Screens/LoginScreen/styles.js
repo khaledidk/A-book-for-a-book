@@ -37,8 +37,8 @@ const styles = StyleSheet.create({
         fontSize: 34,
         alignSelf: "flex-end",
     },
-    RegisterAndQustionFont : {
-     flexDirection : 'row-reverse'
+    RegisterAndQustionFont: {
+        flexDirection: 'row-reverse'
 
     },
     QustionFontFont: {
@@ -76,10 +76,54 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 20,
     },
-    ButtonLoginFont : {
+    ButtonLoginFont: {
         fontSize: 18,
-        fontWeight : '800'
-    }
+        fontWeight: '800'
+    },
+    ButtonPhoneRegister: {
+        marginTop: 20,
+        backgroundColor: "#ff914d",
+        height: 50,
+        width: "100%",
+        justifyContent: 'center',
+        borderRadius: 20,
+    },
+    IconSucsess: {
+
+        color: "#ff914d",
+    },
+    alertContainer: {
+        flexDirection: "column",
+        width: "100%",
+        // height: "100%",
+        justifyContent: "center",
+        alignContent: "center",
+        alignItems: "center",
+
+    },
+    alertContentContainer: {
+
+
+        backgroundColor: "white",
+        borderColor: "#ff914d",
+        borderWidth: 1,
+        borderRadius: 7,
+        padding: 50,
+        justifyContent: "center",
+        alignContent: "center",
+        alignItems: "center",
+        width: "100%",
+    },
+    alertContentTextSucsess: {
+
+        textAlign: "right",
+        fontSize: 20,
+        marginBottom: 10,
+        color: "#ff914d",
+        fontWeight : '800',
+        paddingRight: 8
+        
+      },
 
 });
 

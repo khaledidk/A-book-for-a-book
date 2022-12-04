@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { RootNavigator } from "./src/navigations/RootNavigator";
 import { AuthenticatedUserProvider } from "./src/providers";
 import { createStackNavigator } from "@react-navigation/stack";
-import { LogBox } from 'react-native';
+import { LogBox  } from 'react-native';
 const Stack = createStackNavigator();
 
 LogBox.ignoreLogs(['Setting a timer']);
@@ -14,6 +14,7 @@ export default function App() {
     <AuthenticatedUserProvider>
       <RootNavigator />
     </AuthenticatedUserProvider>
+  
   );
 }
 

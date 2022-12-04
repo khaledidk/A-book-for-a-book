@@ -111,28 +111,49 @@ const styles = StyleSheet.create({
  
     DatePicker: {
         flexDirection: 'row-reverse',
-        
+      
+        // justifyContent : 'center',
+        // alignItems : 'center',
+       
         
 
     },
     DateFont: {
         display: Platform.OS === 'ios' ? 'none' : 'flex',
         color: "#ff914d",
-        fontSize: 20,
+        fontSize: 25,
         fontWeight: "600",
-        paddingTop: 20,
-        alignSelf : 'center',
+       
+        // borderColor : "#ddb07f",
+        // borderWidth : 1,
+        // borderRadius : 5,
+        // marginLeft: 20,
       
- 
-
-
+    },
+    DateFontContainer : {
+        display: Platform.OS === 'ios' ? 'none' : 'flex',
+        borderColor : "#ddb07f",
+        borderWidth : 1,
+        borderRadius : 5,
+        marginLeft: 20,
+        alignItems: 'center',
+        padding :10,
+        width : '74%',
+       
     },
     IconDate: {
 
         color: "#ff914d",
-        paddingTop : 10,
+       
         paddingLeft : 50,
 
+    },
+    DateErrorFont : {
+        alignSelf : 'flex-end',
+        fontSize: 13,
+        color: '#f13a59',
+        paddingTop: 8,
+        alignSelf: 'flex-end'
     },
     ButtonRegister: {
         backgroundColor: "#ff914d",

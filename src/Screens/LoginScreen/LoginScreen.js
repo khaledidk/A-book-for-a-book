@@ -2,64 +2,74 @@
 
 import * as React from 'react';
 import { useState } from "react";
-import { NativeBaseProvider, Item, Input, Label } from "native-base";
 import { ScrollView, Text, View, ImageBackground, KeyboardAvoidingView, Keyboard, TouchableOpacity } from "react-native";
-import { Button } from "react-native-paper";
+import { Button , Modal } from "react-native-paper";
 import KeyboardAvoidingWrapper from "../../components/KeyboardAvoidingWrapper/KeyboardAvoidingWrapper";
 import TextInput from "../../components/TextInput/TextInput";
 import styles from "./styles";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { emailValidator } from "../../helpers/emailValidator";
 import { passwordValidator } from "../../helpers/passwordValidator";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { signIn } from '../../config/AuthDB';
-
+import { SignInWithProvider } from '../../config/AuthDB';
+import { SignIn } from '../../config/AuthDB';
+import { sendEmailVerification } from "firebase/auth";
+import { auth } from '../../config/firebase';
+import {  MaterialCommunityIcons } from '@expo/vector-icons';
 export default function LoginScreen(props) {
   const [email, setEmail] = useState({ value: "", error: "" });
   const [password, setPassword] = useState({ value: "", error: "" });
-  const [errorState, setErrorState] = useState("");
-
+  const [VerifyError, setVerifyError] = useState(false);
+  const [isAleretVisible, setIsAlertVisible] = useState(false);
   const [alertTitle, setAlertTitle] = useState("שגיאה");
   const [alertContent, setAlertContent] = useState("קרתה שגיאה");
-  const [isAleretVisible, setIsAlertVisible] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
+
+  const [IsError, setIsError] = useState(false);
   const { navigation } = props;
+  const SendEmailVerification = () => {
+    const user = auth.currentUser;
+
+    sendEmailVerification(user)
+
+  }
 
   const onLoginPressed = () => {
 
 
-
     const emailError = emailValidator(email.value);
     const passwordError = passwordValidator(password.value);
-    if (emailError || passwordError) {
-      setEmail({ ...email, error: emailError });
-      setPassword({ ...password, error: passwordError });
+
+    SignIn(email.value, password.value).catch((error) => { // catch any error 
+
+      if (emailError || passwordError) {
+        setEmail({ ...email, error: emailError });
+        setPassword({ ...password, error: passwordError });
+
+
+      } else {
+        if (error == "* דוא״ל לא נמצא.") {
+
+          setEmail({ ...email, error: error });
+        } else if (error == "* סיסמה אינו נכונה.") {
+
+          setPassword({ ...password, error: error });
+
+        } else if (error == "* דוא״ל לא אומת.") {
+          setPassword({ ...password, error: error });
+          setVerifyError(true)
+
+        } else {
+
+          setPassword({ ...password, error: error });
+
+        }
+      }
+
+
+
       return;
-    }
-    signIn(email.value, password.value)
-
-   
-
-    // setIsProcessing(true);
-
-    // getUserByEmail(email.value.toLowerCase()).then((currUserInfo) => {
-    //   console.log(currUserInfo);
-
-    //   if (currUserInfo === undefined || currUserInfo.isActive === false) {
-
-    //     setAlertTitle("שגיאה");
-    //     setAlertContent("* נא לוודא דוא״ל וסיסמה");
-    //     setIsProcessing(false);
-    //     setIsAlertVisible(true);
-
-    //   } else {
 
 
-
-    // });
-
-
-
+    });
 
   };
 
@@ -75,7 +85,6 @@ export default function LoginScreen(props) {
 
         showsVerticalScrollIndicator={false}
       >
-
 
 
         <View>
@@ -128,17 +137,26 @@ export default function LoginScreen(props) {
                   errorText={password.error}
                   secureTextEntry
                 />
+                {VerifyError ? <Button
+                  style={styles.ButtonPhoneRegister}
+                  labelStyle={styles.ButtonLoginFont}
+                  mode="contained"
+                  onPress={SendEmailVerification}
+
+                >
+                  תשלח לדוא״ל שוב
+                </Button> : null}
                 {/* // forget password  */}
                 <View style={styles.ForgetPassword}>
 
                   <TouchableOpacity
-                    onPress={() => navigation.navigate("ForgetPassword")}
+                    onPress={() => navigation.navigate("ForgotPassword")}
                   >
                     <Text style={styles.RegisterFont}>שכחת/שינוי סיסמה?</Text>
                   </TouchableOpacity>
 
                 </View>
-                {isAleretVisible ? <Text>{AbortController}</Text> : null}
+
               </View>
 
               <Button
@@ -149,20 +167,58 @@ export default function LoginScreen(props) {
 
               >
 
-                כניסה
+                התחבר
+              </Button>
+
+              <Button
+                style={styles.ButtonPhoneRegister}
+                labelStyle={styles.ButtonLoginFont}
+                mode="contained"
+                onPress={() => navigation.navigate("LoginWithPhone")}
+
+              >
+
+                התחבר עם מספר תלפון
               </Button>
 
             </View>
 
+
           </View>
         </View>
+
+        <Modal visible={isAleretVisible}>
+
+<View style={styles.alertContainer}>
+
+
+    <View style={styles.alertContentContainer}>
+
+        {/* <Text style={styles.alertTitleTextStyle}>{alertTitle}</Text> */}
+         <MaterialCommunityIcons style={styles.IconSucsess} name='email-send-outline' size={100} /> 
+        <Text style={styles.alertContentTextSucsess}>שלחנו אליך הודעת אימות, נא לוודא לדוא״ל שלך.</Text> 
+       
+        <Button
+            style={styles.ButtonLogin}
+            labelStyle={styles.ButtonLoginFont}
+            mode="contained"
+            onPress={() => setIsAlertVisible(false) }
+        >
+
+            סגור
+        </Button>
+
+
+
+    </View>
+
+</View>
+
+</Modal>
 
 
       </ScrollView>
     </KeyboardAvoidingView>
-
-
-
 
   );
 

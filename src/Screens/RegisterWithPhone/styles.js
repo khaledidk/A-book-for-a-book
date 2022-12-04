@@ -4,27 +4,27 @@ import { Dimensions, StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-
+        flexGrow: 1,
+      
+ 
 
 
     },
     ImageBackGround: {
-        height: Dimensions.get('window').height / 5,
+        height: Dimensions.get('window').height / 2,
        
 
     },
  
     BootomView: {
         flex: 1.5,
-        bottom: 50,
-
+        bottom: 200,
         backgroundColor: '#ffffff',
         borderTopStartRadius: 60,
         borderTopEndRadius: 60,
         borderBottomEndRadius: 50,
         borderBottomStartRadius: 50,
-       
+        
 
     },
     WelcomeView: {
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     },
     InputView: {
         marginTop: 50,
-        
+     
 
     },
     PhoneInputButton: {
@@ -118,6 +118,50 @@ const styles = StyleSheet.create({
         marginTop: 20,
     
     },
+    DatePicker: {
+        flexDirection: 'row-reverse',
+
+        marginTop : 20,
+      
+        // justifyContent : 'center',
+        // alignItems : 'center',
+       
+        
+
+    },
+    DateFont: {
+        display: Platform.OS === 'ios' ? 'none' : 'flex',
+        color: "#ff914d",
+        fontSize: 25,
+        fontWeight: "600",
+    
+      
+    },
+    DateFontContainer : {
+        display: Platform.OS === 'ios' ? 'none' : 'flex',
+        borderColor : "#ddb07f",
+        borderWidth : 1,
+        borderRadius : 5,
+        marginLeft: 20,
+        alignItems: 'center',
+        padding :10,
+        width : '74%',
+       
+    },
+    IconDate: {
+
+        color: "#ff914d",
+       
+        paddingLeft : 50,
+
+    },
+    DateErrorFont : {
+        alignSelf : 'flex-end',
+        fontSize: 13,
+        color: '#f13a59',
+        paddingTop: 8,
+        alignSelf: 'flex-end'
+    },
     error: {
         fontSize: 13,
         color: '#f13a59',
@@ -131,7 +175,7 @@ const styles = StyleSheet.create({
         width: "100%",
         justifyContent: 'center',
         borderRadius: 20,
-        marginTop:100,
+        marginTop:20,
     },
 
     ButtonRegisterFont : {
@@ -141,10 +185,11 @@ const styles = StyleSheet.create({
     alertContainer: {
         flexDirection: "column",
          width: "100%",
-        // height: "100%",
+        height: "100%",
         justifyContent: "center",
         alignContent: "center",
-        alignItems: "center",
+        
+       
        
       },
   alertContentContainer: {

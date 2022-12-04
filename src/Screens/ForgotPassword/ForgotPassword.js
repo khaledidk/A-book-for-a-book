@@ -7,21 +7,30 @@ import TextInput from '../../components/TextInput/TextInput';
 import { Button } from "react-native-paper";
 import styles from './styles';
 import { emailValidator } from '../../helpers/emailValidator';
+import { resetEmailPassword } from "../../config/AuthDB";
 export default function ForgotPassword(props) {
     const { navigation } = props;
 
     const [email, setEmail] = useState({ value: "", error: "" });
-    const [password, setPassword] = useState({ value: "", error: "" });
-    const [ConfirmPassowrd, setConfirmPassowrd] = useState({ value: "", error: "" });
 
-    const onSendPressewd = () => {
+
+    const onSendPressed = () => {
         const emailError = emailValidator(email.value);
 
         if (emailError) {
             setEmail({ ...email, error: emailError });
-
             return;
         }
+        resetEmailPassword(email.value).then(() => { // send an link to email for rest the password
+
+            props.navigation.navigate('login')
+
+        }).catch((error) => { // catch any error 
+
+            setEmail({ ...email, error: error });
+            return;
+
+        });
     }
 
     return (
@@ -29,7 +38,7 @@ export default function ForgotPassword(props) {
             behavior={Platform.OS === "ios" ? "padding" : ""}
 
         >
-             <BackButton goBack={navigation.goBack} />
+            <BackButton goBack={navigation.goBack} />
             <ScrollView
                 style={styles.container}
 
@@ -79,7 +88,7 @@ export default function ForgotPassword(props) {
                             <Button
                                 style={styles.ButtonSend}
                                 mode="contained"
-                                onPress={onSendPressewd}
+                                onPress={onSendPressed}
 
 
                             >

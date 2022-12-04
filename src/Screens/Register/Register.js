@@ -70,13 +70,18 @@ export default function Register(props) {
         const passwordError = passwordValidator(password.value);
         const ConfirmPasswordError = passwordValidator(ConfirmPassowrd.value, equalPassword);
         const NameError = nameValidator(UserName.value)
-      
+
+
+
+
 
 
         if (emailError || passwordError || NameError || ConfirmPasswordError || !FormattedDate) {
-        
+            if (!FormattedDate) {
                 setIsDateEmpty(true)
-          
+            } else {
+                setIsDateEmpty(false)
+            }
             setEmail({ ...email, error: emailError });
             setPassword({ ...password, error: passwordError });
             setConfirmPassowrd({ ...ConfirmPassowrd, error: ConfirmPasswordError });
@@ -88,34 +93,7 @@ export default function Register(props) {
         setIsDateEmpty(false)
         navigation.navigate("RegisterOptional", { UserName: UserName, Email: email, Password: password, Date: FormattedDate })
 
-        // CreatNewUser(email.value, password.value)
-        // addNewItem(UserName)
 
-
-        // setIsProcessing(true);
-
-        // getUserByEmail(email.value.toLowerCase()).then((currUserInfo) => {
-        //   console.log(currUserInfo);
-
-        //   if (currUserInfo === undefined || currUserInfo.isActive === false) {
-
-        //     setAlertTitle("שגיאה");
-        //     setAlertContent("* נא לוודא דוא״ל וסיסמה");
-        //     setIsProcessing(false);
-        //     setIsAlertVisible(true);
-
-        //   } else {
-
-        //     signInWithEmailAndPassword(auth, email.value, password.value).catch(error => {
-        //       setErrorState(error.message);
-
-        //       setAlertTitle("שגיאה");
-        //       setAlertContent("* נא לוודא דוא״ל וסיסמה");
-        //       setIsProcessing(false);
-        //       setIsAlertVisible(true);
-        //     });
-        //   }
-        // });
 
     };
 
@@ -176,24 +154,29 @@ export default function Register(props) {
 
 
                                 <View style={styles.DatePicker}>
-                                    <Text style={styles.DateFont}>{FormattedDate}</Text>
-                                    <TouchableOpacity onPress={() => setShowDatePicker(true)} >
-                                        <Entypo name='calendar' style={styles.IconDate} size={50} >
+                                    <View style={styles.DateFontContainer} >
+                                        <Text style={styles.DateFont}>{FormattedDate}</Text>
+                                    </View>
+
+                                    <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => setShowDatePicker(true)} >
+                                        <Entypo name='calendar' style={styles.IconDate} size={50} />
 
 
-                                            {ShowDatePicker && (<DateTimePicker
-                                                testID='dateTimepicker'
-                                                value={date}
-                                                mode='date'
-                                                onChange={onChange}
+                                        {ShowDatePicker && (<DateTimePicker
+                                            testID='dateTimepicker'
+                                            value={date}
+                                            mode='date'
+                                            onChange={onChange}
 
 
-                                            />)}
-                                        </Entypo>
-                                        {IsDateEmpty ? <Text> * לבחור תאריך חובה</Text> : null}
+
+                                        />)}
+
+
                                     </TouchableOpacity>
 
                                 </View>
+                                {IsDateEmpty ? <Text style={styles.DateErrorFont}> * לבחור תאריך חובה</Text> : null}
 
                                 <TextInput
                                     label="סיסמה"

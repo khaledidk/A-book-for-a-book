@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { onAuthStateChanged } from "firebase/auth";
+import { NavigationContainer } from '@react-navigation/native';
+import { onAuthStateChanged, onIdTokenChanged } from "firebase/auth";
 
 import { AuthStack } from "./AuthStack";
 import { AppStack } from "./AppNavigation";
@@ -19,20 +19,32 @@ export const RootNavigator = () => {
         const unsubscribeAuthStateChanged = onAuthStateChanged(
             auth,
             (authenticatedUser) => {
-                if (authenticatedUser && authenticatedUser.emailVerified) { //This will return true or false
-                    setUser(authenticatedUser)
-                    console.log('is virfy');
-                } else {
-                    console.log('not virfy');
-                    setUser(null)
+                if (authenticatedUser) {
+                    onIdTokenChanged(auth, (Changeuser) => {
+
+
+
+
+                        if (Changeuser && (Changeuser.emailVerified || Changeuser.phoneNumber)) { //This will return true or false
+                            // console.log('virfy : ' + Changeuser.emailVerified);
+
+                            setUser(authenticatedUser)
+
+                        } else {
+                            console.log('not virfy');
+                            setUser(null)
+
+                        }
+                    })
                 }
+
                 // authenticatedUser ? setUser(authenticatedUser) : setUser(null);
 
                 setIsLoading(false);
-                // console.log(user.emailVerified)
+
             }
         );
-      
+
         // unsubscribe auth listener on unmount
         return unsubscribeAuthStateChanged;
     }, [user]);
