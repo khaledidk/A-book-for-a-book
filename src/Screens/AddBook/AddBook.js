@@ -6,7 +6,7 @@ import styles from "./styles";
 
 import BottomTab from '../../components/BottomTab/BottomTab'
 
-export default function HomeScreen(props) {
+export default function AddBook(props) {
   const { navigation } = props;
 
 
