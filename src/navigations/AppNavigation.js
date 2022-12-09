@@ -6,25 +6,37 @@ import HomeScreen from '../Screens/Home/HomeScreen';
 import AddBookScreen from '../Screens/AddBook/AddBook';
 
 import profileScreen from '../Screens/Profile/Profile';
+import ItemScreen from '../Screens/Item/Item';
 
-import SearchScreen from '../Screens/Search/SearchScreen';
 import { getStatusBarHeight } from 'react-native-status-bar-height'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Entypo, MaterialIcons, Ionicons, FontAwesome } from '@expo/vector-icons';
 
-import styles from "./styles";
-import AddBook from "../Screens/AddBook/AddBook";
-// const Stack = createStackNavigator();
-const Stack = createBottomTabNavigator();
 
-export const AppStack = () => {
 
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+export const  AppStack = () => {
   return (
     <Stack.Navigator
+    screenOptions={{
+      headerShown: false
+    }}
+    >
+     <Stack.Screen name='Main' component={TabStack} />
+      <Stack.Screen name='AddBook' component={AddBookScreen} />
+      <Stack.Screen name='Item' component={ItemScreen} />
+    </Stack.Navigator>
+  );
+}
+export const TabStack = () => {
+
+  return (
+    <Tab.Navigator
       screenOptions={({ route }) => ({
 
         headerShown: false,
-
+        showLabel: false,
         tabBarActiveTintColor: "#ff914d",
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
@@ -36,10 +48,7 @@ export const AppStack = () => {
           } else if (route.name === 'Profile') {
             iconName = focused ? 'person' : 'person-outline';
             Size = 40
-          } else if (route.name === 'AddBook') {
-            iconName = focused ? 'ios-add-circle-sharp' : 'ios-add-circle-outline';
-            Size = 90
-          }
+          } 
 
           // You can return any component that you like here!
           return <Ionicons name={iconName} size={Size} color={color} />
@@ -51,44 +60,24 @@ export const AppStack = () => {
           position: 'absolute',
           right: 10,
           left: 10,
-          bottom: getStatusBarHeight(),
+          bottom: Platform.OS === "ios" ? getStatusBarHeight() : 10,
           height: 90,
           borderRadius: 15,
           paddingBottom: 5,
         },
-        //  Style: {
-        //     flexDirection: 'row-reverse',
-        //     backgroundColor: "#ffffff",
-        //     // right: 20,
-        //     // left: 20,
-        //     // paddingLeft: 40,
-        //     // paddingRight: 40,
 
-        //     marginStart: 10,
-        //     marginEnd: 10,
-        //     borderRadius: 15,
-        //     bottom: getStatusBarHeight(),
-        //     height: 100,
-        //     justifyContent: 'space-between',
-
-        //   }
+        tabBarShowLabel: false,
 
       })}
 
-      tabBarOptions={{
-
-
-        showLabel: false,
-
-
-      }}
+ 
     >
-      <Stack.Screen name='Home' component={HomeScreen} />
-      <Stack.Screen name='AddBook' component={AddBookScreen} />
-      <Stack.Screen name='Profile' component={profileScreen} />
+      
+      <Tab.Screen name='Home' component={HomeScreen} />
+      <Tab.Screen name='Profile' component={profileScreen} />
 
 
-    </Stack.Navigator>
+    </Tab.Navigator>
 
   )
 }
