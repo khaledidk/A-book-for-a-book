@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/dev-server": "^0.1.120",
     "@firebase/auth": "^0.20.11",
     "@firebase/util": "^1.7.3",
     "@onflow/util-invariant": "^1.0.3",
@@ -22,12 +23,16 @@
     "@react-navigation/core": "^6.4.3",
     "@react-navigation/native": "^6.0.16",
     "@react-navigation/stack": "^6.3.7",
-    "expo": "~47.0.3",
+    "body-parser": "^1.20.1",
+    "expo": "^47.0.8",
     "expo-device": "~5.0.0",
     "expo-firebase-recaptcha": "~2.3.1",
+    "expo-image-manipulator": "^11.0.0",
+    "expo-image-picker": "~14.0.2",
     "expo-status-bar": "~1.4.2",
     "firebase": "^9.14.0",
     "latest-version": "^7.0.0",
+    "lodash": "^4.17.21",
     "native-base": "^3.4.21",
     "react": "18.1.0",
     "react-native": "0.70.5",
@@ -49,8 +54,7 @@
     "react-native-vector-icons": "^9.2.0",
     "react-native-webview": "11.23.1",
     "searchable-dropdown-react-native": "^1.0.0",
-    "urix": "^0.1.0",
-    "expo-image-picker": "~14.0.2"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

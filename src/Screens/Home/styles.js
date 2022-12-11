@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   },
 addButton : {
   position: 'absolute',
-   bottom: 100 , 
+   bottom:  Platform.OS === "ios" ? getStatusBarHeight() + 120 : 120, 
    backgroundColor : "#ff914d" , 
    borderRadius : 100,
    justifyContent : 'center',

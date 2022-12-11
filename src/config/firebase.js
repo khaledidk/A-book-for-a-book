@@ -4,7 +4,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore"
 import { getDatabase } from 'firebase/database';
 
-import { getAnalytics } from "firebase/analytics";
+import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth";
 
 import firebase from 'firebase/compat/app';
@@ -31,6 +31,6 @@ const app = initializeApp(firebaseConfig);
 const DBFire = getFirestore(app);
 const DBReal = getDatabase(app);
 const auth = getAuth(app);
-
-export  { DBReal, DBFire ,app, auth };
+const storage = getStorage(app);
+export  { DBReal, DBFire ,app, auth , storage };
 
