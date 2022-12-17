@@ -99,7 +99,7 @@ export default function LoginScreen(props) {
             {/* // Welcome you  */}
             <View style={styles.WelcomeView} >
 
-              <Text style={styles.WelcomeFont}>בורכים הבאים</Text>
+              <Text style={styles.WelcomeFont}>ברוכים הבאים</Text>
               <View style={styles.RegisterAndQustionFont}>
                 <Text style={styles.QustionFontFont} > אין לך חשבון עדיין?</Text>
                 <TouchableOpacity

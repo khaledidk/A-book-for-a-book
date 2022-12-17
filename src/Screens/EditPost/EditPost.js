@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TouchableOpacity, Text, View, KeyboardAvoidingView, ScrollView, Image } from "react-native";
 
 import styles from "./styles";
@@ -14,8 +14,10 @@ import { authorValidator } from "../../helpers/authorValidator";
 import { addNewbook } from "../../config/FireStoreDB";
 import { auth } from '../../config/firebase';
 
-export default function AddBook(props) {
-  const { navigation } = props;
+
+import { updatePost } from "../../config/FireStoreDB";
+export default function EditPost({ navigation, route }) {
+
   const [bookStatus, setBookStatus] = useState([
     { label: "בשימוש", value: "בשימוש" },
     { label: "חדש", value: "חדש" },
@@ -43,16 +45,16 @@ export default function AddBook(props) {
     { label: "מבוגר צעיר", value: "מבוגר צעיר" },
     { label: "מחזות", value: "מחזות" },
   ]);
-  const [bookTypesVal, setBookTypesVal] = useState("")
+  const [bookTypesVal, setBookTypesVal] = useState(route.params.type)
   const [bookTypesError, setBookTypesError] = useState(false)
   const [openTypeDrop, setOpenTypeDrop] = useState(false)
-  const [bookStatusVal, setBookStatusVal] = useState("")
+  const [bookStatusVal, setBookStatusVal] = useState(route.params.status)
   const [bookStatusError, setBookStatusError] = useState(false)
   const [openStatusDrop, setOpenStatusDrop] = useState(false)
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(route.params.image);
   const [imageError, setImageError] = useState(false)
-  const [bookName, setBookName] = useState({ value: "", error: "" });
-  const [authorName, setAuthorName] = useState({ value: "", error: "" });
+  const [bookName, setBookName] = useState({ value: route.params.title, error: "" });
+  const [authorName, setAuthorName] = useState({ value: route.params.author, error: "" });
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -105,27 +107,32 @@ export default function AddBook(props) {
     setBookTypesError(false)
     setImageError(false)
     let tempeDate = new Date()
-    let fDate = tempeDate.getDate() + '/' + (tempeDate.getMonth() + 1) + '/' + tempeDate.getFullYear() + ',' + tempeDate.getHours() + ':' + tempeDate.getMinutes() + ':' + tempeDate.getSeconds();
- 
+
     const user = auth.currentUser;
     const uid = user.uid;
-   
-    addNewbook(bookName.value, authorName.value, bookTypesVal, bookStatusVal, tempeDate, image, uid).then((bookId) => {
-      console.log(bookId)
-      let newBookJson = {
-        id: bookId,
-        image: image,
-        title: bookName.value,
-        author_name: authorName.value,
-        book_type: bookTypesVal,
-        book_status: bookStatusVal,
-        status : true,
-        // Date: tempeDate
 
-      }
-      navigation.navigate("Home", { newBookJson: newBookJson })
 
-    })
+    let updateInfo = {
+      id: route.params.id,
+      image: image,
+      title: bookName.value,
+      author_name: authorName.value,
+      book_type: bookTypesVal,
+      book_status: bookStatusVal,
+      user_id: uid,
+    }
+    let updateInfoDB = {
+      id: route.params.id,
+      image: image,
+      title: bookName.value,
+      author_name: authorName.value,
+      book_type: bookTypesVal,
+      book_status: bookStatusVal,
+      user_id: uid,
+    }
+    navigation.navigate("UserPost", { updateBookJson: updateInfo })
+    updatePost(route.params.id, updateInfoDB, tempeDate)
+
 
 
 
@@ -137,7 +144,7 @@ export default function AddBook(props) {
       behavior={Platform.OS === "ios" ? "padding" : ""}
 
     >
-      <BackButton goBack={props.navigation.goBack} />
+      <BackButton goBack={navigation.goBack} />
       <ScrollView
         style={styles.container}
 

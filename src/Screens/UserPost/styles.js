@@ -7,12 +7,6 @@ const styles = StyleSheet.create({
   container : {
     flex : 1,
     
-    // justifyContent : 'center',
-    // alignItems : 'center',
-    // backgroundColor : '#f1f1f1',
-    
-    
-    // marginTop: getStatusBarHeight()  || 0,
   },
 
   flatList : {
@@ -26,11 +20,12 @@ const styles = StyleSheet.create({
     borderColor : "#ff914d" ,
     padding: 20,
     flexDirection : 'column',
-    justifyContent : 'center',
-    alignItems : 'center',
+    // justifyContent : 'center',
+    // alignItems : 'center',
     marginVertical: 8,
     marginHorizontal: 16,
   },
+ 
   title: {
     fontSize: 20,
     color: "#ff914d",
@@ -49,9 +44,33 @@ const styles = StyleSheet.create({
   imageProfile : {
     height : 50,
     width : 50,
-   borderRadius : 100,
-   alignSelf : 'flex-end',
+    borderRadius : 100,
+  
+   
+  },
+  firstPartItem : {
+   flexDirection : 'row-reverse',
    marginBottom : 10,
+   justifyContent : 'space-between',
+   alignItems : 'center',
+  
+
+  },
+  seconPartItem : {
+    justifyContent : 'space-between',
+    alignItems : 'center',
+   
+  },
+  itemIcons : {
+    flexDirection : 'row',
+    justifyContent : 'center',
+    alignItems : 'center',
+   
+
+  },
+  Icons : {
+    marginStart : 10,
+
   },
   details : {
 
