@@ -10,8 +10,9 @@ import { fetchCurrentUserInfo } from "../../config/FireStoreDB";
 import { updateUser } from "../../config/FireStoreDB";
 import { useIsFocused } from '@react-navigation/native';
 import { auth } from '../../config/firebase';
+import BackButton from "../../components/BackButton/BackButton";
 
-export default function Profile({ navigation, route }) {
+export default function ViewProfile({ navigation, route }) {
 
   const profileDefaultImageUri = Image.resolveAssetSource(require('../../../assets/defult_Profile.png')).uri;
   const [isEdite, setIsEdite] = useState(false);
@@ -28,8 +29,8 @@ export default function Profile({ navigation, route }) {
   const [authorName, setAuthorName] = useState({ value: "", error: "" });
   const fetchuserInfo = async () => {
     
-      const user = auth.currentUser;
-      const uid = user.uid;
+      
+      const uid = route.params.userId;
   
     fetchCurrentUserInfo(uid).then((userInfo) => {
     
@@ -46,37 +47,21 @@ export default function Profile({ navigation, route }) {
   const isFocused = useIsFocused();
   useEffect(() => {
     fetchuserInfo()
-  }, []);
-  useEffect(() => {
-    if (route.params?.updateUserJson) {
-      let updateInfo = route.params?.updateUserJson
-      updateInfo["email"] = currUserInfo.email
-      console.log("route.params?.updateUserJson: ", route.params?.updateUserJson)
-      setCurrUserInfo(() => updateInfo);
-      updateUser(route.params?.updateUserJson)
-
-    }
+  }, [isFocused]);
 
 
-
-  }, [route.params?.updateUserJson]);
-
-  const HandlerUserEdit = () => {
-    setIsEdite(!isEdite)
-    setUserName(currUserInfo.name)
-
-  }
 
 
   return (
     <View style={styles.Container} >
+         <BackButton goBack={navigation.goBack} />
       <ImageBackground
 
         style={styles.ImageBackGround} >
 
       </ImageBackground>
       <View style={styles.BootomView}>
-        <FontAwesome5 style={styles.iconUserEdit} name={"user-edit"} size={30} color={"#ff914d"} onPress={() => navigation.navigate("EditUserProfile", { userName: currUserInfo.name, image: currUserInfo.image, date: currUserInfo.date, phoneNumber: currUserInfo.phoneNumber })} />
+      
         <View style={styles.profileImageName} >
           <Image
             style={styles.imageProfile}
@@ -103,13 +88,7 @@ export default function Profile({ navigation, route }) {
           </View>
 
         </View>
-        <Button
-          style={styles.signOutButton}
-          labelStyle={styles.ButtonsignOutFont}
-          mode="contained"
-          onPress={SignOut}
-        >התנתק
-        </Button>
+       
       </View>
     </View>
   );

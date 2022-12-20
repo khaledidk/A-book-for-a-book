@@ -120,6 +120,8 @@ export default function EditPost({ navigation, route }) {
       book_type: bookTypesVal,
       book_status: bookStatusVal,
       user_id: uid,
+     
+
     }
     let updateInfoDB = {
       id: route.params.id,
@@ -130,7 +132,7 @@ export default function EditPost({ navigation, route }) {
       book_status: bookStatusVal,
       user_id: uid,
     }
-    navigation.navigate("UserPost", { updateBookJson: updateInfo })
+    navigation.navigate("UserPost", { updateBookJson: updateInfo , status : 'update' })
     updatePost(route.params.id, updateInfoDB, tempeDate)
 
 

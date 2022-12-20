@@ -23,8 +23,8 @@ export default function EditUserProfile({ navigation, route }) {
     const [image, setImage] = useState(route.params.image);
     const [imageError, setImageError] = useState(false)
     const [userName, setUserName] = useState({ value: route.params.userName, error: "" });
-    const [NumberValue, setNumberValue] = useState(route.params.phoneNumber);
-    const [FormattedNumber, setFormattedNumber] = useState("");
+    const [NumberValue, setNumberValue] = useState(route.params.phoneNumber.substring(4));
+    const [FormattedNumber, setFormattedNumber] = useState(route.params.phoneNumber);
     const [ValidNumber, setValidNumber] = useState(false);
     const [PhoneInputerror, setPhoneInputerror] = useState("");
     const [date, setDate] = useState(new Date());
@@ -33,7 +33,7 @@ export default function EditUserProfile({ navigation, route }) {
     const [ShowDatePicker, setShowDatePicker] = useState(false);
 
     const phoneInput = useRef(null);
-
+    const profileDefaultImageUri = Image.resolveAssetSource(require('../../../assets/defult_Profile.png')).uri;
     const pickImage = async () => {
         // No permissions request is necessary for launching the image library
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -97,8 +97,19 @@ export default function EditUserProfile({ navigation, route }) {
         }
         setIsDateEmpty(false)
         setIsDateEmpty(false)
-
-        let updateUserJson = {
+        let updateUserJson;
+        console.log("image" , image)
+        if(profileDefaultImageUri === image){
+            updateUserJson = {
+        
+                name: userName.value,
+                phoneNumber: FormattedNumber,
+                date : FormattedDate,
+                image: null,
+               
+              }
+        }else{
+        updateUserJson = {
             
             name: userName.value,
             phoneNumber: FormattedNumber,
@@ -106,9 +117,9 @@ export default function EditUserProfile({ navigation, route }) {
             date : FormattedDate,
            
           }
+        }
           console.log(updateUserJson)
           navigation.navigate("Profile" , {updateUserJson : updateUserJson})
-
 
     };
 

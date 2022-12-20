@@ -57,8 +57,10 @@ export default async function addNewUser(userID, UserName, userEmail, userPhoneN
 
 }
 
-export async function addNewbook(bookName, authorName, bookType, bookStatus, date, bookImgUri, userId) {
+export async function addNewbook(bookName, authorName, bookType, bookStatus, date, bookImgUri, userId ,  userImage , userName) {
   const imageRef = await uploadImageAsync(bookImgUri);
+  
+ 
 
   const docRef = await addDoc(collection(DBFire, 'books'), {
     title: bookName,
@@ -69,6 +71,8 @@ export async function addNewbook(bookName, authorName, bookType, bookStatus, dat
     book_status: bookStatus,
     Date: Timestamp.fromDate(date).toDate(),
     user_id: userId,
+    user_image : userImage,
+    user_name : userName,
   })
     .catch(alert);
 
@@ -79,16 +83,16 @@ export async function addNewbook(bookName, authorName, bookType, bookStatus, dat
 export async function fetchBookSorted() {
   const qry = query(collection(DBFire, 'books'), orderBy('Date', "desc"));
 
-  let Mycollection = await getDocs(qry);
+  const  Mycollection = await getDocs(qry);
+  let arr=[];
 
-  let arr = [];
-  Mycollection.forEach(element => {
+  Mycollection.forEach( element  =>  {
     let elementWithID = element.data();
-    elementWithID["id"] = element.id //add ID to JSON
+    elementWithID["id"] = element.id //add ID to JSON 
     arr.push(elementWithID);
   });
-
-
+ 
+  //  console.log("arr" , arr)
   return arr;
 }
 export async function fetchByUserId(userId) {
@@ -119,8 +123,8 @@ export async function fetchByLisner() {
 
 
 }
-export async function fetchCurrentUserInfo() {
-  const docRef = doc(DBFire, "users", auth.currentUser.uid);
+export async function fetchCurrentUserInfo(userId) {
+  const docRef = doc(DBFire, "users", userId);
   const docSnap = await getDoc(docRef);
   let userName = docSnap.data()["name"];
   let userEmail = docSnap.data()["email"];
@@ -140,9 +144,24 @@ export async function fetchCurrentUserInfo() {
   return { "name": userName, "email": userEmail, "date": userDate, "image": userImage, "phoneNumber": userPhone };
 }
 
+export async function fetchtUserNameAndImage(userID) {
+  const docRef = doc(DBFire, "users", userID);
+  const docSnap = await getDoc(docRef);
+  let userName = docSnap.data()["name"];
+  let userImage = null;
+  if (docSnap.data()["image"]) {
+    userImage = docSnap.data()["image"];
+  }
+
+  // let userImage = docSnap.data()["image"];
+  
+  return { "userName": userName, "userImage": userImage };
+}
+
 // delete from data base
 function deleteFileFromStorage(fileName) {
   let fileRef = ref(storage, '/' + fileName);
+  console.log("enter image delet")
   deleteObject(fileRef)
     .then(() => {
       console.log(`${fileName}has been deleted successfully.`);
@@ -170,10 +189,11 @@ export async function updatePost(bookId, updated_fields, date) {
   if (updated_fields.image === docSnap.data()['image']) { // no new image
     console.log("emterr")
     updateDoc(itemRef, updated_fields).catch(alert);
+    
     return;
   }
 
-  if (docSnap.data()["image_name"] !== null) {
+  if (docSnap.data()["image_name"] ) {
     deleteFileFromStorage(docSnap.data()["image_name"]); //delete old image
   }
 
@@ -185,15 +205,20 @@ export async function updatePost(bookId, updated_fields, date) {
 
 }
 export async function updateUser(updated_fields) {
+  let UpdatePost  = {
+    user_image : updated_fields.image,
+    user_name : updated_fields.name,
+  }
   const userDocRef = doc(DBFire, 'users', auth.currentUser.uid);
   const docSnap = await getDoc(userDocRef);
   if (updated_fields.image === docSnap.data()['image']) { // no new image
     updateDoc(userDocRef, updated_fields).catch(alert);
+    updatePostByuser(auth.currentUser.uid ,UpdatePost )
     return;
   }
 
 
-  if (docSnap.data()["imageName"] !== null) {
+  if (docSnap.data()["imageName"] ) {
     deleteFileFromStorage(docSnap.data()["imageName"]); //delete old image
   }
 
@@ -202,6 +227,22 @@ export async function updateUser(updated_fields) {
   updated_fields.imageName = imageRef.name;
 
   updateDoc(userDocRef, updated_fields).catch(alert);
+  updatePostByuser(auth.currentUser.uid ,UpdatePost )
+
+}
+export async function updatePostByuser( userId, updated_fields) {
+  const qry = query(collection(DBFire, 'books'), where('user_id', '==', userId));
+
+  let Mycollection = await getDocs(qry);
+
+
+  Mycollection.forEach(element => {
+    const itemRef = doc(DBFire, 'books', element.id);
+    updateDoc(itemRef, updated_fields).catch(alert);
+   
+  });
+
+  
 
 }
 

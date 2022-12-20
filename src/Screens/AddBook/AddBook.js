@@ -13,7 +13,7 @@ import { bookValidator } from "../../helpers/bookValidator";
 import { authorValidator } from "../../helpers/authorValidator";
 import { addNewbook } from "../../config/FireStoreDB";
 import { auth } from '../../config/firebase';
-
+import { fetchtUserNameAndImage } from "../../config/FireStoreDB";
 export default function AddBook(props) {
   const { navigation } = props;
   const [bookStatus, setBookStatus] = useState([
@@ -109,23 +109,27 @@ export default function AddBook(props) {
  
     const user = auth.currentUser;
     const uid = user.uid;
+     fetchtUserNameAndImage(uid).then((userInfo) => {
+      addNewbook(bookName.value, authorName.value, bookTypesVal, bookStatusVal, tempeDate, image, uid , userInfo.userImage,  userInfo.userName ).then((bookId) => {
+        console.log(bookId)
+        let newBookJson = {
+          id: bookId,
+          image: image,
+          title: bookName.value,
+          author_name: authorName.value,
+          book_type: bookTypesVal,
+          book_status: bookStatusVal,
+          user_image : userInfo.userImage,
+          user_name  : userInfo.userName,
+  
+        }
+        navigation.navigate("Home", { newBookJson: newBookJson , status : 'add' })
+  
+      })
+
+
+     })
    
-    addNewbook(bookName.value, authorName.value, bookTypesVal, bookStatusVal, tempeDate, image, uid).then((bookId) => {
-      console.log(bookId)
-      let newBookJson = {
-        id: bookId,
-        image: image,
-        title: bookName.value,
-        author_name: authorName.value,
-        book_type: bookTypesVal,
-        book_status: bookStatusVal,
-        status : true,
-        // Date: tempeDate
-
-      }
-      navigation.navigate("Home", { newBookJson: newBookJson })
-
-    })
 
 
 

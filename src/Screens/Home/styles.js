@@ -7,17 +7,39 @@ const styles = StyleSheet.create({
   container : {
     flex : 1,
     
-    // justifyContent : 'center',
-    // alignItems : 'center',
-    // backgroundColor : '#f1f1f1',
+  },
+  SearchInput : {
     
+    marginTop:  getStatusBarHeight() + 10,
+    fontSize: 20,
+    fontWeight : "650",
+    textAlign: "right",
+    borderColor: "#ff914d",
+    backgroundColor: "#ffffff",
+    marginStart : 10,
+    marginEnd : 10,
+    paddingRight: 30,
+ 
     
-    // marginTop: getStatusBarHeight()  || 0,
+    // borderRadius : 5,
+  },
+  searchIcon : {
+    position: "absolute",
+    zIndex: 1,
+    right: 20,
+    top: getStatusBarHeight() + 30,
   },
 
   flatList : {
-    marginTop : 100,
-    marginBottom:  Platform.OS === "ios" ? getStatusBarHeight() + 90 : 100,
+    marginTop : 20,
+    // marginBottom:  Platform.OS === "ios" ? getStatusBarHeight() + 90 : 100,
+  },
+  userNameAndImage : {
+    flexDirection : 'row',
+     alignSelf : 'flex-end',
+    justifyContent : 'center',
+    alignItems : 'center',
+   
   },
   item: {
     backgroundColor: '#ffffff',
@@ -35,7 +57,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#ff914d",
     fontWeight: '800',
-    alignSelf : 'flex-end',
+
   
   },
   ImageBackGround: {
@@ -50,7 +72,6 @@ const styles = StyleSheet.create({
     height : 50,
     width : 50,
    borderRadius : 100,
-   alignSelf : 'flex-end',
    marginBottom : 10,
   },
   details : {

@@ -9,6 +9,7 @@ import profileScreen from '../Screens/Profile/Profile';
 import ItemScreen from '../Screens/Item/Item';
 import UserPostScreen from "../Screens/UserPost/UserPost";
 import EditPostScreen from "../Screens/EditPost/EditPost";
+import ViewProfileScreen from "../Screens/ViewProfile/ViewProfile";
 import EditUserProfileScreen from "../Screens/EditUserProfile/EditUserProfile";
 import { getStatusBarHeight } from 'react-native-status-bar-height'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -30,6 +31,7 @@ export const AppStack = () => {
       <Stack.Screen name='Item' component={ItemScreen} />
       <Stack.Screen name='EditPost' component={EditPostScreen} />
       <Stack.Screen name='EditUserProfile' component={EditUserProfileScreen} />
+      <Stack.Screen name='ViewProfile' component={ViewProfileScreen} />
     </Stack.Navigator>
   );
 }
@@ -42,6 +44,7 @@ export const TabStack = () => {
         headerShown: false,
         showLabel: false,
         tabBarActiveTintColor: "#ff914d",
+        tabBarHideOnKeyboard: true,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
           let Size;
