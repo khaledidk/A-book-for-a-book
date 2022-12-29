@@ -108,7 +108,72 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     justifyContent: 'center',
     alignContent: 'center',
-  }
+  },
+  alertContainer: {
+    flexDirection: "column",
+     width: "100%",
+    // height: "100%",
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems: "center",
+   
+  },
+  IconError: {
+  
+    color: "red",
+
+
+},
+alertContentTextError: {
+
+  textAlign: "right",
+  fontSize: 20,
+  marginBottom: 10,
+  // color: "red",
+  fontWeight : '800',
+  paddingRight: 8,
+  color : "#ff914d",  
+  
+},
+alertContentContainer: {
+
+backgroundColor: "white",
+borderColor: "#ff914d",
+borderWidth: 1,
+borderRadius: 7,
+padding: 50,
+justifyContent: "center",
+alignContent: "center",
+alignItems: "center",
+width: "100%",
+},
+
+ButtonDelete: {
+  backgroundColor: "red",
+  height: 50,
+  width: "100%",
+  justifyContent: 'center',
+  borderRadius: 20,
+  marginTop:20,
+},
+
+ButtonDeleteFont : {
+  fontSize: 18,
+  fontWeight : '800',
+ 
+},
+ButtonClose :{
+  backgroundColor: "#ff914d",
+  height: 50,
+  width: "100%",
+  justifyContent: 'center',
+  borderRadius: 20,
+  marginTop:100,
+},
+ButtonCloseFont : {
+  fontSize: 18,
+  fontWeight : '800',  
+},
 });
 
 export default styles;

@@ -28,7 +28,7 @@ export default function HomeScreen({ navigation, route }) {
   const profileDefaultImageUri = Image.resolveAssetSource(require('../../../assets/defult_Profile.png')).uri;
   const renderItem = ({ item }) => {
     return (
-      <Item title={item.title} author={item.author_name} type={item.book_type} status={item.book_status} image={item.image} userImage={item.user_image} userName={item.user_name} userId = {item.user_id}/>
+      <Item title={item.title} author={item.author_name} type={item.book_type} status={item.book_status} image={item.image} userImage={item.user_image} userName={item.user_name} userId={item.user_id} />
 
     );
   }
@@ -49,11 +49,11 @@ export default function HomeScreen({ navigation, route }) {
       }
     );
   }
-  const Item = ({ title, author, type, status, image, userImage, userName , userId}) => (
+  const Item = ({ title, author, type, status, image, userImage, userName, userId }) => (
     <View>
       <View style={styles.item} onPress={() => navigation.navigate("Item", { title: title, author: author })}>
-        <TouchableOpacity style={styles.userNameAndImage}  onPress={() => navigation.navigate( "ViewProfile" , {userId :userId })}>
-          <Text style={styles.title}> {userName} </Text>
+        <TouchableOpacity style={styles.userNameAndImage} onPress={() => navigation.navigate("ViewProfile", { userId: userId })}>
+          <Text style={styles.userName}> {userName} </Text>
           {userImage ? <Image
             source={{ uri: userImage }}
             style={styles.imageProfile}
@@ -65,13 +65,14 @@ export default function HomeScreen({ navigation, route }) {
           }
 
         </TouchableOpacity>
-
+        <View  style={styles.itemImageAndeDerails} >
         {image && <Image source={{ uri: image }} style={styles.imageIteam} />}
         <View style={styles.details}>
           <Text style={styles.title}>כותרת: {title} </Text>
           <Text style={styles.title}>שם מחבר: {author}</Text>
           <Text style={styles.title}>סוג הספר: {type}</Text>
           <Text style={styles.title}>מצב הספר: {status}</Text>
+        </View>
         </View>
       </View>
 
@@ -81,7 +82,7 @@ export default function HomeScreen({ navigation, route }) {
     setSearchBookData([])
     setBookData([])
 
-    fetchBookSorted().then((booksList) => {
+    await fetchBookSorted().then((booksList) => {
 
       setBookData(() => booksList);
       setSearchBookData(() => booksList)
@@ -146,10 +147,25 @@ export default function HomeScreen({ navigation, route }) {
 
     setIsRefreshing(true);
 
-    fetchAllBooksDocuments().then(() => {
+    await fetchAllBooksDocuments().then(() => {
 
       setIsRefreshing(false);
     });
+  }
+  const onFocused = async () => {
+
+    if (route.params?.status !== 'add' && route.params?.status !== 'end') {
+
+      setIsLoading(() => true);
+
+      fetchAllBooksDocuments().then(() => {
+        console.log("is load", isLoading)
+        setIsLoading(() => false);
+      });
+    } else {
+
+      navigation.setParams({ status: "" })
+    }
   }
   const updateListBySearch = (searchString) => {
 
@@ -162,7 +178,7 @@ export default function HomeScreen({ navigation, route }) {
       return;
     }
 
-    let searcheableFileds = ["title", "author_name", "book_type", "book_status" ,"user_name"];
+    let searcheableFileds = ["title", "author_name", "book_type", "book_status", "user_name"];
     let newBookList = [];
     let isSuitable = false;
 
@@ -189,18 +205,19 @@ export default function HomeScreen({ navigation, route }) {
   const isFocused = useIsFocused();
   useEffect(() => {
 
-    if (route.params?.status !== 'add' && route.params?.status !== 'end') {
-     
-      setIsLoading(() => true);
-     
-      fetchAllBooksDocuments().then(() => {
-        
-        setIsLoading(() => false);
-      });
-    } else {
+    // if (route.params?.status !== 'add' && route.params?.status !== 'end') {
 
-      navigation.setParams({ status: "" })
-    }
+    //   setIsLoading(() => true);
+
+    //   fetchAllBooksDocuments().then(() => {
+
+    //     setIsLoading(() => false);
+    //   });
+    // } else {
+
+    //   navigation.setParams({ status: "" })
+    // }
+    onFocused()
 
     GfGApp()
 
@@ -217,7 +234,6 @@ export default function HomeScreen({ navigation, route }) {
       setBookData(oldArray => [newBook, ...oldArray]);
       setSearchBookData(oldArray => [newBook, ...oldArray]);
 
-      setStatusAdd(newBook.status)
       navigation.setParams({ status: "end" })
       navigation.setParams({ newBookJson: "" })
     }
@@ -227,7 +243,7 @@ export default function HomeScreen({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      {isLoading && <OurActivityIndicator />}
+      {isLoading ? <OurActivityIndicator /> : null}
       <View>
         <TextInput
           //ddb07f
@@ -256,6 +272,9 @@ export default function HomeScreen({ navigation, route }) {
         data={searchBookData}
         renderItem={renderItem}
         keyExtractor={item => item.id}
+        onEndReached={onRefresh}
+        onEndReachedThreshold={-0.5}
+      //  ListFooterComponent={renderItem}
         //Platform.OS === "ios" ? getStatusBarHeight() + 90 :
 
         style={[{ marginBottom: Platform.OS === "ios" ? getStatusBarHeight() + 90 : 100 }, styles.flatList]}

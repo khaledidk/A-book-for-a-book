@@ -43,8 +43,8 @@ const styles = StyleSheet.create({
   },
   item: {
     backgroundColor: '#ffffff',
-    borderWidth:3,
-    borderRadius : 20,
+    borderBottomWidth: 1,
+    // borderRadius : 20,
     borderColor : "#ff914d" ,
     padding: 20,
     flexDirection : 'column',
@@ -53,10 +53,31 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginHorizontal: 16,
   },
-  title: {
+  itemImageAndeDerails : {
+    // flexGrow: 1,
+    flexDirection : 'row-reverse',
+    // justifyContent : 'space-between',
+    alignItems : 'center',
+    marginEnd : 5,
+    
+  
+
+  },
+  userName : {
     fontSize: 20,
     color: "#ff914d",
     fontWeight: '800',
+  },
+  title: {
+   
+
+    fontSize: 18,
+    color: "grey",
+    fontWeight: '800',
+    // flexWrap : 'wrap',
+    
+    // marginEnd: 20,
+    // marginStart: 20,
 
   
   },
@@ -64,8 +85,9 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').height /5,
 },
   imageIteam : {
-    height : 300,
-    width : 300,
+    height : 120,
+    width : 120,
+    marginStart : 20,
    borderRadius : 20,
   },
   imageProfile : {
@@ -75,9 +97,9 @@ const styles = StyleSheet.create({
    marginBottom : 10,
   },
   details : {
-
+flexShrink : 1,
     flexDirection : 'column',
-    alignSelf : 'flex-end',
+    // alignSelf : 'flex-end',
     marginTop: 10,
    
 

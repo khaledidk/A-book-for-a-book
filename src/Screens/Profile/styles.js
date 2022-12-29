@@ -78,19 +78,70 @@ inputError: {
   },
  
   signOutButton : {
-   marginTop : 50,
+   marginTop : 20,
    marginBottom : 50,
-   marginStart : 20,
-   marginEnd : 20,
+  //  marginStart : 20,
+  //  marginEnd : 20,
    height: 50,
    justifyContent: 'center',
    borderRadius: 20,
    backgroundColor : "red",
+   width: "100%",
   
   },
   ButtonsignOutFont: {
     fontSize: 18,
     fontWeight: '800'
+},
+alertContainer: {
+  flexDirection: "column",
+  //  width: "100%",
+  // height: "100%",
+  justifyContent: "center",
+  alignContent: "center",
+  
+ 
+ 
+},
+alertContentTextError: {
+
+  textAlign: "right",
+  fontSize: 20,
+  marginBottom: 10,
+  // color: "red",
+  fontWeight : '800',
+  paddingRight: 8,
+  color : "#ff914d",  
+  
+},
+alertContentContainer: {
+
+backgroundColor: "white",
+borderColor: "#ff914d",
+borderWidth: 1,
+borderRadius: 7,
+paddingTop: 50,
+paddingRight: 50,
+paddingLeft: 50,
+justifyContent: "center",
+alignContent: "center",
+alignItems: "center",
+width: "100%",
+},
+
+
+
+ButtonClose :{
+  backgroundColor: "#ff914d",
+  height: 50,
+  width: "100%",
+  justifyContent: 'center',
+  borderRadius: 20,
+  marginTop:50,
+},
+ButtonCloseFont : {
+  fontSize: 18,
+  fontWeight : '800',  
 },
   
 });

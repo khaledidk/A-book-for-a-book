@@ -82,10 +82,11 @@ export const TabStack = () => {
 
 
     >
+       <Tab.Screen name='Home' component={HomeScreen} />
 
       <Tab.Screen name='UserPost' component={UserPostScreen} />
 
-      <Tab.Screen name='Home' component={HomeScreen} />
+     
 
       <Tab.Screen name='Profile' component={profileScreen} />
 

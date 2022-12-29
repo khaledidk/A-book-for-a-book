@@ -24,15 +24,19 @@ export default function UserPost({ navigation, route }) {
     const [CurrId, setCurrId] = useState("");
     const [keyboardOpen, setKeyboardOpen] = useState(false);
     let [searchBookData, setSearchBookData] = useState([])
+    const [isAleretVisible, setIsAlertVisible] = useState(false);
 
-    const StatusHandler = (id, status) => {
-        setCurrId(id)
-        setStatus(status)
-        console.log("status change plzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
+    const delete_post_handler = () => {
 
 
-        // bookData.splice(getPostIndex(id), 1);
-        // deletePost(id)
+        console.log("delet id =>>", CurrId, "index ==>", getPostIndex(CurrId))
+        bookData.splice(getPostIndex(CurrId), 1);
+        setBookData(() => bookData);
+        setSearchBookData(() => bookData)
+        deletePost(CurrId)
+        setIsAlertVisible(false)
+
+
 
     }
     const GfGApp = () => {
@@ -75,11 +79,11 @@ export default function UserPost({ navigation, route }) {
             {/* <View style={styles.firstPartItem}> */}
 
             <View style={styles.itemIcons}>
-                <TouchableOpacity onPress={() => StatusHandler(id, "delete")} >
+                <TouchableOpacity onPress={() => setIsAlertVisible(true) || setCurrId(id)} >
                     <Ionicons name={"trash-outline"} size={28} color={"red"} />
                 </TouchableOpacity>
 
-                <FontAwesome style={styles.Icons} name={"edit"} size={30} color={"#ff914d"} onPress={() => navigation.navigate('EditPost', { title: title, author: author, type: type, status: status, image: image, id: id }) || StatusHandler(id, "update")} />
+                <FontAwesome style={styles.Icons} name={"edit"} size={30} color={"#ff914d"} onPress={() => navigation.navigate('EditPost', { title: title, author: author, type: type, status: status, image: image, id: id }) } />
 
             </View>
             {/* </View> */}
@@ -185,8 +189,8 @@ export default function UserPost({ navigation, route }) {
 
 
         if (route.params?.status !== 'update' && route.params?.status !== 'end') {
-            console.log("navigation", isFocused)
-            console.log("route.params?.status", route.params?.status)
+            // console.log("navigation", isFocused)
+            // console.log("route.params?.status", route.params?.status)
             setIsLoading(() => true);
 
             fetchAllBooksDocuments().then(() => {
@@ -223,22 +227,22 @@ export default function UserPost({ navigation, route }) {
         }
 
     }, [route.params?.updateBookJson])
-    useEffect(() => {
-        if (status && CurrId) {
-            console.log("status =>>", status, "currId ==>", CurrId)
-            if (status == 'delete') {
-                console.log("delet id =>>", CurrId, "index ==>", getPostIndex(CurrId))
-                bookData.splice(getPostIndex(CurrId), 1);
-                setBookData(() => bookData);
-                setSearchBookData(() => bookData)
-                deletePost(CurrId)
-                setStatus("")
+    // useEffect(() => {
+    //     if (status && CurrId) {
+    //         console.log("status =>>", status, "currId ==>", CurrId)
+    //         if (status == 'delete') {
+    //             console.log("delet id =>>", CurrId, "index ==>", getPostIndex(CurrId))
+    //             bookData.splice(getPostIndex(CurrId), 1);
+    //             setBookData(() => bookData);
+    //             setSearchBookData(() => bookData)
+    //             deletePost(CurrId)
+    //             setStatus("")
 
-            }
+    //         }
 
-        }
+    //     }
 
-    }, [status]);
+    // }, [status]);
 
 
     return (
@@ -292,7 +296,43 @@ export default function UserPost({ navigation, route }) {
 
                 />}
 
-            {/* <BottomTab navigation = {navigation}/> */}
+            <Modal visible={isAleretVisible}>
+
+                <View style={styles.alertContainer}>
+
+
+                    <View style={styles.alertContentContainer}>
+
+                        {/* <Ionicons name={"trash-outline"} size={100} color={"red"} /> */}
+                        {/* <Entypo style={styles.IconError} name='circle-with-cross' size={100} />  */}
+                        <Text style={styles.alertContentTextError}>האם אתה בטוח רוצה למחוק את הפוסט הזה?</Text>
+                        <Button
+                            style={styles.ButtonClose}
+                            labelStyle={styles.ButtonCloseFont}
+                            mode="contained"
+                            onPress={() => setIsAlertVisible(false)}
+
+                        >
+
+                            לסגור
+                        </Button>
+                        <Button
+                            style={styles.ButtonDelete}
+                            labelStyle={styles.ButtonDeleteFont}
+                            mode="contained"
+                            onPress={delete_post_handler}
+                        >
+
+                            למחוק
+                        </Button>
+
+
+
+                    </View>
+
+                </View>
+
+            </Modal>
 
         </View>
     );

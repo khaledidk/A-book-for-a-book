@@ -57,10 +57,10 @@ export default async function addNewUser(userID, UserName, userEmail, userPhoneN
 
 }
 
-export async function addNewbook(bookName, authorName, bookType, bookStatus, date, bookImgUri, userId ,  userImage , userName) {
+export async function addNewbook(bookName, authorName, bookType, bookStatus, date, bookImgUri, userId, userImage, userName) {
   const imageRef = await uploadImageAsync(bookImgUri);
-  
- 
+
+
 
   const docRef = await addDoc(collection(DBFire, 'books'), {
     title: bookName,
@@ -71,8 +71,8 @@ export async function addNewbook(bookName, authorName, bookType, bookStatus, dat
     book_status: bookStatus,
     Date: Timestamp.fromDate(date).toDate(),
     user_id: userId,
-    user_image : userImage,
-    user_name : userName,
+    user_image: userImage,
+    user_name: userName,
   })
     .catch(alert);
 
@@ -83,15 +83,15 @@ export async function addNewbook(bookName, authorName, bookType, bookStatus, dat
 export async function fetchBookSorted() {
   const qry = query(collection(DBFire, 'books'), orderBy('Date', "desc"));
 
-  const  Mycollection = await getDocs(qry);
-  let arr=[];
+  const Mycollection = await getDocs(qry);
+  let arr = [];
 
-  Mycollection.forEach( element  =>  {
+  Mycollection.forEach(element => {
     let elementWithID = element.data();
     elementWithID["id"] = element.id //add ID to JSON 
     arr.push(elementWithID);
   });
- 
+
   //  console.log("arr" , arr)
   return arr;
 }
@@ -154,7 +154,7 @@ export async function fetchtUserNameAndImage(userID) {
   }
 
   // let userImage = docSnap.data()["image"];
-  
+
   return { "userName": userName, "userImage": userImage };
 }
 
@@ -189,11 +189,11 @@ export async function updatePost(bookId, updated_fields, date) {
   if (updated_fields.image === docSnap.data()['image']) { // no new image
     console.log("emterr")
     updateDoc(itemRef, updated_fields).catch(alert);
-    
+
     return;
   }
 
-  if (docSnap.data()["image_name"] ) {
+  if (docSnap.data()["image_name"]) {
     deleteFileFromStorage(docSnap.data()["image_name"]); //delete old image
   }
 
@@ -205,20 +205,20 @@ export async function updatePost(bookId, updated_fields, date) {
 
 }
 export async function updateUser(updated_fields) {
-  let UpdatePost  = {
-    user_image : updated_fields.image,
-    user_name : updated_fields.name,
+  let UpdatePost = {
+    user_image: updated_fields.image,
+    user_name: updated_fields.name,
   }
   const userDocRef = doc(DBFire, 'users', auth.currentUser.uid);
   const docSnap = await getDoc(userDocRef);
   if (updated_fields.image === docSnap.data()['image']) { // no new image
     updateDoc(userDocRef, updated_fields).catch(alert);
-    updatePostByuser(auth.currentUser.uid ,UpdatePost )
+    updatePostByuser(auth.currentUser.uid, UpdatePost)
     return;
   }
 
 
-  if (docSnap.data()["imageName"] ) {
+  if (docSnap.data()["imageName"]) {
     deleteFileFromStorage(docSnap.data()["imageName"]); //delete old image
   }
 
@@ -227,10 +227,10 @@ export async function updateUser(updated_fields) {
   updated_fields.imageName = imageRef.name;
 
   updateDoc(userDocRef, updated_fields).catch(alert);
-  updatePostByuser(auth.currentUser.uid ,UpdatePost )
+  updatePostByuser(auth.currentUser.uid, UpdatePost)
 
 }
-export async function updatePostByuser( userId, updated_fields) {
+export async function updatePostByuser(userId, updated_fields) {
   const qry = query(collection(DBFire, 'books'), where('user_id', '==', userId));
 
   let Mycollection = await getDocs(qry);
@@ -239,10 +239,10 @@ export async function updatePostByuser( userId, updated_fields) {
   Mycollection.forEach(element => {
     const itemRef = doc(DBFire, 'books', element.id);
     updateDoc(itemRef, updated_fields).catch(alert);
-   
+
   });
 
-  
+
 
 }
 
