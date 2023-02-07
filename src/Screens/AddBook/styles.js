@@ -61,7 +61,8 @@ ContainerDropDown : {
 DropDown: {
   borderColor: "#ddb07f",
   borderWidth: 1,
-
+  position: 'relative',
+  top:0,
 
  
 
@@ -74,7 +75,9 @@ listItemContainer : {
 listItemContainerFont : {
   fontSize:15,
   color : "#ff914d",
-  fontWeight : '600'
+  fontWeight : '600',
+  textAlign:"left",
+  direction:'rtl',
 },
 typeErrorFont : {
   alignSelf : 'flex-end',

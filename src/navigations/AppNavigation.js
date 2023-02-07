@@ -4,13 +4,16 @@ import { NavigationContainer } from '@react-navigation/native'
 import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity } from "react-native";
 import HomeScreen from '../Screens/Home/HomeScreen';
 import AddBookScreen from '../Screens/AddBook/AddBook';
-
 import profileScreen from '../Screens/Profile/Profile';
 import ItemScreen from '../Screens/Item/Item';
 import UserPostScreen from "../Screens/UserPost/UserPost";
 import EditPostScreen from "../Screens/EditPost/EditPost";
 import ViewProfileScreen from "../Screens/ViewProfile/ViewProfile";
+import OtherUserPostScreen from "../Screens/OtherUserPost/OtherUserFile";
 import EditUserProfileScreen from "../Screens/EditUserProfile/EditUserProfile";
+import ChatRoomScreen from "../Screens/ChatRoom/ChatRoom";
+import MapUserScreen from "../Screens/MapUser/MapUser";
+import SingleChatScreen from "../Screens/SingleChat/SingleChat";
 import { getStatusBarHeight } from 'react-native-status-bar-height'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Entypo, MaterialIcons, Ionicons, FontAwesome } from '@expo/vector-icons';
@@ -32,7 +35,10 @@ export const AppStack = () => {
       <Stack.Screen name='EditPost' component={EditPostScreen} />
       <Stack.Screen name='EditUserProfile' component={EditUserProfileScreen} />
       <Stack.Screen name='ViewProfile' component={ViewProfileScreen} />
+      <Stack.Screen name='OtherUserPost' component={OtherUserPostScreen} />
+      <Stack.Screen name='SingleChat' component={SingleChatScreen} />
     </Stack.Navigator>
+    
   );
 }
 export const TabStack = () => {
@@ -51,15 +57,20 @@ export const TabStack = () => {
 
           if (route.name === 'Home') {
             iconName = focused ? 'ios-home-sharp' : 'ios-home-outline';
-            Size = 40
+            Size = 30
           } else if (route.name === 'Profile') {
             iconName = focused ? 'person' : 'person-outline';
-            Size = 40
+            Size = 30
           } else if (route.name === 'UserPost') {
             iconName = focused ? 'list' : 'list-outline';
-            Size = 40
+            Size = 30
+          } else if (route.name === 'MapUser') {
+            iconName = focused ? 'map' : 'map-outline';
+            Size = 30
+          } else if (route.name === 'ChatRoom') {
+            iconName = focused ? 'md-chatbubble-ellipses' : 'md-chatbubble-ellipses-outline';
+            Size = 30
           }
-
           // You can return any component that you like here!
           return <Ionicons name={iconName} size={Size} color={color} />
         },
@@ -68,12 +79,12 @@ export const TabStack = () => {
 
           backgroundColor: 'white',
           position: 'absolute',
-          right: 10,
-          left: 10,
-          bottom: Platform.OS === "ios" ? getStatusBarHeight() : 10,
-          height: 90,
-          borderRadius: 15,
-          paddingBottom: 5,
+          // right: 10,
+          // left: 10,
+          // bottom: Platform.OS === "ios" ? getStatusBarHeight() : 0,
+          height: Platform.OS === "ios" ? 70 : 60,
+          // borderRadius: 15,
+          // paddingBottom: 5,
         },
 
         tabBarShowLabel: false,
@@ -82,13 +93,11 @@ export const TabStack = () => {
 
 
     >
-       <Tab.Screen name='Home' component={HomeScreen} />
-
+      <Tab.Screen name='Home' component={HomeScreen} />
       <Tab.Screen name='UserPost' component={UserPostScreen} />
-
-     
-
       <Tab.Screen name='Profile' component={profileScreen} />
+      <Tab.Screen name='MapUser' component={MapUserScreen} />
+      <Tab.Screen name="ChatRoom" component={ChatRoomScreen} />
 
     </Tab.Navigator>
 

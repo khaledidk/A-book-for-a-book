@@ -124,7 +124,7 @@ export default function EditPost({ navigation, route }) {
 
     }
     let updateInfoDB = {
-      id: route.params.id,
+      // id: route.params.id,
       image: image,
       title: bookName.value,
       author_name: authorName.value,
@@ -253,7 +253,7 @@ export default function EditPost({ navigation, route }) {
                   labelStyle={styles.addButtonFont}
                   mode="contained"
                   onPress={onRegisterPressed}>
-                  הוסיף
+                  עדכן
                 </Button>
 
 

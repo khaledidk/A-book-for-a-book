@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useState, useRef, useEffect } from "react";
 
-import { ScrollView, View, ImageBackground, TouchableOpacity, KeyboardAvoidingView, SafeAreaView, Keyboard, Platform } from "react-native";
+import { ScrollView, View, Alert, TouchableOpacity, KeyboardAvoidingView, SafeAreaView, Keyboard, Platform } from "react-native";
 import BackButton from '../../components/BackButton/BackButton'
 import styles from './styles';
 import { Octicons, Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 
-import { Button, Modal, Text } from "react-native-paper";
+import { Button, Modal, Text,Switch } from "react-native-paper";
 import PhoneInput from 'react-native-phone-number-input';
 
 
@@ -17,7 +17,7 @@ import SearchableDropdown from 'react-native-searchable-dropdown';
 import addNewUser from '../../config/FireStoreDB'
 import createUser from '../../config/AuthDB'
 import DropDownPicker from 'react-native-dropdown-picker'
-
+import * as Location from 'expo-location';
 
 export default function RegisterOptional(props) {
     // const { navigation } = navigation;
@@ -32,8 +32,10 @@ export default function RegisterOptional(props) {
 
     const [ValidNumber, setValidNumber] = useState(false);
     const [PhoneInputerror, setPhoneInputerror] = useState("");
-
+    const [isEnabled, setIsEnabled] = useState(false);
     const phoneInput = useRef(null);
+    const [latitude, setLatitude] = useState("");
+    const [longitude, setLongitude] = useState("");
 
 
     const [DropDownValue, setDropDownValue] = useState('');
@@ -48,13 +50,11 @@ export default function RegisterOptional(props) {
     //     console.log(ArrayData)
 
     // }
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
+    // function sleep(ms) {
+    //     return new Promise(resolve => setTimeout(resolve, ms));
+    // }
 
     const onRegisterOptionalPressed = () => {
-
-
 
         const CheckValidPhoneNumber = phoneInput.current?.isValidNumber(NumberValue);
         setValidNumber(CheckValidPhoneNumber ? CheckValidPhoneNumber : false);
@@ -64,7 +64,7 @@ export default function RegisterOptional(props) {
             return;
         }
         console.log(" this is formateed : " + FormattedNumber)
-        createUser(props.route.params.Email.value, props.route.params.Password.value, props.route.params.UserName.value, FormattedNumber, props.route.params.Date).then(() => {
+        createUser(props.route.params.Email.value, props.route.params.Password.value, props.route.params.UserName.value, FormattedNumber, props.route.params.Date, latitude , longitude).then(() => {
             setAlertContent("שלחנו אליך הודעת אימות, נא לוודא לדוא״ל שלך.")
             setIsAlertVisible(true)
             setModelIcon(true)
@@ -80,6 +80,34 @@ export default function RegisterOptional(props) {
 
 
     };
+
+    const toggleSwitch = async () => {//toggle for location + validation
+     
+        setIsEnabled(previousState => !previousState)
+       
+        if (!isEnabled){
+             
+            setIsEnabled(false)
+            const {status}  = await Location.requestForegroundPermissionsAsync();
+       
+            if(status !== "granted") {
+                    Alert.alert('',"סירבת לאפליקציה הזו לגשת למיקום שלך, עליך לשנות זאת ולאפשר גישה על מנת להמשיך",[,,{text:"אישור"}]);
+                    return;
+            }
+            let location = await Location.getCurrentPositionAsync(); 
+            setLatitude(location.coords.latitude)
+            setLongitude(location.coords.longitude)
+            setIsEnabled(true)
+           
+       
+          }else{
+            setLatitude('')
+            setLongitude('')
+          }
+          console.log("latitude",latitude,"longitude" , longitude)
+        };
+       
+    
 
     return (
 
@@ -256,6 +284,20 @@ export default function RegisterOptional(props) {
 
 
                     </View>
+                    <View style={styles.textAndSwitch}>
+                      
+                        <Switch
+
+                            trackColor={{ false:  "#767577", true: "#ff914d" }}
+                            thumbColor={isEnabled ? "#ff914d": "#ff914d"}
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={toggleSwitch}
+                            value={isEnabled}
+                            // style={styles.toggle}
+                        />
+                           <Text style={{  writingDirection: 'rtl' }}>השתמש במיקום הנוכחי שלי:</Text>
+                       
+                    </View>
 
                     <Button
                         style={styles.ButtonRegister}
@@ -308,5 +350,6 @@ export default function RegisterOptional(props) {
 
 
     );
+      }
 
-}
+

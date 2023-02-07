@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useState } from "react";
 import { ScrollView, Text, View, ImageBackground, KeyboardAvoidingView, Keyboard, TouchableOpacity } from "react-native";
-import { Button , Modal } from "react-native-paper";
+import { Button, Modal } from "react-native-paper";
 import KeyboardAvoidingWrapper from "../../components/KeyboardAvoidingWrapper/KeyboardAvoidingWrapper";
 import TextInput from "../../components/TextInput/TextInput";
 import styles from "./styles";
@@ -14,7 +14,7 @@ import { SignInWithProvider } from '../../config/AuthDB';
 import { SignIn } from '../../config/AuthDB';
 import { sendEmailVerification } from "firebase/auth";
 import { auth } from '../../config/firebase';
-import {  MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 export default function LoginScreen(props) {
   const [email, setEmail] = useState({ value: "", error: "" });
   const [password, setPassword] = useState({ value: "", error: "" });
@@ -105,7 +105,7 @@ export default function LoginScreen(props) {
                 <TouchableOpacity
                   onPress={() => navigation.navigate("Register")}
                 >
-                  <Text style={styles.RegisterFont}> יצירה חשבון</Text>
+                  <Text style={styles.RegisterFont}> יצירת חשבון</Text>
                 </TouchableOpacity>
 
               </View>
@@ -170,7 +170,7 @@ export default function LoginScreen(props) {
                 התחבר
               </Button>
 
-              <Button
+              {/* <Button
                 style={styles.ButtonPhoneRegister}
                 labelStyle={styles.ButtonLoginFont}
                 mode="contained"
@@ -179,7 +179,7 @@ export default function LoginScreen(props) {
               >
 
                 התחבר עם מספר תלפון
-              </Button>
+              </Button> */}
 
             </View>
 
@@ -189,32 +189,32 @@ export default function LoginScreen(props) {
 
         <Modal visible={isAleretVisible}>
 
-<View style={styles.alertContainer}>
+          <View style={styles.alertContainer}>
 
 
-    <View style={styles.alertContentContainer}>
+            <View style={styles.alertContentContainer}>
 
-        {/* <Text style={styles.alertTitleTextStyle}>{alertTitle}</Text> */}
-         <MaterialCommunityIcons style={styles.IconSucsess} name='email-send-outline' size={100} /> 
-        <Text style={styles.alertContentTextSucsess}>שלחנו אליך הודעת אימות, נא לוודא לדוא״ל שלך.</Text> 
-       
-        <Button
-            style={styles.ButtonLogin}
-            labelStyle={styles.ButtonLoginFont}
-            mode="contained"
-            onPress={() => setIsAlertVisible(false) }
-        >
+              {/* <Text style={styles.alertTitleTextStyle}>{alertTitle}</Text> */}
+              <MaterialCommunityIcons style={styles.IconSucsess} name='email-send-outline' size={100} />
+              <Text style={styles.alertContentTextSucsess}>שלחנו אליך הודעת אימות, נא לוודא לדוא״ל שלך.</Text>
 
-            סגור
-        </Button>
+              <Button
+                style={styles.ButtonLogin}
+                labelStyle={styles.ButtonLoginFont}
+                mode="contained"
+                onPress={() => setIsAlertVisible(false)}
+              >
+
+                סגור
+              </Button>
 
 
 
-    </View>
+            </View>
 
-</View>
+          </View>
 
-</Modal>
+        </Modal>
 
 
       </ScrollView>

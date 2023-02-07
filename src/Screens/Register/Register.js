@@ -136,6 +136,7 @@ export default function Register(props) {
                                     error={!!UserName.error}
                                     errorText={UserName.error}
                                     userIcon='user-o'
+
                                 />
                                 <TextInput
                                     label="דוא״ל"

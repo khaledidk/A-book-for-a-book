@@ -22,11 +22,12 @@ export default function TextInput({ errorText, description, userIcon , emailicon
 
 
                 style={styles.input}
+              
                 underlineColor="#ddb07f"
                 mode="outlined"
                 activeOutlineColor="#ddb07f"
                 outlineColor="#ddb07f"
-
+                
 
                 {...props}
             />) : null}
@@ -35,6 +36,7 @@ export default function TextInput({ errorText, description, userIcon , emailicon
 
 
                 style={styles.input}
+               
                 underlineColor='#f14757'
                 mode="outlined"
                 activeOutlineColor='#f14757'

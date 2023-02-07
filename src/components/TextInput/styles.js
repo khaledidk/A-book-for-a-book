@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         zIndex: 1,
         right: 10,
-        top: 10,
+        top: 7,
         fontSize: 15,
 
     },
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         zIndex: 1,
         left: 10,
-        top: 5,
+        top: 8,
         color: "#ff914d",
 
 
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         zIndex: 1,
         left: 10,
-        top: 5,
+        top: 8,
         color: "#ff914d",
 
 
@@ -37,12 +37,22 @@ const styles = StyleSheet.create({
         position: "absolute",
         zIndex: 1,
         left: 15,
-        top: 10,
+        top: 12,
         color: "#ff914d",
     },
     input: {
         paddingLeft: 50,
         backgroundColor: "#ffffff",
+        textAlign: "right",
+        height : 55,
+        // marginTop:20,
+
+    },
+    input1: {
+        // backgroundColor : 'red',
+        // marginBottom:20
+        paddingTop : 20,
+        margin : -10,
 
     },
     inputError: {

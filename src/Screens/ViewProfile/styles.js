@@ -77,6 +77,27 @@ inputError: {
     paddingEnd: 30,
     marginBottom : 50,
   },
+  viewPostsButton : {
+    backgroundColor: "#ff914d",
+    height: 50,
+    width: "100%",
+    justifyContent: 'center',
+    borderRadius: 20,
+    marginTop:60,
+  },
+  ButtonSendSms: {
+    backgroundColor: "#ff914d",
+    height: 50,
+    width: "100%",
+    justifyContent: 'center',
+    borderRadius: 20,
+    marginTop:20,
+},
+
+buttonFont : {
+    fontSize: 18,
+    fontWeight : '800'
+},
  
   signOutButton : {
    marginTop : 50,
@@ -93,6 +114,18 @@ inputError: {
     fontSize: 18,
     fontWeight: '800'
 },
+IconList: {
+  position: "absolute",
+   zIndex: 1,
+    left: 10, 
+    top: 60, 
+},
+iconSMS : {
+   position: "absolute",
+    zIndex: 1,
+     left: 15, 
+     top: 20, 
+}
   
 });
 

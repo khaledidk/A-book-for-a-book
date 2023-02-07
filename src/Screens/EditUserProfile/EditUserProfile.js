@@ -7,12 +7,11 @@ import { Button, Modal } from "react-native-paper";
 import TextInput from "../../components/TextInput/TextInput";
 import * as ImagePicker from 'expo-image-picker';
 import BackButton from "../../components/BackButton/BackButton";
-import DropDownPicker from "react-native-dropdown-picker";
+
 import { MaterialCommunityIcons ,Entypo } from '@expo/vector-icons';
-import { bookValidator } from "../../helpers/bookValidator";
+
 import { nameValidator } from "../../helpers/nameValidator";
-import { addNewbook } from "../../config/FireStoreDB";
-import { auth } from '../../config/firebase';
+
 import PhoneInput from 'react-native-phone-number-input';
 import DateTimePicker from '@react-native-community/datetimepicker';
 export default function EditUserProfile({ navigation, route }) {

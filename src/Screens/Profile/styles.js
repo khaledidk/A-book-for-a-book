@@ -76,10 +76,22 @@ inputError: {
     paddingStart: 30,
     paddingEnd: 30,
   },
+  mapButton : {
+    marginTop : 5,
+   
+   //  marginStart : 20,
+   //  marginEnd : 20,
+    height: 50,
+    justifyContent: 'center',
+    borderRadius: 20,
+    backgroundColor : "red",
+    width: "100%",
+   
+   },
  
   signOutButton : {
    marginTop : 20,
-   marginBottom : 50,
+   marginBottom : 10,
   //  marginStart : 20,
   //  marginEnd : 20,
    height: 50,
@@ -143,7 +155,12 @@ ButtonCloseFont : {
   fontSize: 18,
   fontWeight : '800',  
 },
-  
+iconSignOut: {
+   position: "absolute", 
+   zIndex: 1, 
+   left: 15, 
+   top: 20, 
+}
 });
 
 export default styles;

@@ -11,9 +11,9 @@ const styles = StyleSheet.create({
     elevation: 1,
     
   },
-  BackIcon : {
-    color : "#ff914d",
-  }
+  // BackIcon : {
+  //   color : "#ff914d",
+  // }
 });
 
 export default styles;

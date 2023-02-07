@@ -7,6 +7,7 @@ import RegisterScreen from '../Screens/Register/Register'
 import RegisterOptionalScreen from '../Screens/RegisterOptional/RegisterOptional'
 import RegisterWithPhoneScreen from '../Screens/RegisterWithPhone/RegisterWithPhone'
 import LoginWithPhoneScreen from "../Screens/LoginWithPhone/LoginWithPhone";
+
 const Stack = createStackNavigator();
 
 export const AuthStack = () => {
@@ -22,6 +23,7 @@ export const AuthStack = () => {
             <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
             <Stack.Screen name="RegisterWithPhone" component={RegisterWithPhoneScreen} />
             <Stack.Screen name="LoginWithPhone" component={LoginWithPhoneScreen} />
+           
         
            
             

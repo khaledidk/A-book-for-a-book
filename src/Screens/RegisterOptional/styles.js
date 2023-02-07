@@ -133,7 +133,11 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginTop:100,
     },
-
+    textAndSwitch : { 
+        flexDirection: 'row', 
+        alignItems: 'center',
+         justifyContent: 'center' 
+     },
     ButtonRegisterFont : {
         fontSize: 18,
         fontWeight : '800'

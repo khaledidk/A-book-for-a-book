@@ -2,15 +2,13 @@ import React, { useEffect, useState } from "react";
 import { FlatList, RefreshControl, Text, View, Image, TouchableOpacity, Keyboard } from "react-native";
 import styles from "./styles";
 import { getStatusBarHeight } from 'react-native-status-bar-height'
-import { Button, Modal } from "react-native-paper";
-import * as ImagePicker from 'expo-image-picker';
-import BottomTab from '../../components/BottomTab/BottomTab'
+
 import { TextInput } from "react-native-paper";
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { fetchBookSorted } from "../../config/FireStoreDB";
-import { fetchByLisner } from "../../config/FireStoreDB";
+
 import OurActivityIndicator from "../../components/OurActivityIndicator/OurActivityIndicator";
-import { getDocs, onSnapshot, query, orderBy, where, collection } from "firebase/firestore"
+
 import { auth, DBFire } from "../../config/firebase";
 
 import { useIsFocused } from '@react-navigation/native';
@@ -49,10 +47,20 @@ export default function HomeScreen({ navigation, route }) {
       }
     );
   }
+  const PressOnUserProfileHandler = (userId) => {
+    const user = auth.currentUser;
+    const uid = user.uid;
+
+    if (uid === userId) {
+      navigation.navigate("Profile")
+    } else {
+      navigation.navigate("ViewProfile", { userId: userId })
+    }
+  }
   const Item = ({ title, author, type, status, image, userImage, userName, userId }) => (
     <View>
       <View style={styles.item} onPress={() => navigation.navigate("Item", { title: title, author: author })}>
-        <TouchableOpacity style={styles.userNameAndImage} onPress={() => navigation.navigate("ViewProfile", { userId: userId })}>
+        <TouchableOpacity style={styles.userNameAndImage} onPress={() => PressOnUserProfileHandler(userId)}>
           <Text style={styles.userName}> {userName} </Text>
           {userImage ? <Image
             source={{ uri: userImage }}
@@ -65,14 +73,14 @@ export default function HomeScreen({ navigation, route }) {
           }
 
         </TouchableOpacity>
-        <View  style={styles.itemImageAndeDerails} >
-        {image && <Image source={{ uri: image }} style={styles.imageIteam} />}
-        <View style={styles.details}>
-          <Text style={styles.title}>כותרת: {title} </Text>
-          <Text style={styles.title}>שם מחבר: {author}</Text>
-          <Text style={styles.title}>סוג הספר: {type}</Text>
-          <Text style={styles.title}>מצב הספר: {status}</Text>
-        </View>
+        <View style={styles.itemImageAndeDerails} >
+          {image && <Image source={{ uri: image }} style={styles.imageIteam} />}
+          <View style={styles.details}>
+            <Text style={styles.title}>{title} </Text>
+            <Text style={styles.txt}>שם הסופר: {author}</Text>
+            <Text style={styles.txt}>סוג הספר: {type}</Text>
+            <Text style={styles.txt}>מצב הספר: {status}</Text>
+          </View>
         </View>
       </View>
 
@@ -93,54 +101,7 @@ export default function HomeScreen({ navigation, route }) {
 
 
   };
-  // const fetchAllBooksDocumentsBylisner = async () => {
 
-
-  //   const q = query(collection(DBFire, "books"), orderBy('Date', "desc"));
-
-  //   const unsubscribe = onSnapshot(q, (snapshot) => {
-  //     snapshot.docChanges().forEach((change) => {
-  //       // if (change.type === "added" && statusAdd) {
-  //       //   console.log("added ", change.doc.data());
-  //       //   if (change.doc.data().user_id !== auth.currentUser.uid) {
-  //       //     let newBookJson = {
-  //       //       id: change.doc.id,
-  //       //       image: change.doc.data().image,
-  //       //       title: change.doc.data().title,
-  //       //       author_name: change.doc.data().author_name,
-  //       //       book_type: change.doc.data().book_type,
-  //       //       book_status: change.doc.data().book_status,
-
-  //       //     }
-  //       //     setBookData(oldArray => [newBookJson, ...oldArray]);
-  //       //     setSearchBookData(oldArray => [newBookJson, ...oldArray]);
-
-  //       //   }
-  //       // }
-  //       // if (change.type === "added" && !statusAdd && change.doc.data().user_id !== auth.currentUser.uid) {
-  //       //   fetchAllBooksDocuments().then(() => {
-
-  //       //     setIsLoading(() => false);
-  //       //   });
-
-  //       // }
-  //       if (change.type === "modified") {
-  //         console.log("Modified city: ", change.doc.data());
-  //       }
-  //       if (change.type === "removed") {
-  //         console.log("Removed c: ", change.doc.data());
-  //         fetchAllBooksDocuments().then(() => {
-
-  //           setIsLoading(() => false);
-  //         });
-
-  //       }
-  //     })
-
-  //   });
-
-  //   return () => unsubscribe();
-  // };
   const onRefresh = async () => {
 
     console.log("Refreshing");
@@ -205,18 +166,6 @@ export default function HomeScreen({ navigation, route }) {
   const isFocused = useIsFocused();
   useEffect(() => {
 
-    // if (route.params?.status !== 'add' && route.params?.status !== 'end') {
-
-    //   setIsLoading(() => true);
-
-    //   fetchAllBooksDocuments().then(() => {
-
-    //     setIsLoading(() => false);
-    //   });
-    // } else {
-
-    //   navigation.setParams({ status: "" })
-    // }
     onFocused()
 
     GfGApp()
@@ -263,8 +212,7 @@ export default function HomeScreen({ navigation, route }) {
         <MaterialIcons style={styles.searchIcon} name={"search"} size={30} color={"#ddb07f"} />
       </View>
       {!keyboardOpen ? <FlatList
-        //  onRefresh={onRefresh}
-        //  refreshing={isRefreshing}
+
         refreshControl={<RefreshControl
           colors={["#ff914d", "#ff914d"]}
           refreshing={isRefreshing}
@@ -274,15 +222,12 @@ export default function HomeScreen({ navigation, route }) {
         keyExtractor={item => item.id}
         onEndReached={onRefresh}
         onEndReachedThreshold={-0.5}
-      //  ListFooterComponent={renderItem}
-        //Platform.OS === "ios" ? getStatusBarHeight() + 90 :
 
-        style={[{ marginBottom: Platform.OS === "ios" ? getStatusBarHeight() + 90 : 100 }, styles.flatList]}
+        style={[{ marginBottom: Platform.OS === "ios" ? getStatusBarHeight() + 40 : 65 }, styles.flatList]}
 
       /> :
         <FlatList
-          //  onRefresh={onRefresh}
-          //  refreshing={isRefreshing}
+
           refreshControl={<RefreshControl
             colors={["#ff914d", "#ff914d"]}
             refreshing={isRefreshing}
@@ -290,7 +235,7 @@ export default function HomeScreen({ navigation, route }) {
           data={searchBookData}
           renderItem={renderItem}
           keyExtractor={item => item.id}
-          //Platform.OS === "ios" ? getStatusBarHeight() + 90 :
+
 
           style={[{ marginBottom: Platform.OS === "ios" ? getStatusBarHeight() + 200 : 10 }, styles.flatList]}
 

@@ -1,41 +1,27 @@
 
 import { collection, setDoc, doc, addDoc, getDocs, getDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, where, Timestamp } from "firebase/firestore"
 import { ref, getDownloadURL, uploadBytesResumable, uploadBytes, getStorage, deleteObject } from "firebase/storage";
-import { DBFire, storage, auth } from "./firebase";
+
+import { DBFire, storage, auth, DBReal } from "./firebase";
 import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator';
-
-// Add a new document with a generated id.
-export async function addNewItem(bookName) {
-
-
-  const docRef = await addDoc(collection(DBFire, 'book'), {
-    name: bookName,
-
-  })
-    .catch(alert);
-}
+import { Image } from "react-native";
+import CreatUserInRealDB from "./RealTimeDB";
+import { UpdateAvater } from "./RealTimeDB";
+const profileDefaultImageUri = Image.resolveAssetSource(require('../../assets/defult_Profile.png')).uri;
 
 //add  to data base
-export default async function addNewUser(userID, UserName, userEmail, userPhoneNumber, date) {
+export default async function addNewUser(userID, UserName, userEmail, userPhoneNumber, date, latitude, longitude) {
 
-  console.log("enter yesssssssssssss")
+  CreatUserInRealDB(userID , UserName)
 
-  if (userEmail == 'None') {
-
-    await setDoc(doc(DBFire, "users", userID), {
-      name: UserName,
-      phoneNumber: userPhoneNumber,
-      date: date,
-
-    }).catch((error) => {
-      console.log(error)
-    });
-  } else if (!userPhoneNumber) {
+  if (!userPhoneNumber) {
     console.log("userPhoneNumber: " + userPhoneNumber)
     await setDoc(doc(DBFire, "users", userID), {
       name: UserName,
       email: userEmail,
       date: date,
+      latitude: latitude,
+      longitude: longitude,
 
     }).catch((error) => {
       console.log(error)
@@ -48,6 +34,8 @@ export default async function addNewUser(userID, UserName, userEmail, userPhoneN
       email: userEmail,
       phoneNumber: userPhoneNumber,
       date: date,
+      latitude: latitude,
+      longitude: longitude,
 
     }).catch((error) => {
       console.log(error)
@@ -83,6 +71,7 @@ export async function addNewbook(bookName, authorName, bookType, bookStatus, dat
 export async function fetchBookSorted() {
   const qry = query(collection(DBFire, 'books'), orderBy('Date', "desc"));
 
+
   const Mycollection = await getDocs(qry);
   let arr = [];
 
@@ -92,7 +81,29 @@ export async function fetchBookSorted() {
     arr.push(elementWithID);
   });
 
+
+
   //  console.log("arr" , arr)
+  return arr;
+}
+export async function fetchOtherUsers() {
+  const qry = query(collection(DBFire, 'users'));
+
+
+  const Mycollection = await getDocs(qry);
+  let arr = [];
+
+  Mycollection.forEach(element => {
+    let elementWithID = element.data();
+    if (element.id != auth.currentUser.uid) {
+      elementWithID["id"] = element.id //add ID to JSON 
+      arr.push(elementWithID);
+    }
+
+
+  });
+
+
   return arr;
 }
 export async function fetchByUserId(userId) {
@@ -123,6 +134,20 @@ export async function fetchByLisner() {
 
 
 }
+// export async function getUserImageAndName(userId) {
+//   const docRef = doc(DBFire, "users", userId);
+//   const docSnap = await getDoc(docRef);
+//   let userName = docSnap.data()["name"];
+
+//   if (docSnap.data()["image"]) {
+//     userImage = docSnap.data()["image"];
+//   } else {
+//     userImage = 
+//   }
+
+
+//   return { "name": userName, "image": userImage };
+// }
 export async function fetchCurrentUserInfo(userId) {
   const docRef = doc(DBFire, "users", userId);
   const docSnap = await getDoc(docRef);
@@ -151,6 +176,8 @@ export async function fetchtUserNameAndImage(userID) {
   let userImage = null;
   if (docSnap.data()["image"]) {
     userImage = docSnap.data()["image"];
+  }else{
+    userImage = profileDefaultImageUri;
   }
 
   // let userImage = docSnap.data()["image"];
@@ -184,10 +211,10 @@ export async function updatePost(bookId, updated_fields, date) {
   updated_fields["Date"] = Timestamp.fromDate(date).toDate();
   const itemRef = doc(DBFire, 'books', bookId);
   const docSnap = await getDoc(itemRef);
-  console.log("========>", bookId)
 
+  console.log(" image local =======" , updated_fields.image)
   if (updated_fields.image === docSnap.data()['image']) { // no new image
-    console.log("emterr")
+    console.log("no new image")
     updateDoc(itemRef, updated_fields).catch(alert);
 
     return;
@@ -206,9 +233,10 @@ export async function updatePost(bookId, updated_fields, date) {
 }
 export async function updateUser(updated_fields) {
   let UpdatePost = {
-    user_image: updated_fields.image,
+
     user_name: updated_fields.name,
   }
+
   const userDocRef = doc(DBFire, 'users', auth.currentUser.uid);
   const docSnap = await getDoc(userDocRef);
   if (updated_fields.image === docSnap.data()['image']) { // no new image
@@ -225,12 +253,26 @@ export async function updateUser(updated_fields) {
   const imageRef = await uploadImageAsync(updated_fields.image);
   updated_fields.image = imageRef.URL;
   updated_fields.imageName = imageRef.name;
+  console.log("UpdatePost ====================== ")
+  UpdatePost["user_image"] = imageRef.URL
+
 
   updateDoc(userDocRef, updated_fields).catch(alert);
   updatePostByuser(auth.currentUser.uid, UpdatePost)
+ 
 
 }
+
+export async function updateUserLoction(updated_fields) {
+  const userDocRef = doc(DBFire, 'users', auth.currentUser.uid);
+  const docSnap = await getDoc(userDocRef);
+  updateDoc(userDocRef, updated_fields).catch(alert);
+
+}
+
+
 export async function updatePostByuser(userId, updated_fields) {
+  console.log("updated_fields post ========: ", updated_fields)
   const qry = query(collection(DBFire, 'books'), where('user_id', '==', userId));
 
   let Mycollection = await getDocs(qry);
@@ -241,8 +283,6 @@ export async function updatePostByuser(userId, updated_fields) {
     updateDoc(itemRef, updated_fields).catch(alert);
 
   });
-
-
 
 }
 

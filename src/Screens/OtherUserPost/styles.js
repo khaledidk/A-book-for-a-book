@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
   },
   SearchInput : {
     
-    marginTop:  getStatusBarHeight() ,
+    marginTop:  getStatusBarHeight() + 40,
     fontSize: 20,
     fontWeight : "650",
     textAlign: "right",
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     zIndex: 1,
     right: 20,
-    top: getStatusBarHeight() + 30,
+    top: getStatusBarHeight() + 70,
   },
 
   flatList: {

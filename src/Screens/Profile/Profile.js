@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FlatList, Text, View, Image, TouchableHighlight, ImageBackground } from "react-native";
-import { MaterialCommunityIcons, FontAwesome5,FontAwesome, Entypo } from '@expo/vector-icons';
+import { MaterialCommunityIcons, FontAwesome5, FontAwesome, Entypo } from '@expo/vector-icons';
 
 import { SignOut } from "../../config/AuthDB";
 import { Button } from "react-native-paper";
@@ -16,16 +16,7 @@ export default function Profile({ navigation, route }) {
   const profileDefaultImageUri = Image.resolveAssetSource(require('../../../assets/defult_Profile.png')).uri;
   const [isEdite, setIsEdite] = useState(false);
   const [currUserInfo, setCurrUserInfo] = useState({ name: "", image: profileDefaultImageUri, email: "", phoneNumber: "" });
-  const [bookTypesVal, setBookTypesVal] = useState("")
-  const [bookTypesError, setBookTypesError] = useState(false)
-  const [openTypeDrop, setOpenTypeDrop] = useState(false)
-  const [bookStatusVal, setBookStatusVal] = useState("")
-  const [bookStatusError, setBookStatusError] = useState(false)
-  const [openStatusDrop, setOpenStatusDrop] = useState(false)
-  const [image, setImage] = useState(null);
-  const [imageError, setImageError] = useState(false)
   const [userName, setUserName] = useState({ value: "", error: "" });
-  const [authorName, setAuthorName] = useState({ value: "", error: "" });
   const [isAleretVisible, setIsAlertVisible] = useState(false);
   const fetchuserInfo = async () => {
 
@@ -52,9 +43,10 @@ export default function Profile({ navigation, route }) {
     if (route.params?.updateUserJson) {
       let updateInfo = route.params?.updateUserJson
       updateInfo["email"] = currUserInfo.email
-      console.log("route.params?.updateUserJson: ", route.params?.updateUserJson)
+     
       setCurrUserInfo(() => updateInfo);
       updateUser(route.params?.updateUserJson)
+      navigation.setParams({ updateUserJson: "" })
 
     }
 
@@ -103,16 +95,25 @@ export default function Profile({ navigation, route }) {
             <Text style={styles.detailsFont}> {currUserInfo.date}</Text>
           </View>
           <View>
-          <Button
+            <Button
               style={styles.signOutButton}
               labelStyle={styles.ButtonsignOutFont}
               mode="contained"
-              onPress={()=> setIsAlertVisible(true)}
+              onPress={() => setIsAlertVisible(true)}
             >התנתק
-             
+
             </Button>
-            <FontAwesome name='sign-out' style={{  position: "absolute", zIndex: 1,left: 15 ,   top: 20,}} size={50} color={"#ffffff"} />
-            </View>
+{/* 
+            <Button
+              style={styles.mapButton}
+              labelStyle={styles.ButtonsignOutFont}
+              mode="contained"
+              onPress={() => navigation.navigate('Map')}
+            >map
+
+            </Button> */}
+            <FontAwesome name='sign-out' style={styles.iconSignOut} size={50} color={"#ffffff"} />
+          </View>
 
         </View>
 

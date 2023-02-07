@@ -2,43 +2,26 @@ import React, { useEffect, useState } from "react";
 import { FlatList, RefreshControl, Text, View, Image, TouchableOpacity, KeyboardAvoidingView, Keyboard } from "react-native";
 import styles from "./styles";
 import { getStatusBarHeight } from 'react-native-status-bar-height'
-import { Button, Modal } from "react-native-paper";
-import * as ImagePicker from 'expo-image-picker';
-import BottomTab from '../../components/BottomTab/BottomTab'
+import BackButton from "../../components/BackButton/BackButton";
+
+
 import TextInput from "../../components/TextInput/TextInput";
 import { MaterialIcons, Ionicons, FontAwesome, Entypo } from '@expo/vector-icons';
-import { fetchBookSorted } from "../../config/FireStoreDB";
+
 import OurActivityIndicator from "../../components/OurActivityIndicator/OurActivityIndicator";
 import { fetchByUserId } from "../../config/FireStoreDB";
-import { auth } from '../../config/firebase';
-import { deletePost } from "../../config/FireStoreDB";
-import { useIsFocused } from '@react-navigation/native';
-export default function UserPost({ navigation, route }) {
+
+export default function OtherUserPost({ navigation, route }) {
 
 
     const [bookData, setBookData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const [status, setStatus] = useState("");
-    const [Startstatus, setStartStatus] = useState(false);
-    const [CurrId, setCurrId] = useState("");
+  
     const [keyboardOpen, setKeyboardOpen] = useState(false);
     let [searchBookData, setSearchBookData] = useState([])
-    const [isAleretVisible, setIsAlertVisible] = useState(false);
-
-    const delete_post_handler = () => {
 
 
-        console.log("delet id =>>", CurrId, "index ==>", getPostIndex(CurrId))
-        bookData.splice(getPostIndex(CurrId), 1);
-        setBookData(() => bookData);
-        setSearchBookData(() => bookData)
-        deletePost(CurrId)
-        setIsAlertVisible(false)
-
-
-
-    }
     const GfGApp = () => {
         const keyboardShowListener = Keyboard.addListener('keyboardDidShow', () => {
 
@@ -56,17 +39,7 @@ export default function UserPost({ navigation, route }) {
             }
         );
     }
-    const getPostIndex = (PostID) => {
-
-        for (let currIndex = 0; currIndex < bookData.length; currIndex++) {
-
-            if (bookData[currIndex].id === PostID) {
-                return currIndex;
-            }
-        }
-
-        return -1;
-    }
+ 
     const renderItem = ({ item }) => {
         return (
             <Item title={item.title} author={item.author_name} type={item.book_type} status={item.book_status} image={item.image} id={item.id} />
@@ -76,17 +49,7 @@ export default function UserPost({ navigation, route }) {
     const Item = ({ title, author, type, status, image, id }) => (
         <View style={styles.item}>
 
-            {/* <View style={styles.firstPartItem}> */}
-
-            <View style={styles.itemIcons}>
-                <TouchableOpacity onPress={() => setIsAlertVisible(true) || setCurrId(id)} >
-                    <Ionicons name={"trash-outline"} size={28} color={"red"} />
-                </TouchableOpacity>
-
-                <FontAwesome style={styles.Icons} name={"edit"} size={30} color={"#ff914d"} onPress={() => navigation.navigate('EditPost', { title: title, author: author, type: type, status: status, image: image, id: id })} />
-
-            </View>
-            {/* </View> */}
+         
 
 
             <View style={styles.itemImageAndeDerails} >
@@ -102,8 +65,8 @@ export default function UserPost({ navigation, route }) {
         </View>
     );
     const fetchAllBooksDocuments = async () => {
-        const user = auth.currentUser;
-        const uid = user.uid;
+       
+        const uid = route.params.userId
         setSearchBookData([])
         setBookData([])
         await fetchByUserId(uid).then((booksList) => {
@@ -165,24 +128,8 @@ export default function UserPost({ navigation, route }) {
 
     };
 
-    // useFocusEffect(
-
-    //     React.useCallback(() => {
-    //   if(route.params?.status !== 'update'){
-    //         console.log("route.params?.updateBookJson status===>" ,route.params?.status )
-    //         setIsLoading(() => true);
-    //     fetchAllBooksDocuments().then(() => {
-
-    //         setIsLoading(() => false);
-    //     });
-    //     GfGApp();
-    //   }
-
-
-    // }, [])
-
-    // );
-    const isFocused = useIsFocused();
+ 
+   
     useEffect(() => {
 
 
@@ -205,44 +152,9 @@ export default function UserPost({ navigation, route }) {
 
 
 
-    }, [isFocused]);
-    useEffect(() => {
-        if (route.params?.updateBookJson) {
-
-            console.log("============== enter update local =======")
-            let updatedInfo = route.params?.updateBookJson;
-
-            bookData.splice(getPostIndex(updatedInfo.id), 1, updatedInfo);
-            // setBookData(oldArray => [updatedInfo, ...oldArray]);
-            // searchBookData.splice(getPostIndex(updatedInfo.id), 1);
-            // setSearchBookData(oldArray => [updatedInfo, ...oldArray]);
-            updateListBySearch("")
-
-
-            console.log("book:", bookData)
-            navigation.setParams({ status: "end" })
-            navigation.setParams({ updateBookJson: "" })
-
-
-        }
-
-    }, [route.params?.updateBookJson])
-    // useEffect(() => {
-    //     if (status && CurrId) {
-    //         console.log("status =>>", status, "currId ==>", CurrId)
-    //         if (status == 'delete') {
-    //             console.log("delet id =>>", CurrId, "index ==>", getPostIndex(CurrId))
-    //             bookData.splice(getPostIndex(CurrId), 1);
-    //             setBookData(() => bookData);
-    //             setSearchBookData(() => bookData)
-    //             deletePost(CurrId)
-    //             setStatus("")
-
-    //         }
-
-    //     }
-
-    // }, [status]);
+    }, []);
+  
+  
 
 
     return (
@@ -265,6 +177,7 @@ export default function UserPost({ navigation, route }) {
 
                 <MaterialIcons style={styles.searchIcon} name={"search"} size={30} color={"#ddb07f"} />
             </View>
+            <BackButton goBack={navigation.goBack} />
             {!keyboardOpen ? <FlatList
                 //  onRefresh={onRefresh}
                 //  refreshing={isRefreshing}
@@ -296,43 +209,7 @@ export default function UserPost({ navigation, route }) {
 
                 />}
 
-            <Modal visible={isAleretVisible}>
-
-                <View style={styles.alertContainer}>
-
-
-                    <View style={styles.alertContentContainer}>
-
-                        {/* <Ionicons name={"trash-outline"} size={100} color={"red"} /> */}
-                        {/* <Entypo style={styles.IconError} name='circle-with-cross' size={100} />  */}
-                        <Text style={styles.alertContentTextError}>האם אתה בטוח רוצה למחוק את הפוסט הזה?</Text>
-                        <Button
-                            style={styles.ButtonClose}
-                            labelStyle={styles.ButtonCloseFont}
-                            mode="contained"
-                            onPress={() => setIsAlertVisible(false)}
-
-                        >
-
-                            לסגור
-                        </Button>
-                        <Button
-                            style={styles.ButtonDelete}
-                            labelStyle={styles.ButtonDeleteFont}
-                            mode="contained"
-                            onPress={delete_post_handler}
-                        >
-
-                            למחוק
-                        </Button>
-
-
-
-                    </View>
-
-                </View>
-
-            </Modal>
+          
 
         </View>
     );

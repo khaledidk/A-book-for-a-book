@@ -106,11 +106,11 @@ export default function AddBook(props) {
     setImageError(false)
     let tempeDate = new Date()
     let fDate = tempeDate.getDate() + '/' + (tempeDate.getMonth() + 1) + '/' + tempeDate.getFullYear() + ',' + tempeDate.getHours() + ':' + tempeDate.getMinutes() + ':' + tempeDate.getSeconds();
- 
+
     const user = auth.currentUser;
     const uid = user.uid;
-     fetchtUserNameAndImage(uid).then((userInfo) => {
-      addNewbook(bookName.value, authorName.value, bookTypesVal, bookStatusVal, tempeDate, image, uid , userInfo.userImage,  userInfo.userName ).then((bookId) => {
+    fetchtUserNameAndImage(uid).then((userInfo) => {
+      addNewbook(bookName.value, authorName.value, bookTypesVal, bookStatusVal, tempeDate, image, uid, userInfo.userImage, userInfo.userName).then((bookId) => {
         console.log(bookId)
         let newBookJson = {
           id: bookId,
@@ -119,17 +119,17 @@ export default function AddBook(props) {
           author_name: authorName.value,
           book_type: bookTypesVal,
           book_status: bookStatusVal,
-          user_image : userInfo.userImage,
-          user_name  : userInfo.userName,
-  
+          user_image: userInfo.userImage,
+          user_name: userInfo.userName,
+
         }
-        navigation.navigate("Home", { newBookJson: newBookJson , status : 'add' })
-  
+        navigation.navigate("Home", { newBookJson: newBookJson, status: 'add' })
+
       })
 
 
-     })
-   
+    })
+
 
 
 
@@ -193,7 +193,6 @@ export default function AddBook(props) {
                 />
                 {/* Drop Down for type */}
 
-                {/* <View style={{ zIndex: 100 }}> */}
                 <DropDownPicker
                   style={styles.DropDown}
                   open={openTypeDrop}
@@ -208,38 +207,42 @@ export default function AddBook(props) {
                   listItemContainerStyle={styles.listItemContainer}
                   listItemLabelStyle={styles.listItemContainerFont}
                   dropDownContainerStyle={styles.DropDown}
+                  // multiple={true}
+
                   listMode="SCROLLVIEW"
-                //  zIndex={100}
-                //  defaultIndex={0}
-                // zIndexInverse={1000}
+                  scrollViewProps={{
+                    nestedScrollEnabled: true,
+                  }}
+
                 />
 
                 {/* </View> */}
 
                 {bookTypesError ? <Text style={styles.typeErrorFont}>* לבחור סוג ספר חובה</Text> : null}
 
-                <View style={{ zIndex: 2, marginTop: 60 }}>
 
-                  {/* </View> */}
-                  <DropDownPicker
-                    style={styles.DropDown}
-                    open={openStatusDrop}
-                    value={bookStatusVal} //genderValue
-                    items={bookStatus}
-                    setValue={setBookStatusVal}
-                    setItems={setBookStatus}
-                    setOpen={setOpenStatusDrop}
-                    placeholder="בחר מצב הספר"
-                    containerStyle={styles.ContainerDropDown}
-                    textStyle={styles.listItemContainerFont}
-                    listItemContainerStyle={styles.listItemContainer}
-                    listItemLabelStyle={styles.listItemContainerFont}
-                    dropDownContainerStyle={styles.DropDown}
-                    listMode="SCROLLVIEW"
 
-                  // zIndexInverse={1000}
-                  />
-                </View>
+                <DropDownPicker
+                  style={styles.DropDown}
+                  open={openStatusDrop}
+                  value={bookStatusVal} //genderValue
+                  items={bookStatus}
+                  setValue={setBookStatusVal}
+                  setItems={setBookStatus}
+                  setOpen={setOpenStatusDrop}
+                  placeholder="בחר מצב הספר"
+                  containerStyle={styles.ContainerDropDown}
+                  textStyle={styles.listItemContainerFont}
+                  listItemContainerStyle={styles.listItemContainer}
+                  listItemLabelStyle={styles.listItemContainerFont}
+                  dropDownContainerStyle={styles.DropDown}
+                  listMode="SCROLLVIEW"
+                  scrollViewProps={{
+                    nestedScrollEnabled: true,
+                  }}
+                // zIndexInverse={1000}
+                />
+
                 {bookStatusError ? <Text style={styles.typeErrorFont}>* לבחור מצב הספר חובה</Text> : null}
 
 
