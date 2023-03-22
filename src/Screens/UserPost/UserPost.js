@@ -69,11 +69,11 @@ export default function UserPost({ navigation, route }) {
     }
     const renderItem = ({ item }) => {
         return (
-            <Item title={item.title} author={item.author_name} type={item.book_type} status={item.book_status} image={item.image} id={item.id} />
+            <Item title={item.title} author={item.author_name} type={item.book_type} status={item.book_status} image={item.image} id={item.id} language={item.book_language} starRating = {item.rating_value}/>
 
         );
     }
-    const Item = ({ title, author, type, status, image, id }) => (
+    const Item = ({ title, author, type, status, image, id, language , starRating }) => (
         <View style={styles.item}>
 
             {/* <View style={styles.firstPartItem}> */}
@@ -83,7 +83,7 @@ export default function UserPost({ navigation, route }) {
                     <Ionicons name={"trash-outline"} size={28} color={"red"} />
                 </TouchableOpacity>
 
-                <FontAwesome style={styles.Icons} name={"edit"} size={30} color={"#ff914d"} onPress={() => navigation.navigate('EditPost', { title: title, author: author, type: type, status: status, image: image, id: id })} />
+                <FontAwesome style={styles.Icons} name={"edit"} size={30} color={"#ff914d"} onPress={() => navigation.navigate('EditPost', { title: title, author: author, type: type, status: status, image: image, id: id, language: language , starRating : starRating})} />
 
             </View>
             {/* </View> */}
@@ -96,6 +96,17 @@ export default function UserPost({ navigation, route }) {
                     <Text style={styles.txt}>שם הסופר: {author}</Text>
                     <Text style={styles.txt}>סוג הספר: {type}</Text>
                     <Text style={styles.txt}>מצב הספר: {status}</Text>
+                    <Text style={styles.txt}>שפת הספר: {language}</Text>
+                    <View style={styles.starRating}>
+                        <View style={styles.ratingFontContiner}>
+                            <Text style={styles.ratingFont}> {starRating} </Text>
+                            <Text style={styles.txt} >/5</Text>
+                        </View>
+                        <Image
+                            style={styles.imageStar}
+                            source={require("../../../assets/star.png")}
+                        />
+                    </View>
                 </View>
             </View>
 
@@ -295,6 +306,9 @@ export default function UserPost({ navigation, route }) {
                     style={[{ marginBottom: Platform.OS === "ios" ? getStatusBarHeight() + 200 : 10 }, styles.flatList]}
 
                 />}
+                   <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate("AddBook")} >
+        <Ionicons size={50} name={"add"} color={"#ffffff"} />
+      </TouchableOpacity>
 
             <Modal visible={isAleretVisible}>
 

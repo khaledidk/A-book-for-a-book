@@ -26,7 +26,7 @@ export default function HomeScreen({ navigation, route }) {
   const profileDefaultImageUri = Image.resolveAssetSource(require('../../../assets/defult_Profile.png')).uri;
   const renderItem = ({ item }) => {
     return (
-      <Item title={item.title} author={item.author_name} type={item.book_type} status={item.book_status} image={item.image} userImage={item.user_image} userName={item.user_name} userId={item.user_id} />
+      <Item title={item.title} author={item.author_name} type={item.book_type} status={item.book_status} image={item.image} userImage={item.user_image} userName={item.user_name} userId={item.user_id} language = {item.book_language} starRating = {item.rating_value} />
 
     );
   }
@@ -57,14 +57,15 @@ export default function HomeScreen({ navigation, route }) {
       navigation.navigate("ViewProfile", { userId: userId })
     }
   }
-  const Item = ({ title, author, type, status, image, userImage, userName, userId }) => (
+  const Item = ({ title, author, type, status, image, userImage, userName, userId , language , starRating }) => (
     <View>
       <View style={styles.item} onPress={() => navigation.navigate("Item", { title: title, author: author })}>
         <TouchableOpacity style={styles.userNameAndImage} onPress={() => PressOnUserProfileHandler(userId)}>
           <Text style={styles.userName}> {userName} </Text>
           {userImage ? <Image
-            source={{ uri: userImage }}
             style={styles.imageProfile}
+            source={{ uri: userImage }}
+          
           /> :
             <Image
               source={{ uri: profileDefaultImageUri }}
@@ -80,6 +81,17 @@ export default function HomeScreen({ navigation, route }) {
             <Text style={styles.txt}>שם הסופר: {author}</Text>
             <Text style={styles.txt}>סוג הספר: {type}</Text>
             <Text style={styles.txt}>מצב הספר: {status}</Text>
+            <Text style={styles.txt}>שפת הספר: {language}</Text>
+            <View style={styles.starRating}>
+            <View style={styles.ratingFontContiner}>
+            <Text style={styles.ratingFont}> {starRating} </Text>
+            <Text style={styles.txt} >/5</Text>
+            </View>
+            <Image
+            style={styles.imageStar}
+            source={require("../../../assets/star.png")}
+          />
+          </View>
           </View>
         </View>
       </View>
@@ -94,6 +106,7 @@ export default function HomeScreen({ navigation, route }) {
 
       setBookData(() => booksList);
       setSearchBookData(() => booksList)
+    
 
     });;
 

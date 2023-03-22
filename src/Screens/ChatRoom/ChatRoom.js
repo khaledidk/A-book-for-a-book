@@ -8,6 +8,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import BackButton from "../../components/BackButton/BackButton";
 import TextInput from "../../components/TextInput/TextInput"
 import { off } from "firebase/database";
+import { async } from "@firebase/util";
 export default function ChatRoom({ navigation, route }) {
 
     const [users, setUsers] = useState([]);
@@ -20,11 +21,12 @@ export default function ChatRoom({ navigation, route }) {
             userInfo["id"] = auth.currentUser.uid
             setMyData(userInfo)
         })
-        ListenerData()
-        
-        console.log(users)
+        ListenerData();
+        //lastMassage();
 
 
+
+        // return () => off(ref);
     }, [])
     const onRefresh = async () => {
 
@@ -74,24 +76,46 @@ export default function ChatRoom({ navigation, route }) {
     };
     const renderUser = ({ item }) => {
         return (
-            <TouchableOpacity onPress={() => navigation.navigate("SingleChat", { selectedUser: item, MyData : myData, chatRoomID: item.chatroomId })} style={styles.row}>
+            <TouchableOpacity onPress={() => navigation.navigate("SingleChat", { selectedUser: item, MyData: myData, chatRoomID: item.chatroomId })} style={styles.row}>
                 <Image style={styles.avatar} source={{ uri: item.avatar }} />
+                <View style={styles.userNameAndLastMassage} >
                 <Text style={styles.userName} >{item.username}</Text>
+                <Text style={styles.lastMassage} >{item.lastMassage}</Text>
+                </View>
             </TouchableOpacity>
         );
     };
+    // const lastMassage = async (friendList) => {
+        
+    //     const chatroomRef = ref(DBReal, '/chatrooms/' + route.params.chatRoomID);
+    //     onValue(chatroomRef, snapshot => {
+    //         const data = snapshot.val();
+    //         if (data) {
+    //             if (data.messages) {
+    //                 console.log( "data.messages" , data.messages)
+    //                 //searchUsersList["lastMassage"] = data.messages[data.messages.leangth -1]
+    //             }
+
+
+    //         }
+    //     });
+    //     return () => {
+    //         //remove chatroom listener
+    //         off(chatroomRef);
+    //     };
+    // }
 
     const ListenerData = async () => {
-
+        let friendList;
         const myUserRef = ref(DBReal, '/users/' + auth.currentUser.uid);
-
+        
         onValue(myUserRef, snapshot => {
             console.log("enterLister")
             const array = [];
             setUsers([])
             setSearchUsersList([])
             const userData = snapshot.val();
-            const friendList = userData.friends;
+            friendList = userData.friends;
 
             if (friendList) {
 
@@ -102,10 +126,11 @@ export default function ChatRoom({ navigation, route }) {
                         element["username"] = userInfo.userName
                         element["avatar"] = userInfo.userImage
                         array.push(element)
+                        setSearchUsersList(() => array)
+                        setUsers(() => array)
+                        // setSearchUsersList(() => [...oldArray, element])
 
-                        setSearchUsersList((oldArray) => [...oldArray, element])
-
-                        setUsers((oldArray) => [...oldArray, element])
+                        // setUsers((oldArray) => [...oldArray, element])
 
                     })
 
@@ -125,7 +150,9 @@ export default function ChatRoom({ navigation, route }) {
 
         });
 
-        return () => off(ref);
+       
+
+        return () => off(myUserRef);
     };
     return (
         <View style={styles.container}>

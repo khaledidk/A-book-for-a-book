@@ -1,15 +1,17 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { FlatList, RefreshControl, Text, View, Image, TouchableOpacity, Keyboard, Pressable } from "react-native";
+import { FlatList, RefreshControl, Text, View, Image, TouchableOpacity, Dimensions, Pressable } from "react-native";
 import styles from "./styles";
 import { DBReal, auth } from "../../config/firebase";
 import { ref, onValue } from "firebase/database";
-import { GiftedChat } from 'react-native-gifted-chat';
+import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat';
 import { fetchMessages } from "../../config/RealTimeDB";
 import { fetchtUserNameAndImage } from "../../config/FireStoreDB";
 import { UpdateMassage } from "../../config/RealTimeDB";
-import { FindUser } from "../../config/RealTimeDB";
+import BackButton from "../../components/BackButton/BackButton";
 import { useIsFocused } from '@react-navigation/native';
 import { off } from "firebase/database";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { AddFriendWhenFirstMassage } from "../../config/RealTimeDB";
 export default function SingleChat({ navigation, route }) {
 
     const [myData, setMyData] = useState({});
@@ -81,8 +83,16 @@ export default function SingleChat({ navigation, route }) {
         const chatroomRef = ref(DBReal, '/chatrooms/' + route.params.chatRoomID);
         onValue(chatroomRef, snapshot => {
             const data = snapshot.val();
-
+            if(data){
+            if( data.messages){
+              
+                AddFriendWhenFirstMassage( route.params.selectedUser.id , route.params.chatRoomID ,  data.messages[ data.messages.length-1].text)
+               
+            }
+            
+        
             setMessages(renderMessages(data.messages));
+        }
         });
 
         return () => {
@@ -90,11 +100,66 @@ export default function SingleChat({ navigation, route }) {
             off(chatroomRef);
         };
     }, [isFocused]);
+    const renderSend = (props) => {
+        return (
+            <Send {...props}
 
+                containerStyle={{
+                    position: "absolute",
+                    zIndex: 1,
+                    left: 10,
+
+
+                }}
+            >
+                <View style={styles.sendingButtonContainer}  >
+
+                    <MaterialCommunityIcons name='send-circle' color="#ff914d" size={40} style={styles.rotate90} />
+                </View>
+
+            </Send>
+        );
+    }
+    const renderBubble = (props) => {
+        return (
+            // Step 3: return the component
+            <Bubble
+                {...props}
+                wrapperStyle={{
+                    right: {
+                        // Here is the color change
+                        backgroundColor: "#ff914d"
+                    },
+                    left: {
+                        // Here is the color change
+                        backgroundColor: "grey"
+                    }
+
+                }}
+                textStyle={{
+                    right: {
+                        color: '#fff'
+                    },
+                    left: {
+                        // Here is the color change
+                        color: '#fff'
+                    }
+                }}
+            />
+        );
+    }
 
 
     return (
         <View style={styles.container}>
+          <BackButton goBack={navigation.goBack} color = {"#ffffff"}/>
+            <View style={styles.label}>
+            <View style={styles.nameAndImage}>
+                <Text style={styles.name} >{route.params.selectedUser.username}</Text>
+                <Image style={styles.avatar} source={{ uri: route.params.selectedUser.avatar }} />
+            
+                </View>
+            </View>
             <GiftedChat
                 messages={messages}
                 onSend={newMessage => onSend(newMessage)}
@@ -102,6 +167,11 @@ export default function SingleChat({ navigation, route }) {
                     _id: route.params.MyData.id,
 
                 }}
+                alwaysShowSend
+                textInputStyle={styles.inputSend}
+                textInputProps={{ placeholder: "הודעת טקסט" }}
+                renderSend={renderSend}
+                renderBubble={renderBubble}
             />
         </View>
     );

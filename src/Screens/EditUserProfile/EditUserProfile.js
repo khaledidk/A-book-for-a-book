@@ -8,7 +8,7 @@ import TextInput from "../../components/TextInput/TextInput";
 import * as ImagePicker from 'expo-image-picker';
 import BackButton from "../../components/BackButton/BackButton";
 
-import { MaterialCommunityIcons ,Entypo } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 
 import { nameValidator } from "../../helpers/nameValidator";
 
@@ -68,57 +68,57 @@ export default function EditUserProfile({ navigation, route }) {
 
 
 
-        if (userNameError || !image  || !FormattedDate|| (!CheckValidPhoneNumber && FormattedNumber)) {
+        if (userNameError || !image || (!CheckValidPhoneNumber && FormattedNumber)) {
             if (!image) {
 
                 setImageError(true)
             } else {
-                
+
                 setImageError(false)
             }
 
 
-            if (!FormattedDate) {
+            // if (!FormattedDate) {
 
-                setIsDateEmpty(true)
-            } else {
+            //     setIsDateEmpty(true)
+            // } else {
 
-                setIsDateEmpty(false)
-            }
+            //     setIsDateEmpty(false)
+            // }
             if (!CheckValidPhoneNumber && FormattedNumber) {
                 setPhoneInputerror("* מספר טלפון אינו נכון")
 
             }
-          
+
 
             setUserName({ ...userName, error: userNameError });
             return;
         }
-        setIsDateEmpty(false)
-        setIsDateEmpty(false)
+        // setIsDateEmpty(false)
+        // setIsDateEmpty(false)
         let updateUserJson;
-        console.log("image" , image)
-        if(profileDefaultImageUri === image){
+        console.log("image", image)
+        if (profileDefaultImageUri === image) {
             updateUserJson = {
-        
+
                 name: userName.value,
                 phoneNumber: FormattedNumber,
-                date : FormattedDate,
+
                 image: null,
-               
-              }
-        }else{
-        updateUserJson = {
-            
-            name: userName.value,
-            phoneNumber: FormattedNumber,
-            image: image,
-            date : FormattedDate,
-           
-          }
+
+            }
+        } else {
+            updateUserJson = {
+
+                name: userName.value,
+                phoneNumber: FormattedNumber,
+                image: image,
+
+
+            }
         }
-          console.log(updateUserJson)
-          navigation.navigate("Profile" , {updateUserJson : updateUserJson})
+        console.log(updateUserJson)
+        navigation.navigate("Profile", { updateUserJson: updateUserJson })
 
     };
 
@@ -145,7 +145,7 @@ export default function EditUserProfile({ navigation, route }) {
                             <View style={styles.addImageButton}  >
 
 
-                             
+
 
 
                                 {image && <Image source={{ uri: image }} style={styles.bookImage} />}
@@ -160,14 +160,14 @@ export default function EditUserProfile({ navigation, route }) {
                                     label="שם משתמש"
                                     returnKeyType="next"
                                     value={userName.value}
-                                    onChangeText={(text) =>  setUserName({ value: text, error: "" })}
+                                    onChangeText={(text) => setUserName({ value: text, error: "" })}
                                     error={!!userName.error}
                                     errorText={userName.error}
                                     autoCapitalize="none"
                                     userIcon='user-o'
 
                                 />
-                                <View style={styles.DatePicker}>
+                                {/* <View style={styles.DatePicker}>
                                     <View style={styles.DateFontContainer} >
                                         <Text style={styles.DateFont}>{FormattedDate}</Text>
                                     </View>
@@ -184,7 +184,7 @@ export default function EditUserProfile({ navigation, route }) {
                                     </TouchableOpacity>
 
                                 </View>
-                                {IsDateEmpty ? <Text style={styles.DateErrorFont}> * לבחור תאריך חובה</Text> : null}
+                                {IsDateEmpty ? <Text style={styles.DateErrorFont}> * לבחור תאריך חובה</Text> : null} */}
 
                                 {PhoneInputerror ? <PhoneInput
                                     ref={phoneInput}

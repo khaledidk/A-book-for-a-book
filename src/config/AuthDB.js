@@ -56,7 +56,7 @@ export async function SignOut() {
 }
 
 // creat user by email and password
-export default async function createUser(email, password, name, number, date ,  latitude , longitude) {
+export default async function createUser(email, password, name, number ) {
 
 
     await createUserWithEmailAndPassword(auth, email, password)
@@ -69,7 +69,7 @@ export default async function createUser(email, password, name, number, date ,  
 
             const userID = userCredential.user.uid;
 
-            addNewUser(userID, name, email, number, date, latitude , longitude)
+            addNewUser(userID, name, email, number)
 
             //  addNewUser(userID, name, email, phoneNumber);
 

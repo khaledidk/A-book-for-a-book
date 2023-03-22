@@ -8,19 +8,18 @@ import TextInput from "../../components/TextInput/TextInput";
 import { emailValidator } from "../../helpers/emailValidator";
 import { passwordValidator } from "../../helpers/passwordValidator";
 import { nameValidator } from '../../helpers/nameValidator';
-import { Button } from "react-native-paper";
+import { Button, Modal } from "react-native-paper";
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 import PhoneInputComponet from '../../components/PhoneInput/PhoneInputComponet';
 
-import { Entypo } from '@expo/vector-icons';
+import { Entypo, ModelIcon, MaterialCommunityIcons } from '@expo/vector-icons';
 import { CreatNewUser } from '../../config/RealTimeDB';
 import { addNewItem } from '../../config/FireStoreDB';
 
 import DropDownPicker from 'react-native-dropdown-picker'
-import { set } from 'firebase/database';
-
-
+import PhoneInput from 'react-native-phone-number-input';
+import createUser from '../../config/AuthDB'
 
 
 export default function Register(props) {
@@ -33,8 +32,15 @@ export default function Register(props) {
     const [IsDateEmpty, setIsDateEmpty] = useState(false);
     const [ShowDatePicker, setShowDatePicker] = useState(false);
     const [ConfirmPassowrd, setConfirmPassowrd] = useState({ value: "", error: "" });
+    const phoneInput = useRef(null);
+    const [ValidNumber, setValidNumber] = useState(false);
+    const [PhoneInputerror, setPhoneInputerror] = useState("");
+    const [NumberValue, setNumberValue] = useState("");
+    const [FormattedNumber, setFormattedNumber] = useState("");
+    const [isAleretVisible, setIsAlertVisible] = useState(false);
+    const [ModelIcon, setModelIcon] = useState(false);
 
-
+    const [alertContent, setAlertContent] = useState("");
 
 
     const ConfirmPassowrdFunc = (FirstPassword, SecondPassword) => {
@@ -72,15 +78,23 @@ export default function Register(props) {
         const NameError = nameValidator(UserName.value)
 
 
+        const CheckValidPhoneNumber = phoneInput.current?.isValidNumber(NumberValue);
+        setValidNumber(CheckValidPhoneNumber ? CheckValidPhoneNumber : false);
 
 
 
 
-        if (emailError || passwordError || NameError || ConfirmPasswordError || !FormattedDate) {
-            if (!FormattedDate) {
-                setIsDateEmpty(true)
-            } else {
-                setIsDateEmpty(false)
+
+
+        if (emailError || passwordError || NameError || ConfirmPasswordError || (!CheckValidPhoneNumber && FormattedNumber)) {
+            // if (!FormattedDate) {
+            //     setIsDateEmpty(true)
+            // } else {
+            //     setIsDateEmpty(false)
+            // }
+            if (!CheckValidPhoneNumber && FormattedNumber) {
+                setPhoneInputerror("* מספר טלפון אינו נכון")
+
             }
             setEmail({ ...email, error: emailError });
             setPassword({ ...password, error: passwordError });
@@ -90,8 +104,21 @@ export default function Register(props) {
 
 
         }
-        setIsDateEmpty(false)
-        navigation.navigate("RegisterOptional", { UserName: UserName, Email: email, Password: password, Date: FormattedDate })
+        // setIsDateEmpty(false)
+        createUser(email.value, password.value, UserName.value, FormattedNumber).then(() => {
+            setAlertContent("שלחנו אליך הודעת אימות, נא לוודא לדוא״ל שלך.")
+            setIsAlertVisible(true)
+            setModelIcon(true)
+
+
+        }).catch((error) => {
+            setAlertContent(error)
+            setModelIcon(false)
+            setIsAlertVisible(true)
+
+
+        });
+
 
 
 
@@ -153,8 +180,69 @@ export default function Register(props) {
                                 />
 
 
+                                <View style={styles.InputView}>
 
-                                <View style={styles.DatePicker}>
+                                    {PhoneInputerror ? <PhoneInput
+                                        ref={phoneInput}
+                                        defaultValue={NumberValue}
+                                        defaultCode="IL"
+                                        layout="first"
+                                        placeholder='מספר טלפון'
+
+
+                                        containerStyle={styles.PhoneInputBorderError}
+                                        textContainerStyle={{ backgroundColor: '#ffffff' }}
+                                        countryPickerButtonStyle={styles.PhoneInputButton}
+                                        countryPickerProps={{ region: 'Asia' }}
+                                        onChangeText={(text) => {
+                                            setNumberValue(text)
+                                            setPhoneInputerror("")
+                                        }}
+
+                                        onChangeFormattedText={(text) => {
+                                            console.log(text)
+                                            setFormattedNumber(text)
+                                        }}
+
+
+                                        filterProps={{ placeholder: 'תבחרו מדינה' }}
+
+                                        withShadow
+                                        {...props}
+
+                                    /> : null}
+                                    {!PhoneInputerror ? <PhoneInput
+                                        ref={phoneInput}
+                                        defaultValue={NumberValue}
+                                        defaultCode="IL"
+                                        layout="first"
+                                        placeholder='מספר טלפון'
+
+
+                                        containerStyle={styles.PhoneInputStyle}
+                                        textContainerStyle={{ backgroundColor: '#ffffff' }}
+                                        countryPickerButtonStyle={styles.PhoneInputButton}
+                                        countryPickerProps={{ region: 'Asia' }}
+                                        onChangeText={(text) => {
+                                            setNumberValue(text)
+                                            setPhoneInputerror("")
+                                        }}
+                                        onChangeFormattedText={(text) => {
+
+                                            setFormattedNumber(text)
+                                        }}
+
+
+
+                                        withShadow
+                                        {...props}
+
+                                    /> : null}
+
+                                    {PhoneInputerror ? <Text style={styles.error}>{PhoneInputerror}</Text> : null}
+                                </View>
+
+                                {/* <View style={styles.DatePicker}>
                                     <View style={styles.DateFontContainer} >
                                         <Text style={styles.DateFont}>{FormattedDate}</Text>
                                     </View>
@@ -176,8 +264,8 @@ export default function Register(props) {
 
                                     </TouchableOpacity>
 
-                                </View>
-                                {IsDateEmpty ? <Text style={styles.DateErrorFont}> * לבחור תאריך חובה</Text> : null}
+                                </View> */}
+                                {/* {IsDateEmpty ? <Text style={styles.DateErrorFont}> * לבחור תאריך חובה</Text> : null} */}
 
                                 <TextInput
                                     label="סיסמה"
@@ -211,14 +299,51 @@ export default function Register(props) {
                                 onPress={onRegisterPressed}
 
                             >
-                                המשך
+                                הרשם
                             </Button>
 
                         </View>
 
                     </View>
                 </View>
+                <Modal visible={isAleretVisible}>
 
+                    <View style={styles.alertContainer}>
+
+
+                        <View style={styles.alertContentContainer}>
+
+                            {/* <Text style={styles.alertTitleTextStyle}>{alertTitle}</Text> */}
+                            {ModelIcon ? <MaterialCommunityIcons style={styles.IconSucsess} name='email-send-outline' size={100} /> : null}
+                            {ModelIcon ? <Text style={styles.alertContentTextSucsess}>{alertContent}</Text> : null}
+                            {!ModelIcon ? <Entypo style={styles.IconError} name='circle-with-cross' size={100} /> : null}
+                            {!ModelIcon ? <Text style={styles.alertContentTextError}>{alertContent}</Text> : null}
+                            {ModelIcon ? <Button
+                                style={styles.ButtonRegister}
+                                labelStyle={styles.ButtonRegisterFont}
+                                mode="contained"
+                                onPress={() => setIsAlertVisible(false) || navigation.navigate('login')}
+                            >
+
+                                סגור
+                            </Button> : null}
+                            {!ModelIcon ? <Button
+                                style={styles.ButtonRegister}
+                                labelStyle={styles.ButtonRegisterFont}
+                                mode="contained"
+                                onPress={() => setIsAlertVisible(false) || navigation.navigate('Register')}
+                            >
+
+                                סגור
+                            </Button> : null}
+
+
+
+                        </View>
+
+                    </View>
+
+                </Modal>
 
             </ScrollView>
         </KeyboardAvoidingView>

@@ -98,6 +98,17 @@ addButtonFont : {
   fontSize: 18,
   fontWeight : '800'
 },
+ratingText : {
+  color:"#ff914d",
+  fontWeight : '600',
+  fontSize: 15,
+  marginStart : 10,
+  marginTop: 5,
+},
+starRating : {
+  flexDirection : "row-reverse",
+  marginTop: 20,
+}
 });
 
 export default styles;

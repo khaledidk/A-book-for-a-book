@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { useState, useRef, useEffect } from "react";
 
-import { ScrollView, View, Alert, TouchableOpacity, KeyboardAvoidingView, SafeAreaView, Keyboard, Platform } from "react-native";
+import { Switch, View, Alert, TouchableOpacity, KeyboardAvoidingView, SafeAreaView, Keyboard, Platform } from "react-native";
 import BackButton from '../../components/BackButton/BackButton'
 import styles from './styles';
 import { Octicons, Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 
-import { Button, Modal, Text,Switch } from "react-native-paper";
+import { Button, Modal, Text } from "react-native-paper";
 import PhoneInput from 'react-native-phone-number-input';
 
 
 import PhoneInputComponet from '../../components/PhoneInput/PhoneInputComponet';
 import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper/KeyboardAvoidingWrapper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import SearchableDropdown from 'react-native-searchable-dropdown';
+
 import addNewUser from '../../config/FireStoreDB'
 import createUser from '../../config/AuthDB'
 import DropDownPicker from 'react-native-dropdown-picker'
@@ -55,7 +55,7 @@ export default function RegisterOptional(props) {
     // }
 
     const onRegisterOptionalPressed = () => {
-
+     
         const CheckValidPhoneNumber = phoneInput.current?.isValidNumber(NumberValue);
         setValidNumber(CheckValidPhoneNumber ? CheckValidPhoneNumber : false);
 
@@ -64,7 +64,7 @@ export default function RegisterOptional(props) {
             return;
         }
         console.log(" this is formateed : " + FormattedNumber)
-        createUser(props.route.params.Email.value, props.route.params.Password.value, props.route.params.UserName.value, FormattedNumber, props.route.params.Date, latitude , longitude).then(() => {
+        createUser(props.route.params.Email.value, props.route.params.Password.value, props.route.params.UserName.value, FormattedNumber, props.route.params.Date, latitude, longitude).then(() => {
             setAlertContent("שלחנו אליך הודעת אימות, נא לוודא לדוא״ל שלך.")
             setIsAlertVisible(true)
             setModelIcon(true)
@@ -81,33 +81,38 @@ export default function RegisterOptional(props) {
 
     };
 
-    const toggleSwitch = async () => {//toggle for location + validation
-     
-        setIsEnabled(previousState => !previousState)
-       
-        if (!isEnabled){
-             
-            setIsEnabled(false)
-            const {status}  = await Location.requestForegroundPermissionsAsync();
-       
-            if(status !== "granted") {
-                    Alert.alert('',"סירבת לאפליקציה הזו לגשת למיקום שלך, עליך לשנות זאת ולאפשר גישה על מנת להמשיך",[,,{text:"אישור"}]);
-                    return;
+    const toggleSwitch = async (value) => {//toggle for location + validation
+
+        setIsEnabled(value);
+
+        if (value) {
+
+
+            const { status } = await Location.requestForegroundPermissionsAsync();
+
+            if (status !== "granted") {
+                Alert.alert('', "סירבת לאפליקציה הזו לגשת למיקום שלך, עליך לשנות זאת ולאפשר גישה על מנת להמשיך", [, , { text: "אישור" }]);
+                setIsEnabled(false)
+                return;
             }
-            let location = await Location.getCurrentPositionAsync(); 
-            setLatitude(location.coords.latitude)
-            setLongitude(location.coords.longitude)
-            setIsEnabled(true)
-           
-       
-          }else{
+
+            await Location.getCurrentPositionAsync().then((location) => {
+                console.log("isEnabled", isEnabled);
+                setLatitude(location.coords.latitude)
+                setLongitude(location.coords.longitude)
+            });
+
+
+
+
+        } else {
             setLatitude('')
             setLongitude('')
-          }
-          console.log("latitude",latitude,"longitude" , longitude)
-        };
-       
-    
+        }
+        console.log("latitude", latitude, "longitude", longitude)
+    };
+
+
 
     return (
 
@@ -285,18 +290,18 @@ export default function RegisterOptional(props) {
 
                     </View>
                     <View style={styles.textAndSwitch}>
-                      
+
                         <Switch
 
-                            trackColor={{ false:  "#767577", true: "#ff914d" }}
-                            thumbColor={isEnabled ? "#ff914d": "#ff914d"}
+                            trackColor={{ false: "#767577", true: "#ff914d" }}
+                            thumbColor={isEnabled ? "#ff914d" : "#ff914d"}
                             ios_backgroundColor="#3e3e3e"
-                            onValueChange={toggleSwitch}
+                            onValueChange={(value) => toggleSwitch(value)}
                             value={isEnabled}
-                            // style={styles.toggle}
+                        // style={styles.toggle}
                         />
-                           <Text style={{  writingDirection: 'rtl' }}>השתמש במיקום הנוכחי שלי:</Text>
-                       
+                        <Text style={{ writingDirection: 'rtl' }}>השתמש במיקום הנוכחי שלי:</Text>
+
                     </View>
 
                     <Button
@@ -350,6 +355,6 @@ export default function RegisterOptional(props) {
 
 
     );
-      }
+}
 
 

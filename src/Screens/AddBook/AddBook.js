@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useState } from "react";
 import { TouchableOpacity, Text, View, KeyboardAvoidingView, ScrollView, Image } from "react-native";
 
 import styles from "./styles";
-import KeyboardAvoidingWrapper from "../../components/KeyboardAvoidingWrapper/KeyboardAvoidingWrapper";
+import { Rating, AirbnbRating } from 'react-native-ratings';
 import { Button, Modal } from "react-native-paper";
 import TextInput from "../../components/TextInput/TextInput";
 import * as ImagePicker from 'expo-image-picker';
@@ -21,6 +21,41 @@ export default function AddBook(props) {
     { label: "חדש", value: "חדש" },
 
 
+  ]);
+  const [bookLanguage, setBookLanguage] = useState([
+    { label: "אנגלית", value: "אנגלית" },
+    { label: "סינית", value: "סינית" },
+    { label: "הינדי", value: "הינדי" },
+    { label: "ספרדית", value: "ספרדית" },
+    { label: "צרפתית", value: "צרפתית" },
+    { label: "ערבית", value: "ערבית" },
+    { label: "בנגלית", value: "בנגלית" },
+    { label: "רוסי", value: "רוסי" },
+    { label: "פורטוגזית", value: "פורטוגזית" },
+    { label: "אינדונזית", value: "אינדונזית" },
+    { label: "אורדו", value: "אורדו" },
+    { label: "יפּנית", value: "יפּנית" },
+    { label: "גרמנית", value: "גרמנית" },
+    { label: "פנג'בי", value: "פנג'בי" },
+    { label: "ג'אווה", value: "ג'אווה" },
+    { label: "טלוגו", value: "טלוגו" },
+    { label: "טורקי", value: "טורקי" },
+    { label: "קוריאנית", value: "קוריאנית" },
+    { label: "איטלקית", value: "איטלקית" },
+    { label: "הולנדי", value: "הולנדי" },
+    { label: "מראטי", value: "מראטי" },
+    { label: "אידישׁ", value: "אידישׁ" },
+    { label: "לטינית", value: "לטינית" },
+    { label: "שוודית", value: "שוודית" },
+    { label: "דני", value: "דני" },
+    { label: "יווני", value: "יווני" },
+    { label: "צ'כית", value: "צ'כית" },
+    { label: "פולני", value: "פולני" },
+    { label: "ארמני", value: "ארמני" },
+    { label: "אוקראינית", value: "אוקראינית" },
+    { label: "הונגרי", value: "הונגרי" },
+    { label: "סנסקריט", value: "סנסקריט" },
+    { label: "שפות אחרות", value: "שפות אחרות" },
   ]);
   const [bookTypes, setBookTypes] = useState([
     { label: "סיפורי הרפתקאות", value: "סיפורי הרפתקאות" },
@@ -48,12 +83,22 @@ export default function AddBook(props) {
   const [openTypeDrop, setOpenTypeDrop] = useState(false)
   const [bookStatusVal, setBookStatusVal] = useState("")
   const [bookStatusError, setBookStatusError] = useState(false)
+  const [bookLanguageError, setBookLanguageError] = useState(false)
   const [openStatusDrop, setOpenStatusDrop] = useState(false)
   const [image, setImage] = useState(null);
   const [imageError, setImageError] = useState(false)
   const [bookName, setBookName] = useState({ value: "", error: "" });
   const [authorName, setAuthorName] = useState({ value: "", error: "" });
+  const [bookLanguageVal, setBookLanguageVal] = useState("");
+  const [openLanguageDrop, setOpenLanguageDrop] = useState(false)
+  const [starRating, setStarRating] = useState(3)
+  const bookLanguageSorted = [...bookLanguage].sort((a, b) => {
+    return a.label.localeCompare(b.label);
+  });
 
+  // const starRatingFunc = (value) =>{
+  //        console.log("starRating" ,value )
+  // }
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -70,11 +115,12 @@ export default function AddBook(props) {
     }
   };
 
-  async function onRegisterPressed() {
+  async function onAddPressed() {
     const bookNameError = bookValidator(bookName.value)
     const authorNameError = authorValidator(authorName.value)
 
-    if (bookNameError || authorNameError || !bookTypesVal || !bookStatusVal || !image) {
+    if (bookNameError || authorNameError || !bookTypesVal || !bookStatusVal || !image || !bookLanguageVal) {
+
       if (!image) {
 
         setImageError(true)
@@ -97,6 +143,13 @@ export default function AddBook(props) {
 
         setBookStatusError(false)
       }
+      if (!bookLanguageVal) {
+
+        setBookLanguageError(true)
+      } else {
+
+        setBookLanguageError(false)
+      }
       console.log(bookTypesError)
       setBookName({ ...bookName, error: bookNameError });
       setAuthorName({ ...authorName, error: authorNameError });
@@ -110,7 +163,7 @@ export default function AddBook(props) {
     const user = auth.currentUser;
     const uid = user.uid;
     fetchtUserNameAndImage(uid).then((userInfo) => {
-      addNewbook(bookName.value, authorName.value, bookTypesVal, bookStatusVal, tempeDate, image, uid, userInfo.userImage, userInfo.userName).then((bookId) => {
+      addNewbook(bookName.value, authorName.value, bookTypesVal, bookStatusVal, tempeDate, image, uid, userInfo.userImage, userInfo.userName, bookLanguageVal, starRating).then((bookId) => {
         console.log(bookId)
         let newBookJson = {
           id: bookId,
@@ -121,7 +174,8 @@ export default function AddBook(props) {
           book_status: bookStatusVal,
           user_image: userInfo.userImage,
           user_name: userInfo.userName,
-
+          book_language: bookLanguageVal,
+          rating_value: starRating,
         }
         navigation.navigate("Home", { newBookJson: newBookJson, status: 'add' })
 
@@ -207,8 +261,6 @@ export default function AddBook(props) {
                   listItemContainerStyle={styles.listItemContainer}
                   listItemLabelStyle={styles.listItemContainerFont}
                   dropDownContainerStyle={styles.DropDown}
-                  // multiple={true}
-
                   listMode="SCROLLVIEW"
                   scrollViewProps={{
                     nestedScrollEnabled: true,
@@ -216,7 +268,7 @@ export default function AddBook(props) {
 
                 />
 
-                {/* </View> */}
+
 
                 {bookTypesError ? <Text style={styles.typeErrorFont}>* לבחור סוג ספר חובה</Text> : null}
 
@@ -244,13 +296,46 @@ export default function AddBook(props) {
                 />
 
                 {bookStatusError ? <Text style={styles.typeErrorFont}>* לבחור מצב הספר חובה</Text> : null}
+                <DropDownPicker
+                  style={styles.DropDown}
+                  open={openLanguageDrop}
+                  value={bookLanguageVal} //genderValue
+                  items={bookLanguageSorted}
+                  setValue={setBookLanguageVal}
+                  setItems={setBookLanguage}
+                  setOpen={setOpenLanguageDrop}
+                  placeholder="בחר שפת הספר"
+                  containerStyle={styles.ContainerDropDown}
+                  textStyle={styles.listItemContainerFont}
+                  listItemContainerStyle={styles.listItemContainer}
+                  listItemLabelStyle={styles.listItemContainerFont}
+                  dropDownContainerStyle={styles.DropDown}
+                  listMode="SCROLLVIEW"
+                  scrollViewProps={{
+                    nestedScrollEnabled: true,
+                  }}
+
+                />
+                {bookLanguageError ? <Text style={styles.typeErrorFont}>* לבחור שפת הספר חובה</Text> : null}
+                <View style={styles.starRating}>
+                  <Text style={styles.ratingText} >הדירוג שלך לספר:</Text>
+                  <Rating
+
+                    startingValue={3}
+                    ratingCount={5}
+                    imageSize={30}
 
 
+                    onFinishRating={setStarRating}
+
+                  />
+
+                </View>
                 <Button
                   style={styles.addButton}
                   labelStyle={styles.addButtonFont}
                   mode="contained"
-                  onPress={onRegisterPressed}>
+                  onPress={onAddPressed}>
                   הוסיף
                 </Button>
 
@@ -265,6 +350,8 @@ export default function AddBook(props) {
             </View>
 
           </View>
+
+
         </View>
 
 

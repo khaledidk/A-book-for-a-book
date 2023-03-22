@@ -63,6 +63,25 @@ const styles = StyleSheet.create({
 
 
   },
+  starRating : {
+    flexDirection : 'row',
+    alignSelf: "flex-end",
+    },
+    imageStar: {
+      height: 30,
+      width: 30,
+     
+    },
+  ratingFontContiner : {
+    flexDirection : 'row',
+    marginTop : 5,
+    marginEnd : 5,
+    },
+    ratingFont : {
+      fontSize: 18,
+      fontWeight: '800',
+      color: "#f8c40c",
+    },
   txt: {
 
     // backgroundColor : 'red',
@@ -207,6 +226,14 @@ ButtonClose :{
 ButtonCloseFont : {
   fontSize: 18,
   fontWeight : '800',  
+},
+addButton: {
+  position: 'absolute',
+  bottom: Platform.OS === "ios" ? getStatusBarHeight() + 120 : 120,
+  backgroundColor: "#ff914d",
+  borderRadius: 100,
+  justifyContent: 'center',
+  alignContent: 'center',
 },
 });
 

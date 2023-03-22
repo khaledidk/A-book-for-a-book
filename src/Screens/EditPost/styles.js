@@ -46,6 +46,7 @@ width : 200,
 borderRadius : 20,
 marginTop : 10,
 },
+
 addImageButton : {
  
 
@@ -61,6 +62,8 @@ ContainerDropDown : {
 DropDown: {
   borderColor: "#ddb07f",
   borderWidth: 1,
+  position: 'relative',
+  top:0,
 
 
  
@@ -95,6 +98,17 @@ addButtonFont : {
   fontSize: 18,
   fontWeight : '800'
 },
+ratingText : {
+  color:"#ff914d",
+  fontWeight : '600',
+  fontSize: 15,
+  marginStart : 10,
+  marginTop: 5,
+},
+starRating : {
+  flexDirection : "row-reverse",
+  marginTop: 20,
+}
 });
 
 export default styles;

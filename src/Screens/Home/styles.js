@@ -84,6 +84,16 @@ const styles = StyleSheet.create({
 
 
   },
+  ratingFontContiner : {
+  flexDirection : 'row',
+  marginTop : 5,
+  marginEnd : 5,
+  },
+  ratingFont : {
+    fontSize: 18,
+    fontWeight: '800',
+    color: "#f8c40c",
+  },
   txt: {
 
     // backgroundColor : 'red',
@@ -100,6 +110,12 @@ const styles = StyleSheet.create({
   ImageBackGround: {
     height: Dimensions.get('window').height / 5,
   },
+  imageProfile : {
+    height : 50,
+    width : 50,
+   borderRadius : 100,
+   marginBottom : 10,
+  },
   imageIteam: {
     height: 120,
     width: 120,
@@ -107,11 +123,14 @@ const styles = StyleSheet.create({
     marginTop:10,
     borderRadius: 20,
   },
-  imageProfile: {
-    height: 50,
-    width: 50,
-    borderRadius: 100,
-    marginBottom: 10,
+  starRating : {
+  flexDirection : 'row',
+  alignSelf: "flex-end",
+  },
+  imageStar: {
+    height: 30,
+    width: 30,
+   
   },
   details: {
     // flexShrink : 1,

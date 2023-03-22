@@ -13,11 +13,45 @@ import { bookValidator } from "../../helpers/bookValidator";
 import { authorValidator } from "../../helpers/authorValidator";
 import { addNewbook } from "../../config/FireStoreDB";
 import { auth } from '../../config/firebase';
-
+import { Rating, AirbnbRating } from 'react-native-ratings';
 
 import { updatePost } from "../../config/FireStoreDB";
 export default function EditPost({ navigation, route }) {
-
+  const [bookLanguage, setBookLanguage] = useState([
+    { label: "אנגלית", value: "אנגלית" },
+    { label: "סינית", value: "סינית" },
+    { label: "הינדי", value: "הינדי" },
+    { label: "ספרדית", value: "ספרדית" },
+    { label: "צרפתית", value: "צרפתית" },
+    { label: "ערבית", value: "ערבית" },
+    { label: "בנגלית", value: "בנגלית" },
+    { label: "רוסי", value: "רוסי" },
+    { label: "פורטוגזית", value: "פורטוגזית" },
+    { label: "אינדונזית", value: "אינדונזית" },
+    { label: "אורדו", value: "אורדו" },
+    { label: "יפּנית", value: "יפּנית" },
+    { label: "גרמנית", value: "גרמנית" },
+    { label: "פנג'בי", value: "פנג'בי" },
+    { label: "ג'אווה", value: "ג'אווה" },
+    { label: "טלוגו", value: "טלוגו" },
+    { label: "טורקי", value: "טורקי" },
+    { label: "קוריאנית", value: "קוריאנית" },
+    { label: "איטלקית", value: "איטלקית" },
+    { label: "הולנדי", value: "הולנדי" },
+    { label: "מראטי", value: "מראטי" },
+    { label: "אידישׁ", value: "אידישׁ" },
+    { label: "לטינית", value: "לטינית" },
+    { label: "שוודית", value: "שוודית" },
+    { label: "דני", value: "דני" },
+    { label: "יווני", value: "יווני" },
+    { label: "צ'כית", value: "צ'כית" },
+    { label: "פולני", value: "פולני" },
+    { label: "ארמני", value: "ארמני" },
+    { label: "אוקראינית", value: "אוקראינית" },
+    { label: "הונגרי", value: "הונגרי" },
+    { label: "סנסקריט", value: "סנסקריט" },
+    { label: "שפות אחרות", value: "שפות אחרות" },
+  ]);
   const [bookStatus, setBookStatus] = useState([
     { label: "בשימוש", value: "בשימוש" },
     { label: "חדש", value: "חדש" },
@@ -55,7 +89,13 @@ export default function EditPost({ navigation, route }) {
   const [imageError, setImageError] = useState(false)
   const [bookName, setBookName] = useState({ value: route.params.title, error: "" });
   const [authorName, setAuthorName] = useState({ value: route.params.author, error: "" });
-
+  const [bookLanguageVal, setBookLanguageVal] = useState(route.params.language);
+  const [openLanguageDrop, setOpenLanguageDrop] = useState(false)
+  const [starRating, setStarRating] = useState(route.params.starRating)
+  const bookLanguageSorted = [...bookLanguage].sort((a, b) => {
+    return a.label.localeCompare(b.label);
+  });
+  const [bookLanguageError, setBookLanguageError] = useState(false)
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -72,11 +112,11 @@ export default function EditPost({ navigation, route }) {
     }
   };
 
-  async function onRegisterPressed() {
+  async function onEditPressed() {
     const bookNameError = bookValidator(bookName.value)
     const authorNameError = authorValidator(authorName.value)
 
-    if (bookNameError || authorNameError || !bookTypesVal || !bookStatusVal || !image) {
+    if (bookNameError || authorNameError || !bookTypesVal || !bookStatusVal || !image || !bookLanguageVal) {
       if (!image) {
 
         setImageError(true)
@@ -99,6 +139,13 @@ export default function EditPost({ navigation, route }) {
 
         setBookStatusError(false)
       }
+      if (!bookLanguageVal) {
+
+        setBookLanguageError(true)
+      } else {
+
+        setBookLanguageError(false)
+      }
       console.log(bookTypesError)
       setBookName({ ...bookName, error: bookNameError });
       setAuthorName({ ...authorName, error: authorNameError });
@@ -120,7 +167,8 @@ export default function EditPost({ navigation, route }) {
       book_type: bookTypesVal,
       book_status: bookStatusVal,
       user_id: uid,
-     
+      book_language : bookLanguageVal,
+      rating_value : starRating,
 
     }
     let updateInfoDB = {
@@ -131,8 +179,10 @@ export default function EditPost({ navigation, route }) {
       book_type: bookTypesVal,
       book_status: bookStatusVal,
       user_id: uid,
+      book_language : bookLanguageVal,
+      rating_value : starRating,
     }
-    navigation.navigate("UserPost", { updateBookJson: updateInfo , status : 'update' })
+    navigation.navigate("UserPost", { updateBookJson: updateInfo, status: 'update' })
     updatePost(route.params.id, updateInfoDB, tempeDate)
 
 
@@ -223,36 +273,71 @@ export default function EditPost({ navigation, route }) {
 
                 {bookTypesError ? <Text style={styles.typeErrorFont}>* לבחור סוג ספר חובה</Text> : null}
 
-                <View style={{ zIndex: 2, marginTop: 60 }}>
+                {/* <View style={{ zIndex: 2, marginTop: 60 }}> */}
 
-                  {/* </View> */}
-                  <DropDownPicker
-                    style={styles.DropDown}
-                    open={openStatusDrop}
-                    value={bookStatusVal} //genderValue
-                    items={bookStatus}
-                    setValue={setBookStatusVal}
-                    setItems={setBookStatus}
-                    setOpen={setOpenStatusDrop}
-                    placeholder="בחר מצב הספר"
-                    containerStyle={styles.ContainerDropDown}
-                    textStyle={styles.listItemContainerFont}
-                    listItemContainerStyle={styles.listItemContainer}
-                    listItemLabelStyle={styles.listItemContainerFont}
-                    dropDownContainerStyle={styles.DropDown}
-                    listMode="SCROLLVIEW"
+                {/* </View> */}
+                <DropDownPicker
+                  style={styles.DropDown}
+                  open={openStatusDrop}
+                  value={bookStatusVal} //genderValue
+                  items={bookStatus}
+                  setValue={setBookStatusVal}
+                  setItems={setBookStatus}
+                  setOpen={setOpenStatusDrop}
+                  placeholder="בחר מצב הספר"
+                  containerStyle={styles.ContainerDropDown}
+                  textStyle={styles.listItemContainerFont}
+                  listItemContainerStyle={styles.listItemContainer}
+                  listItemLabelStyle={styles.listItemContainerFont}
+                  dropDownContainerStyle={styles.DropDown}
+                  listMode="SCROLLVIEW"
 
-                  // zIndexInverse={1000}
-                  />
-                </View>
+                // zIndexInverse={1000}
+                />
+                {/* // </View> */}
                 {bookStatusError ? <Text style={styles.typeErrorFont}>* לבחור מצב הספר חובה</Text> : null}
 
+                <DropDownPicker
+                  style={styles.DropDown}
+                  open={openLanguageDrop}
+                  value={bookLanguageVal} //genderValue
+                  items={bookLanguageSorted}
+                  setValue={setBookLanguageVal}
+                  setItems={setBookLanguage}
+                  setOpen={setOpenLanguageDrop}
+                  placeholder="בחר שפת הספר"
+                  containerStyle={styles.ContainerDropDown}
+                  textStyle={styles.listItemContainerFont}
+                  listItemContainerStyle={styles.listItemContainer}
+                  listItemLabelStyle={styles.listItemContainerFont}
+                  dropDownContainerStyle={styles.DropDown}
+                  listMode="SCROLLVIEW"
+                  scrollViewProps={{
+                    nestedScrollEnabled: true,
+                  }}
 
+                />
+                {bookLanguageError ? <Text style={styles.typeErrorFont}>* לבחור שפת הספר חובה</Text> : null}
+
+                <View style = {styles.starRating}>
+                <Text style = {styles.ratingText} >הדירוג שלך לספר:</Text>
+                <Rating
+                 
+                 startingValue = {route.params.starRating}
+                  ratingCount={5}
+                  imageSize={30}
+                
+                 
+                  onFinishRating={setStarRating}
+                
+                />
+               
+              </View>
                 <Button
                   style={styles.addButton}
                   labelStyle={styles.addButtonFont}
                   mode="contained"
-                  onPress={onRegisterPressed}>
+                  onPress={onEditPressed}>
                   עדכן
                 </Button>
 

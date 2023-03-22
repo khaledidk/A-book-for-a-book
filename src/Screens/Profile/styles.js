@@ -10,11 +10,11 @@ const styles = StyleSheet.create({
   
   },
   ImageBackGround: {
-    height: Dimensions.get('window').height / 5,
+    height: Dimensions.get('window').height / 6,
 },
   BootomView: {
     // flex: 0.8,
-    bottom: 50,
+ 
 
     backgroundColor: '#ffffff',
     borderTopStartRadius: 60,
@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
 
 },
   profileImageName : {
-  marginTop : 20,
-  padding: 30,
+  
+  padding: 10,
   flexDirection :"row",
   
   alignItems: 'center',
@@ -111,8 +111,6 @@ alertContainer: {
   // height: "100%",
   justifyContent: "center",
   alignContent: "center",
-  
- 
  
 },
 alertContentTextError: {
@@ -160,7 +158,72 @@ iconSignOut: {
    zIndex: 1, 
    left: 15, 
    top: 20, 
-}
+},
+flatList: {
+  // marginTop: 10,
+  // marginBottom:  Platform.OS === "ios" ? getStatusBarHeight() + 90 : 100,
+},
+txt: {
+
+  fontSize: 18,
+  color: "grey",
+  fontWeight: '800',
+  textAlign: "right",
+
+},
+itemImageAndeDerails: {
+  // flexGrow: 1,
+  flexDirection: 'row-reverse',
+  // justifyContent : 'space-between',
+  // alignItems: 'center',
+  marginEnd: 5,
+  marginTop: 30,
+},
+item: {
+  backgroundColor: '#ffffff',
+  borderBottomWidth: 1,
+  // borderRadius : 20,
+  borderColor: "#ff914d",
+  padding: 20,
+  flexDirection: 'column',
+  // justifyContent: 'center',
+  // alignItems: 'center',
+  marginVertical: 8,
+  marginHorizontal: 16,
+},
+userNameAndImage: {
+  flexDirection: 'row',
+  alignSelf: 'flex-end',
+  justifyContent: 'center',
+  alignItems: 'center',
+
+},
+otherUserName: {
+  fontSize: 20,
+  color: "#ff914d",
+  fontWeight: '800',
+},
+imageProfileOtherUser: {
+  height: 50,
+  width: 50,
+  borderRadius: 100,
+
+},
+feedBackLebal : {
+  marginTop : 10,
+  fontSize: 20,
+  color: "#ff914d",
+  fontWeight: '800',
+alignSelf : 'center'
+},
+details: {
+  // flexShrink : 1,
+  flex: 1,
+  flexDirection: 'column',
+  alignSelf: 'flex-end',
+
+
+},
 });
 
 export default styles;

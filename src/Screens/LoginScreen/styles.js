@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     BootomView: {
         flex: 1.5,
         bottom: 50,
-
+        marginTop: 10,
         backgroundColor: '#ffffff',
         borderTopStartRadius: 60,
         borderTopEndRadius: 60,

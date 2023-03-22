@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FlatList, Text, View, Image, TouchableHighlight, ImageBackground } from "react-native";
+import { FlatList, Text, View, Image, TouchableOpacity, ImageBackground , RefreshControl } from "react-native";
 import { MaterialCommunityIcons, FontAwesome5, FontAwesome, Entypo } from '@expo/vector-icons';
 
 import { SignOut } from "../../config/AuthDB";
@@ -11,6 +11,9 @@ import { updateUser } from "../../config/FireStoreDB";
 import { useIsFocused } from '@react-navigation/native';
 import { auth } from '../../config/firebase';
 import { Modal } from "react-native-paper";
+import { Rating } from 'react-native-ratings';
+import { fetchFeedBackWithUserDetails } from "../../config/FireStoreDB";
+
 export default function Profile({ navigation, route }) {
 
   const profileDefaultImageUri = Image.resolveAssetSource(require('../../../assets/defult_Profile.png')).uri;
@@ -18,12 +21,62 @@ export default function Profile({ navigation, route }) {
   const [currUserInfo, setCurrUserInfo] = useState({ name: "", image: profileDefaultImageUri, email: "", phoneNumber: "" });
   const [userName, setUserName] = useState({ value: "", error: "" });
   const [isAleretVisible, setIsAlertVisible] = useState(false);
+  const [feedBackArray, setFeedBackArray] = useState([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const renderItem = ({ item }) => {
+    return (
+      <Item remarks={item.Remarks} rating={item.rating} userName={item.user_name} userImage={item.user_image} currUserID={item.currUserID} />
+
+    );
+  }
+  const Item = ({ remarks, rating, userName, userImage, currUserID }) => (
+    <View>
+      <View style={styles.item} >
+        <TouchableOpacity style={styles.userNameAndImage} onPress={() => PressOnUserProfileHandler(currUserID)}>
+          <Text style={styles.otherUserName}> {userName} </Text>
+          {userImage ? <Image
+            style={styles.imageProfileOtherUser}
+            source={{ uri: userImage }}
+
+          /> :
+            <Image
+              source={{ uri: profileDefaultImageUri }}
+              style={styles.imageProfileOtherUser}
+            />
+          }
+
+        </TouchableOpacity>
+
+
+        <View style={styles.details}>
+
+          <Text style={styles.txt}>הערות: {remarks}</Text>
+          <View style={styles.starRating}>
+            <Text style={styles.ratingText} >הדירוג:</Text>
+            <Rating
+              startingValue={rating}
+              ratingCount={5}
+              imageSize={30}
+              readonly={true}
+            />
+
+          </View>
+        </View>
+
+
+
+
+      </View>
+
+    </View>
+  );
   const fetchuserInfo = async () => {
 
     const user = auth.currentUser;
     const uid = user.uid;
 
-    fetchCurrentUserInfo(uid).then((userInfo) => {
+   await fetchCurrentUserInfo(uid).then((userInfo) => {
 
       let userJSONObj = { name: userInfo.name, image: userInfo.image === null ? profileDefaultImageUri : userInfo.image, email: userInfo.email, date: userInfo.date, phoneNumber: userInfo.phoneNumber === null ? "" : userInfo.phoneNumber };
 
@@ -31,13 +84,33 @@ export default function Profile({ navigation, route }) {
 
     })
 
+    await fetchFeedBackWithUserDetails(uid).then((feedBackArray) => {
+      console.log("feedBackArray", feedBackArray)
+      setFeedBackArray(feedBackArray)
 
+    })
 
 
   };
+
+  const onRefresh = async () => {
+
+
+    const user = auth.currentUser;
+    const uid = user.uid;
+    setIsRefreshing(true);
+
+    await fetchFeedBackWithUserDetails(uid).then((feedBackArray) => {
+
+      setIsRefreshing(false);
+      setFeedBackArray(feedBackArray)
+
+    })
+  }
   const isFocused = useIsFocused();
   useEffect(() => {
     fetchuserInfo()
+    
   }, []);
   useEffect(() => {
     if (route.params?.updateUserJson) {
@@ -90,10 +163,10 @@ export default function Profile({ navigation, route }) {
             <Text style={styles.detailsFont}> {currUserInfo.phoneNumber}</Text>
           </View> : null}
 
-          <View style={styles.Details}>
+          {/* <View style={styles.Details}>
             <Entypo name='calendar' style={styles.icon} size={40} color={"#ff914d"} />
             <Text style={styles.detailsFont}> {currUserInfo.date}</Text>
-          </View>
+          </View> */}
           <View>
             <Button
               style={styles.signOutButton}
@@ -118,6 +191,22 @@ export default function Profile({ navigation, route }) {
         </View>
 
       </View>
+      {feedBackArray.length ? <Text style = {styles.feedBackLebal}>מושבים:</Text> : null}
+      <FlatList
+
+refreshControl={<RefreshControl
+  colors={["#ff914d", "#ff914d"]}
+  refreshing={isRefreshing}
+  onRefresh={onRefresh}
+/>}
+data={feedBackArray}
+renderItem={renderItem}
+keyExtractor={item => item.id}
+
+
+style={styles.flatList}
+
+/>
       <Modal visible={isAleretVisible}>
 
         <View style={styles.alertContainer}>
