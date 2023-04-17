@@ -143,14 +143,14 @@ export async function fetchFeedBackWithUserDetails(userId) {
   for (let i = 0; i < temp_array.length; i++) {
     element = temp_array[i];
     temp = await fetchtUserNameAndImage(element.currUserID)
-    console.log("temp", temp)
+   
     element["user_name"] = temp.userName;
     element["user_image"] = temp.userImage;
     result_array.push(element)
 
   }
 
- console.log("temp_array" , temp_array)
+
 
   return result_array;
 }
@@ -203,6 +203,11 @@ export async function fetchCurrentUserInfo(userId) {
 
   return { "name": userName, "email": userEmail, "date": userDate, "image": userImage, "phoneNumber": userPhone };
 }
+export async function fetchCurrentUserAllInfo(userId) {
+  const docRef = doc(DBFire, "users", userId);
+  const docSnap = await getDoc(docRef);
+  return docSnap.data();
+}
 export async function fetchCurrentUserLoction(userId) {
   const docRef = doc(DBFire, "users", userId);
   const docSnap = await getDoc(docRef);
@@ -210,6 +215,8 @@ export async function fetchCurrentUserLoction(userId) {
   if (docSnap.data()["latitude"] && docSnap.data()["longitude"]) {
     latitude = docSnap.data()["latitude"];
     longitude = docSnap.data()["longitude"];
+  }else{
+    return null;
   }
 
 
@@ -258,10 +265,11 @@ export async function fetchBookLoction() {
   for (let i = 0; i < books_array.length; i++) {
     let element = books_array[i];
     let user_loction = await fetchCurrentUserLoction(books_array[i].user_id);
-
+   if(user_loction){
     element["latitude"] = user_loction.latitude;
     element["longitude"] = user_loction.longitude;
     result_array.push(element);
+   }
   }
 
   return result_array;

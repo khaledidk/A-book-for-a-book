@@ -45,10 +45,12 @@ const styles = StyleSheet.create({
   userName: {
 
   },
-  lastMassage: {
+  lastMassageSeen: {
     color: "grey",
   },
-
+  lastMassageNotSeen: {
+    color: "black",
+  },
   row: {
     flexDirection: 'row-reverse',
     padding: 10,

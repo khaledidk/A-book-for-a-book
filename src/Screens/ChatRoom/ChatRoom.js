@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import { FlatList, RefreshControl, Text, View, Image, TouchableOpacity, Keyboard, Pressable } from "react-native";
 import styles from "./styles";
 import { DBReal, auth } from "../../config/firebase";
-import { ref, onValue } from "firebase/database";
+import { ref, onValue, onChildChanged } from "firebase/database";
 import { fetchtUserNameAndImage } from "../../config/FireStoreDB";
 import { MaterialIcons } from '@expo/vector-icons';
 import BackButton from "../../components/BackButton/BackButton";
 import TextInput from "../../components/TextInput/TextInput"
-import { off } from "firebase/database";
-import { async } from "@firebase/util";
+import { getRoomChat } from "../../config/RealTimeDB";
+
+import { useIsFocused } from '@react-navigation/native';
+import { UpdateNotify } from "../../config/RealTimeDB";
 export default function ChatRoom({ navigation, route }) {
 
     const [users, setUsers] = useState([]);
@@ -16,24 +18,31 @@ export default function ChatRoom({ navigation, route }) {
     const [oneTime, setOneTime] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [myData, setMyData] = useState(null);
+    const isFocused = useIsFocused();
     useEffect(() => {
         fetchtUserNameAndImage(auth.currentUser.uid).then((userInfo) => {
             userInfo["id"] = auth.currentUser.uid
             setMyData(userInfo)
         })
         ListenerData();
-        //lastMassage();
+        // getData();
+        // onUpdateLister();
+        console.log("is foucos", isFocused)
+        if (!isFocused) {
 
+            UpdateNotify(auth.currentUser.uid, 0)
+        }
 
-
-        // return () => off(ref);
-    }, [])
+    }, [isFocused])
     const onRefresh = async () => {
 
         console.log("Refreshing");
 
         setIsRefreshing(true);
+        // getData().then(() => {
 
+        //     setIsRefreshing(false);
+        // });
         ListenerData().then(() => {
 
             setIsRefreshing(false);
@@ -79,38 +88,64 @@ export default function ChatRoom({ navigation, route }) {
             <TouchableOpacity onPress={() => navigation.navigate("SingleChat", { selectedUser: item, MyData: myData, chatRoomID: item.chatroomId })} style={styles.row}>
                 <Image style={styles.avatar} source={{ uri: item.avatar }} />
                 <View style={styles.userNameAndLastMassage} >
-                <Text style={styles.userName} >{item.username}</Text>
-                <Text style={styles.lastMassage} >{item.lastMassage}</Text>
+                    <Text style={styles.userName} >{item.username}</Text>
+                    {item.seen ? <Text style={styles.lastMassageSeen} >{item.lastMassage}</Text> :
+                        <Text style={styles.lastMassageNotSeen} >{item.lastMassage}</Text>}
                 </View>
             </TouchableOpacity>
         );
     };
-    // const lastMassage = async (friendList) => {
-        
-    //     const chatroomRef = ref(DBReal, '/chatrooms/' + route.params.chatRoomID);
-    //     onValue(chatroomRef, snapshot => {
-    //         const data = snapshot.val();
-    //         if (data) {
-    //             if (data.messages) {
-    //                 console.log( "data.messages" , data.messages)
-    //                 //searchUsersList["lastMassage"] = data.messages[data.messages.leangth -1]
-    //             }
+    const getPostIndex = (PostID) => {
+        console.log("searchUsersList", searchUsersList)
+        for (let currIndex = 0; currIndex < searchUsersList.length; currIndex++) {
+
+            if (searchUsersList[currIndex].chatroomId === PostID) {
+                return currIndex;
+            }
+        }
+
+        return -1;
+    }
+    // const onUpdateLister = async () => {
+    //     const myUserRef = ref(DBReal, '/users/' + auth.currentUser.uid + '/friends/');
+
+    //     onChildChanged(myUserRef, snapshot => {
+    //         const snapshotChange = snapshot.val();
+    //         console.log("=======change=============", snapshotChange.chatroomId);
+    //         // users.splice(getPostIndex(snapshot.id), 1, snapshot);
+    //         const index = getPostIndex(snapshotChange.chatroomId)
+
+    //         console.log("index", index)
+    //         // let temp = users[index];
+    //         // console.log("temp", temp)
+    //         // temp.lastMassage = snapshotChange.lastMassage;
+
+    //         // searchUsersList.splice(index, 1, temp);
+    //         // users.splice(index, 1, temp);
+    //         // console.log("searchUsersList", searchUsersList)
+    //         // searchUsersList.splice(getPostIndex(snapshot.id), 1, snapshot);
 
 
-    //         }
+
     //     });
-    //     return () => {
-    //         //remove chatroom listener
-    //         off(chatroomRef);
-    //     };
+    //     return () => off(myUserRef);
+
     // }
 
+    const getData = async () => {
+
+        getRoomChat().then((dataArray) => {
+
+            setSearchUsersList(dataArray)
+            setUsers(dataArray)
+        })
+    }
     const ListenerData = async () => {
         let friendList;
         const myUserRef = ref(DBReal, '/users/' + auth.currentUser.uid);
-        
+
         onValue(myUserRef, snapshot => {
-            console.log("enterLister")
+
             const array = [];
             setUsers([])
             setSearchUsersList([])
@@ -150,7 +185,7 @@ export default function ChatRoom({ navigation, route }) {
 
         });
 
-       
+
 
         return () => off(myUserRef);
     };

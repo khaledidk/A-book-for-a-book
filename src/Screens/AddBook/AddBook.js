@@ -176,6 +176,7 @@ export default function AddBook(props) {
           user_name: userInfo.userName,
           book_language: bookLanguageVal,
           rating_value: starRating,
+          user_id: uid,
         }
         navigation.navigate("Home", { newBookJson: newBookJson, status: 'add' })
 

@@ -4,7 +4,7 @@ import styles from "./styles";
 import { DBReal, auth } from "../../config/firebase";
 import { ref, onValue } from "firebase/database";
 import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat';
-import { fetchMessages } from "../../config/RealTimeDB";
+import { fetchMessages, IsSeenMessage, NewNotifyCounter, UpdateNotify } from "../../config/RealTimeDB";
 import { fetchtUserNameAndImage } from "../../config/FireStoreDB";
 import { UpdateMassage } from "../../config/RealTimeDB";
 import BackButton from "../../components/BackButton/BackButton";
@@ -12,6 +12,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { off } from "firebase/database";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AddFriendWhenFirstMassage } from "../../config/RealTimeDB";
+
 export default function SingleChat({ navigation, route }) {
 
     const [myData, setMyData] = useState({});
@@ -20,18 +21,29 @@ export default function SingleChat({ navigation, route }) {
 
     //load old messages
     const loadData = async () => {
-
-
-        // await fetchtUserNameAndImage(route.params.selectedUserID).then((userInfo) => {
-        //     userInfo["id"] = route.params.selectedUserID
-        //     setSelectedUser(() => [userInfo])
-
-        //     console.log("maydata", myData)
-        // })
         const myChatroom = await fetchMessages(route.params.chatRoomID);
 
         console.log("After my data maydata")
         setMessages(renderMessages(myChatroom.messages));
+    };
+
+    const notifiction = async (flag, seen, lastMassage) => {
+        await NewNotifyCounter(route.params.selectedUser.id, flag).then(() => {
+            if (seen) {
+                UpdateNotify(auth.currentUser.uid)
+                IsSeenMessage(auth.currentUser.uid, route.params.selectedUser.id, seen)
+            } else {
+                UpdateNotify(route.params.selectedUser.id)
+                IsSeenMessage(route.params.selectedUser.id, auth.currentUser.uid, seen)
+            }
+
+
+        })
+        console.log("seend", seen)
+
+
+
+
     };
 
     const renderMessages = (msgs) => {
@@ -65,8 +77,10 @@ export default function SingleChat({ navigation, route }) {
             const lastMessages = currentChatroom.messages || [];
 
 
-
+            await notifiction(1, false);
             UpdateMassage(route.params.chatRoomID, lastMessages, msg, route.params.MyData);
+         
+
 
 
 
@@ -77,29 +91,32 @@ export default function SingleChat({ navigation, route }) {
         console.log("enter")
         loadData();
 
+        notifiction(0, true)
+
 
 
         // set chatroom change listener
         const chatroomRef = ref(DBReal, '/chatrooms/' + route.params.chatRoomID);
         onValue(chatroomRef, snapshot => {
             const data = snapshot.val();
-            if(data){
-            if( data.messages){
-              
-                AddFriendWhenFirstMassage( route.params.selectedUser.id , route.params.chatRoomID ,  data.messages[ data.messages.length-1].text)
-               
+            if (data) {
+                if (data.messages) {
+
+                    AddFriendWhenFirstMassage(route.params.selectedUser.id, route.params.chatRoomID, data.messages[data.messages.length - 1].text)
+
+                }
+
+
+                setMessages(renderMessages(data.messages));
             }
-            
-        
-            setMessages(renderMessages(data.messages));
-        }
         });
 
-        return () => {
-            //remove chatroom listener
-            off(chatroomRef);
-        };
+        return () => off(chatroomRef)
+
     }, [isFocused]);
+
+
+
     const renderSend = (props) => {
         return (
             <Send {...props}
@@ -152,12 +169,12 @@ export default function SingleChat({ navigation, route }) {
 
     return (
         <View style={styles.container}>
-          <BackButton goBack={navigation.goBack} color = {"#ffffff"}/>
+            <BackButton goBack={navigation.goBack} color={"#ffffff"} />
             <View style={styles.label}>
-            <View style={styles.nameAndImage}>
-                <Text style={styles.name} >{route.params.selectedUser.username}</Text>
-                <Image style={styles.avatar} source={{ uri: route.params.selectedUser.avatar }} />
-            
+                <View style={styles.nameAndImage}>
+                    <Text style={styles.name} >{route.params.selectedUser.username}</Text>
+                    <Image style={styles.avatar} source={{ uri: route.params.selectedUser.avatar }} />
+
                 </View>
             </View>
             <GiftedChat

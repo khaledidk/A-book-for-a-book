@@ -194,9 +194,7 @@ export default function MapUser({ navigation, route }) {
     })
 
   }
-  const fetchBookAndLoction = async (bookLanguage) => {
-
-  }
+ 
   const fetchByUsersLoction = async () => {
     setIsLoading(true);
 
@@ -205,34 +203,7 @@ export default function MapUser({ navigation, route }) {
 
     })
   }
-  // const onSelectItem = async (Languages) => {
-  //   setIsLoading(true);
-  //   console.log("items" , Languages)
-  //   if (Languages.length == 0) {
-  //     setBookByLanguageInfo([]);
-  //   }
-  //   let result_array = [];
-  //   let arr = [];
-  //   for (let i = 0; i < Languages.length; i++) {
-  //     arr.push(Languages[i].value)
-  //   }
-  // //  for (let i = 0; i < Languages.length; i++) {
 
-  //     let temp = await fetchBookLoction(arr);
-  //     console.log("result_array", temp)
-  //     if (result_array.length == 0) {
-  //       result_array = temp;
-
-  //       setBookByLanguageInfo(() => temp);
-  //     } else {
-  //       result_array = result_array.concat(temp);
-  //       setBookByLanguageInfo(() => result_array);
-  //     }
-
-
-  //   setIsLoading(() => false);
-  //   setShowOnMapByLanguage(true);
-  // }
   const onSelectFilter = async () => {
     setIsLoading(true);
 
@@ -440,6 +411,7 @@ export default function MapUser({ navigation, route }) {
           חיבוש
         </Button>}
       </View>}
+      <View style = {{flex : 1 , bottom : Platform.OS === "ios" ? 70 : 60 , marginTop: Platform.OS === "ios" ? 70 : 60}}>
 
       {!isLoading && <MapView style={styles.map}
         region={mapRegion}
@@ -532,6 +504,7 @@ export default function MapUser({ navigation, route }) {
         ))}
 
       </MapView>}
+      </View>
 
 
     </View>

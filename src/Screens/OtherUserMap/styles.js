@@ -3,27 +3,26 @@ import { StyleSheet, Dimensions } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height'
 const styles = StyleSheet.create({
     container: {
-       
-         flex: 1,
+        flex: 1,
         //alignItems: 'center',
-        // justifyContent: 'center',
-
+       // justifyContent: 'center',
+       
 
     },
-    filter: {
-
-        backgroundColor: "#ffffff",
-        marginTop: getStatusBarHeight() + 10,
+    filter : {
+   
+    backgroundColor: "#ffffff",
+  
     },
-    filterButtonContainer: {
-      
+    filterButtonContainer : {
+        marginTop : getStatusBarHeight() ,
         flexDirection: 'row',
         justifyContent: 'center',
-
-
-
+      
+     
+       
     },
-    filterButton: {
+    filterButton : {
         // height: 50,
         backgroundColor: "#ffffff",
         justifyContent: 'center',
@@ -31,56 +30,55 @@ const styles = StyleSheet.create({
 
 
         // marginStart : 10,
-
+       
     },
-    searchButton: {
+    searchButton : {
         // height: 50,
         backgroundColor: "#ffffff",
         justifyContent: 'center',
         borderRadius: 20,
-        borderColor: '#ff914d',
-        borderWidth: 1,
-        marginTop: 10,
-        marginStart: 100,
-        marginEnd: 100,
-
+        borderColor : '#ff914d',
+        borderWidth : 1,
+        marginTop : 10,
+        marginStart : 100,
+        marginEnd : 100,
+       
     },
-    filterButtonFont: {
+    filterButtonFont : {
         fontSize: 14,
-        fontWeight: '800',
-        color: "#ff914d",
+        fontWeight : '800',
+        color : "#ff914d",
     },
-    ContainerDropDown: {
-        marginTop: 10,
+    ContainerDropDown : {
+        marginTop:10,
         paddingStart: 40,
         paddingEnd: 40,
         // height: 200,
-    },
-    DropDown: {
+      },
+      DropDown: {
         borderColor: "#ddb07f",
         borderWidth: 1,
         position: 'relative',
-        top: 0,
-
-    },
-    listItemContainer: {
+        top:0,
+     
+      },
+      listItemContainer : {
         borderColor: "#ddb07f",
         borderBottomWidth: 1,
-
-    },
-    listItemContainerFont: {
-        fontSize: 15,
-        color: "#ff914d",
-        fontWeight: '600'
-    },
+       
+      },
+      listItemContainerFont : {
+        fontSize:15,
+        color : "#ff914d",
+        fontWeight : '600'
+      },
     map: {
 
         // alignItems: 'flex-end',
         // justifyContent: 'flex-end',
         width: '100%',
         height: '100%',
-       
-
+      
     },
 
     image: {

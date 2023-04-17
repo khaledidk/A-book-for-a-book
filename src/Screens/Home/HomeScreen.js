@@ -50,10 +50,11 @@ export default function HomeScreen({ navigation, route }) {
   const PressOnUserProfileHandler = (userId) => {
     const user = auth.currentUser;
     const uid = user.uid;
-
-    if (uid === userId) {
+       console.log("userid" , userId)
+    if (uid == userId) {
       navigation.navigate("Profile")
     } else {
+
       navigation.navigate("ViewProfile", { userId: userId })
     }
   }

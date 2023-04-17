@@ -24,10 +24,21 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.khaledidk.Abookforabook",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyD6-aSQWpkH0SN2pffG9pgWX60L0owkWhM"
+        }
       }
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "daefc4e3-0b88-4191-8fde-142f769aa72a"
+      }
     }
   }
 }

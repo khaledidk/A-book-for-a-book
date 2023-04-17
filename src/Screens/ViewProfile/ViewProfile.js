@@ -17,7 +17,7 @@ import { fetchtUserNameAndImage } from "../../config/FireStoreDB";
 import { Rating } from 'react-native-ratings';
 import { getDistance, getPreciseDistance } from 'geolib';
 
-export default function ViewProfile({ navigation , route }) {
+export default function ViewProfile({ navigation, route }) {
 
   const profileDefaultImageUri = Image.resolveAssetSource(require('../../../assets/defult_Profile.png')).uri;
 
@@ -31,7 +31,9 @@ export default function ViewProfile({ navigation , route }) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [myData, setMyData] = useState({});
   const [feedBackArray, setFeedBackArray] = useState([]);
-  var [pdis , setPdis] = useState();
+  const [otherUserCor, setOtherUserCor] = useState();
+  const [currUserCor, setCurrUserCor] = useState();
+  var [pdis, setPdis] = useState();
 
   const renderItem = ({ item }) => {
     return (
@@ -87,12 +89,12 @@ export default function ViewProfile({ navigation , route }) {
     if (uid === userId) {
       navigation.navigate("Profile")
     } else {
-      navigation.push("ViewProfile", { userId: userId }) 
-     
+      navigation.push("ViewProfile", { userId: userId })
+
     }
   }
   const smsSend = async () => {
-  
+
 
     console.log("my data", myData);
     const uid = route.params.userId;
@@ -105,7 +107,7 @@ export default function ViewProfile({ navigation , route }) {
     await AddFriend(uid).then((newChatroomId) => {
 
 
-      console.log("newChatroomId", newChatroomId)
+      console.log("newChatroomId=========", newChatroomId)
 
 
 
@@ -127,7 +129,7 @@ export default function ViewProfile({ navigation , route }) {
     })
 
     await fetchFeedBackWithUserDetails(uid).then((feedBackArray) => {
-     
+
       setFeedBackArray(feedBackArray)
 
     })
@@ -145,19 +147,26 @@ export default function ViewProfile({ navigation , route }) {
     const checkAvailable = await SMS.isAvailableAsync()
     setIsAvailable("ASDasd", checkAvailable)
   }
- 
+
   const calculatePreciseDistance = async () => {
     const OtherUser = route.params.userId;
     const user = auth.currentUser;
     const currid = user.uid;
+
     const corOtherUser = await fetchCurrentUserLoction(OtherUser)
     const corCurrUser = await fetchCurrentUserLoction(currid)
-    var tempPdis = getPreciseDistance(
-      { latitude: corOtherUser.latitude, longitude: corOtherUser.longitude },
-      { latitude: corCurrUser.latitude, longitude: corCurrUser.longitude }
-    );
-    setPdis(tempPdis)
-  
+
+    if (corOtherUser && corCurrUser) {
+      var tempPdis = getPreciseDistance(
+        { latitude: corOtherUser.latitude, longitude: corOtherUser.longitude },
+        { latitude: corCurrUser.latitude, longitude: corCurrUser.longitude }
+      );
+
+      setOtherUserCor(corOtherUser)
+      setCurrUserCor(corCurrUser)
+      setPdis(tempPdis)
+    }
+
   };
   const onRefresh = async () => {
 
@@ -253,11 +262,11 @@ export default function ViewProfile({ navigation , route }) {
             <Text style={styles.detailsFont}> {currUserInfo.phoneNumber}</Text>
           </View> : null}
 
-           <View style={styles.Details}>  
-            <MaterialIcons style={styles.icon} name={"location-pin"} size={40} color={"#ff914d"} /> 
+          {otherUserCor && currUserCor ? <TouchableOpacity onPress={() => navigation.navigate("OtherUserMap", { otherUserInfo: currUserInfo, otherUserCor: otherUserCor, userId: route.params.userId })} style={styles.Details}>
+            <MaterialIcons style={styles.icon} name={"location-pin"} size={40} color={"#ff914d"} />
             <Text style={styles.detailsFont}> {pdis / 1000} ק"מ</Text>
 
-           </View>
+          </TouchableOpacity> : null}
 
           <View style={styles.buttonContiner}>
             <View>
@@ -294,7 +303,7 @@ export default function ViewProfile({ navigation , route }) {
 
 
       </View>
-      {feedBackArray.length ? <Text style = {styles.feedBackLebal}>מושבים:</Text> : null}
+      {feedBackArray.length ? <Text style={styles.feedBackLebal}>מושבים:</Text> : null}
       <FlatList
 
         refreshControl={<RefreshControl

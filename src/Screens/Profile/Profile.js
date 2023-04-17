@@ -71,6 +71,17 @@ export default function Profile({ navigation, route }) {
 
     </View>
   );
+  const PressOnUserProfileHandler = (userId) => {
+    const user = auth.currentUser;
+    const uid = user.uid;
+    console.log("result", userId, uid)
+    if (uid === userId) {
+      navigation.navigate("Profile")
+    } else {
+      navigation.push("ViewProfile", { userId: userId }) 
+     
+    }
+  }
   const fetchuserInfo = async () => {
 
     const user = auth.currentUser;

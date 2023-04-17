@@ -209,6 +209,17 @@ imageProfileOtherUser: {
   borderRadius: 100,
 
 },
+starRating: {
+  flexDirection: "row-reverse",
+  marginTop: 20,
+},
+ratingText: {
+  color: "#ff914d",
+  fontWeight: '600',
+  fontSize: 15,
+  marginStart: 10,
+  marginTop: 5,
+},
 feedBackLebal : {
   marginTop : 10,
   fontSize: 20,
