@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
 import MapView, { Callout, Marker } from 'react-native-maps';
 import { PROVIDER_GOOGLE } from 'react-native-maps';
-import { View, Text, Alert, Image } from 'react-native';
+import { View, Text, Alert, Image, TouchableOpacity } from 'react-native';
 import styles from "./styles";
 import BackButton from '../../components/BackButton/BackButton';
 import * as Location from 'expo-location';
 import { fetchOtherUsers } from "../../config/FireStoreDB";
 import { fetchByUserId } from "../../config/FireStoreDB";
 import { auth } from '../../config/firebase';
+import { MaterialIcons } from '@expo/vector-icons';
 import OurActivityIndicator from "../../components/OurActivityIndicator/OurActivityIndicator";
 import { updateUserLoction } from "../../config/FireStoreDB";
-import { fetchCurrentUserInfo } from "../../config/FireStoreDB";
+import { fetchCurrentUserInfo, fetchCurrentUserLoction, fetchBookLoction } from "../../config/FireStoreDB";
 import { useIsFocused } from '@react-navigation/native';
 import { Svg, Image as ImageSvg } from 'react-native-svg';
 import DropDownPicker from "react-native-dropdown-picker";
-import { fetchBookLoction } from "../../config/FireStoreDB";
-import { Button } from "react-native-paper";
+import { Button, Modal } from "react-native-paper";
 export default function MapUser({ navigation, route }) {
   const profileDefaultImageUri = Image.resolveAssetSource(require('../../../assets/defult_Profile.png')).uri;
   const [mapRegion, setMapRegion] = useState({
@@ -112,6 +112,8 @@ export default function MapUser({ navigation, route }) {
   const [openTypeDrop, setOpenTypeDrop] = useState(false)
   const [typeArray, setTypeArray] = useState([])
 
+  const [isAleretVisible, setIsAlertVisible] = useState(false);
+
   const user = auth.currentUser;
   const uid = user.uid;
   const userLocation = async () => {
@@ -119,11 +121,80 @@ export default function MapUser({ navigation, route }) {
     const user = auth.currentUser;
     const uid = user.uid;
 
-    console.log("========= enter before ==========")
+    const locationObj = await fetchCurrentUserLoction(uid);
+
+    if (locationObj) {
+      setLatitude(locationObj.latitude);
+      setLongitude(locationObj.longitude);
+
+      setMapRegion({
+        latitude: locationObj.latitude,
+        longitude: locationObj.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      })
+
+
+      await fetchCurrentUserInfo(uid).then((userInfo) => {
+        userInfo["latitude"] = locationObj.latitude
+        userInfo["longitude"] = locationObj.longitude
+        setCurrUserInfo(() => [userInfo])
+      })
+      await fetchallUserLoctions();
+    } else {
+
+      let { status } = await Location.requestForegroundPermissionsAsync({
+        enableHighAccuracy: false,
+        maximumAge: 10000,
+        timeout: 5000
+      }).catch((error) => {
+        console.log("error : ", error)
+
+      });
+      if (status !== "granted") {
+        Alert.alert('', "סירבת לאפליקציה הזו לגשת למיקום שלך, עליך לשנות זאת ולאפשר גישה על מנת לקבל ביצועים טובים יותר", [, , { text: "אישור" }]);
+        setCurrUserInfo([]);
+        setOtherUsersInfo([]);
+        return;
+      }
+
+      let location;
+      if (!longitude && !latitude) {
+        location = await Location.getCurrentPositionAsync();
+        setLatitude(location.coords.latitude);
+        setLongitude(location.coords.longitude);
+
+
+        setMapRegion({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        })
+
+        let currUserLocation = {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        }
+
+        await fetchCurrentUserInfo(uid).then((userInfo) => {
+          userInfo["latitude"] = location.coords.latitude
+          userInfo["longitude"] = location.coords.longitude
+          setCurrUserInfo(() => [userInfo])
+        })
+
+
+
+        await fetchallUserLoctions();
+        updateUserLoction(currUserLocation)
+      }
+    }
+  }
+  const updateLoction = async () => {
+    setIsAlertVisible(false)
+    setIsLoading(true);
     let { status } = await Location.requestForegroundPermissionsAsync({
       enableHighAccuracy: false,
-
-
       maximumAge: 10000,
       timeout: 5000
     }).catch((error) => {
@@ -136,37 +207,34 @@ export default function MapUser({ navigation, route }) {
       setOtherUsersInfo([]);
       return;
     }
-    console.log("========= enter requestForegroundPermissionsAsync ==========")
+
     let location;
-    if (!longitude && !latitude) {
-      location = await Location.getCurrentPositionAsync();
-      setLatitude(location.coords.latitude);
-      setLongitude(location.coords.longitude);
+
+    location = await Location.getCurrentPositionAsync();
+    console.log("locationObj", location)
+    setLatitude(location.coords.latitude);
+    setLongitude(location.coords.longitude);
 
 
-      setMapRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      })
-      console.log("========= enter getCurrentPositionAsync ==========")
-      let currUserLocation = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      }
+    setMapRegion({
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    })
 
-      await fetchCurrentUserInfo(uid).then((userInfo) => {
-        userInfo["latitude"] = location.coords.latitude
-        userInfo["longitude"] = location.coords.longitude
-        setCurrUserInfo(() => [userInfo])
-      })
-
-
-
-      await fetchallUserLoctions();
-      updateUserLoction(currUserLocation)
+    let currUserLocation = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
     }
+    updateUserLoction(currUserLocation)
+    await fetchCurrentUserInfo(uid).then((userInfo) => {
+      userInfo["latitude"] = location.coords.latitude
+      userInfo["longitude"] = location.coords.longitude
+      setCurrUserInfo(() => [userInfo])
+    })
+    setIsLoading(false)
+
   }
 
   const fetchallUserLoctions = async () => {
@@ -194,7 +262,7 @@ export default function MapUser({ navigation, route }) {
     })
 
   }
- 
+
   const fetchByUsersLoction = async () => {
     setIsLoading(true);
 
@@ -304,14 +372,14 @@ export default function MapUser({ navigation, route }) {
           <Button
             style={styles.filterButton}
             labelStyle={styles.filterButtonFont}
-            mode="Outlined "
+            mode="Outlined"
             onPress={() => setDropsVisible(!dropsVisible)}>
             חיפוש לפי ספרים
           </Button>
           <Button
             style={styles.filterButton}
             labelStyle={styles.filterButtonFont}
-            mode="contained"
+            mode="Outlined"
             onPress={() => setDropsVisible(false) || setBooksVisible(false)}>
             הציג לפי בעלי ספרים
           </Button>
@@ -411,102 +479,146 @@ export default function MapUser({ navigation, route }) {
           חיבוש
         </Button>}
       </View>}
-      <View style = {{flex : 1 , bottom : Platform.OS === "ios" ? 70 : 60 , marginTop: Platform.OS === "ios" ? 70 : 60}}>
+      <View style={{ flex: 1, bottom: Platform.OS === "ios" ? 72 : 60, marginTop: Platform.OS === "ios" ? 70 : 60 }}>
 
-      {!isLoading && <MapView style={styles.map}
-        region={mapRegion}
+        {!isLoading && <MapView style={styles.map}
+          region={mapRegion}
 
-        provider={PROVIDER_GOOGLE}
+          provider={PROVIDER_GOOGLE}
 
-      >
-
-
-        {currUserInfo.map((user) => (
-          <Marker
-            key={0}
-            coordinate={user}
-            pinColor='blue'
-
-          >
-            <Callout onPress={() => navigation.navigate("Profile")}  >
-              <View style={styles.bubble}>
-                <Text style={styles.txtFont}>אני</Text>
+        >
 
 
-                <Svg width={100} height={100}  >
-                  <ImageSvg
-                    width={'100%'}
-                    height={'100%'}
+          {currUserInfo.map((user) => (
+            <Marker
+              key={0}
+              coordinate={user}
+              pinColor='blue'
+
+            >
+              <Callout onPress={() => navigation.navigate("Profile")}  >
+                <View style={styles.bubble}>
+                  <Text style={styles.txtFont}>אני</Text>
 
 
-                    preserveAspectRatio="xMidYMid slice"
-                    style={styles.image}
-                    href={{ uri: !user.image ? profileDefaultImageUri : user.image }}
-                  />
-                </Svg>
-
-              </View>
-
-            </Callout>
-          </Marker>
-        ))}
-
-        {!booksVisible && otherUsersInfo.map((user, i) => (
-          <Marker
-            key={i + 1}
-            coordinate={user}
-          >
-            <Callout onPress={() => navigation.navigate("ViewProfile", { userId: user.id })} >
-              <View style={styles.bubble}>
-                <Text style={styles.txtFont}>{user.name}</Text>
+                  <Svg width={100} height={100}  >
+                    <ImageSvg
+                      width={'100%'}
+                      height={'100%'}
 
 
-                <Svg width={100} height={100}>
-                  <ImageSvg
-                    width={'100%'}
-                    height={'100%'}
-                    preserveAspectRatio="xMidYMid slice"
-                    href={{ uri: !user.image ? profileDefaultImageUri : user.image }}
-                  />
-                </Svg>
+                      preserveAspectRatio="xMidYMid slice"
+                      style={styles.image}
+                      href={{ uri: !user.image ? profileDefaultImageUri : user.image }}
+                    />
+                  </Svg>
 
-              </View>
+                </View>
 
-            </Callout>
+              </Callout>
+            </Marker>
+          ))}
 
-          </Marker>
-        ))}
+          {!booksVisible && otherUsersInfo.map((user, i) => (
+            <Marker
+              key={i + 1}
+              coordinate={user}
+            >
+              <Callout onPress={() => navigation.navigate("ViewProfile", { userId: user.id })} >
+                <View style={styles.bubble}>
+                  <Text style={styles.txtFont}>{user.name}</Text>
 
-        {booksVisible && bookByFilterInfo.map((book, i) => (
-          <Marker
-            key={i + 1}
-            coordinate={book}
-          >
-            <Callout >
-              <View style={styles.bubble}>
-                <Text style={styles.txtFont}>{book.title}</Text>
-                {book.user_id === uid ? <Text style={styles.txtFont}>(ספר שלי )</Text> : null}
 
-                <Svg width={100} height={100}>
-                  <ImageSvg
-                    width={'100%'}
-                    height={'100%'}
-                    preserveAspectRatio="xMidYMid slice"
-                    href={{ uri: !book.image ? profileDefaultImageUri : book.image }}
-                  />
-                </Svg>
+                  <Svg width={100} height={100}>
+                    <ImageSvg
+                      width={'100%'}
+                      height={'100%'}
+                      preserveAspectRatio="xMidYMid slice"
+                      href={{ uri: !user.image ? profileDefaultImageUri : user.image }}
+                    />
+                  </Svg>
 
-              </View>
+                </View>
 
-            </Callout>
+              </Callout>
 
-          </Marker>
-        ))}
+            </Marker>
+          ))}
 
-      </MapView>}
+          {booksVisible && bookByFilterInfo.map((book, i) => (
+            <Marker
+              key={i + 1}
+              coordinate={book}
+            >
+              <Callout >
+                <View style={styles.bubble}>
+                  <Text style={styles.txtFont}>{book.title}</Text>
+                  {book.user_id === uid ? <Text style={styles.txtFont}>(ספר שלי )</Text> : null}
+
+                  <Svg width={100} height={100}>
+                    <ImageSvg
+                      width={'100%'}
+                      height={'100%'}
+                      preserveAspectRatio="xMidYMid slice"
+                      href={{ uri: !book.image ? profileDefaultImageUri : book.image }}
+                    />
+                  </Svg>
+
+                </View>
+
+              </Callout>
+
+            </Marker>
+          ))}
+
+        </MapView>}
+        <TouchableOpacity style={styles.newLocation} onPress={() => setIsAlertVisible(true)} >
+          <MaterialIcons style={styles.icon} name={"location-pin"} size={40} color={"#ff914d"} />
+          <Text>עדכון מקום</Text>
+        </TouchableOpacity>
       </View>
 
+      <Modal visible={isAleretVisible}>
 
+        <View style={styles.alertContainer}>
+
+
+          <View style={styles.alertContentContainer}>
+
+
+            <Text style={styles.alertContentTextError}>האם אתה רוצה לעדכן המקום שלך במקמך הנוכחי?</Text>
+
+            <View style={styles.modelAnswer}>
+
+              <Button
+                style={styles.ModealButtons}
+                labelStyle={styles.filterButtonFont}
+                mode="Outlined"
+                onPress={updateLoction}
+              >
+
+                כן
+              </Button>
+              <Button
+                style={styles.ModealButtons}
+                labelStyle={styles.filterButtonFont}
+                mode="Outlined"
+                onPress={() => setIsAlertVisible(false)}
+              >
+
+                לא
+              </Button>
+
+
+
+            </View>
+
+
+          </View>
+
+        </View>
+
+      </Modal>
     </View>
   );
 

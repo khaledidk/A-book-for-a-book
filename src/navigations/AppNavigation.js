@@ -54,11 +54,11 @@ export const TabStack = () => {
 
     onValue(user, snapshot => {
       const data = snapshot.val();
-   
-      if (data.notifyCounter || data.notifyCounter == 0 ) {
+
+      if (data.notifyCounter || data.notifyCounter == 0) {
         console.log("yess")
         if (data.notifyCounter == 0) {
-       
+
           setChatBadge()
         } else {
           setChatBadge(data.notifyCounter)
@@ -78,7 +78,7 @@ export const TabStack = () => {
       screenOptions={({ route }) => ({
 
         headerShown: false,
-        showLabel: false,
+        showLabel: true,
         tabBarActiveTintColor: "#ff914d",
         tabBarHideOnKeyboard: true,
 
@@ -113,24 +113,62 @@ export const TabStack = () => {
           // right: 10,
           // left: 10,
           // bottom: Platform.OS === "ios" ? getStatusBarHeight() : 0,
-          height: Platform.OS === "ios" ? 70 : 60,
+          height: Platform.OS === "ios" ? 80 : 60,
           // borderRadius: 15,
           // paddingBottom: 5,
         },
 
-        tabBarShowLabel: false,
+        tabBarShowLabel: true,
+        tabBarLabelStyle: {
+          fontSize: 15
+        },
 
       })}
 
 
     >
-      <Tab.Screen name='Home' component={HomeScreen} />
-      <Tab.Screen name='UserPost' component={UserPostScreen} />
-      <Tab.Screen name='Profile' component={profileScreen} />
-      <Tab.Screen name='MapUser' component={MapUserScreen} />
+      <Tab.Screen name='Home' component={HomeScreen}
+        options={{
+
+          tabBarLabel: "בית",
+
+
+        }}
+
+      />
+      <Tab.Screen name='UserPost' component={UserPostScreen}
+
+        options={{
+
+          tabBarLabel: "ספרים שלי",
+
+
+        }}
+
+      />
+      <Tab.Screen name='Profile' component={profileScreen}
+        options={{
+
+          tabBarLabel: "איזור אישי",
+
+
+        }} />
+      <Tab.Screen name='MapUser' component={MapUserScreen}
+
+        options={{
+
+          tabBarLabel: "מפה",
+
+
+        }}
+
+      />
       <Tab.Screen name="ChatRoom" component={ChatRoomScreen}
+
         options={{
           tabBarBadge: chatBadge,
+          tabBarLabel: "צ'אט",
+
 
         }}
 

@@ -13,13 +13,13 @@ const styles = StyleSheet.create({
     filter: {
 
         backgroundColor: "#ffffff",
-        marginTop: getStatusBarHeight() + 10,
+    
     },
     filterButtonContainer: {
       
         flexDirection: 'row',
         justifyContent: 'center',
-
+        marginTop: getStatusBarHeight() + 10,
 
 
     },
@@ -31,6 +31,17 @@ const styles = StyleSheet.create({
 
 
         // marginStart : 10,
+
+    },
+    ModealButtons: {
+        // height: 50,
+        backgroundColor: "#ffffff",
+        justifyContent: 'center',
+        borderRadius: 20,
+        borderColor: '#ff914d',
+        borderWidth: 1,
+        marginEnd: 20,
+        marginStart : 20,
 
     },
     searchButton: {
@@ -102,5 +113,60 @@ const styles = StyleSheet.create({
         fontWeight: '700'
 
     },
+    newLocation : {
+        position: 'absolute',
+        bottom: Platform.OS === "ios" ? getStatusBarHeight() + 40 : 40,
+        backgroundColor: "#ffffff",
+        borderRadius: 100,
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection : 'row',
+        left : 10, 
+        padding : 5
+    },
+    alertContainer: {
+        flexDirection: "column",
+         width: "100%",
+        // height: "100%",
+        justifyContent: "center",
+        alignContent: "center",
+        alignItems: "center",
+       
+      },
+      IconError: {
+      
+        color: "red",
+    
+    
+    },
+    alertContentTextError: {
+    
+      textAlign: "right",
+      fontSize: 20,
+      marginBottom: 10,
+      // color: "red",
+      fontWeight : '800',
+      paddingRight: 8,
+      color : "#ff914d",  
+      
+    },
+    alertContentContainer: {
+    backgroundColor: "white",
+    borderColor: "#ff914d",
+    borderWidth: 1,
+    borderRadius: 7,
+    padding: 50,
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems: "center",
+    width: "100%",
+    },
+    modelAnswer : {
+     marginTop : 20,
+     flexDirection : 'row',
+     justifyContent : 'center'
+
+    },
+ 
 });
 export default styles;

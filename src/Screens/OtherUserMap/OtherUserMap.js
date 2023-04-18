@@ -9,6 +9,7 @@ import { auth } from '../../config/firebase';
 import styles from "./styles";
 import BackButton from "../../components/BackButton/BackButton";
 export default function OtherUserMap({ navigation, route }) {
+    const profileDefaultImageUri = Image.resolveAssetSource(require('../../../assets/defult_Profile.png')).uri;
     const [currUserInfo, setCurrUserInfo] = useState([])
     const [isLoading, setIsLoading] = useState(true);
     const [mapRegion, setMapRegion] = useState({

@@ -319,7 +319,7 @@ export default function UserPost({ navigation, route }) {
 
                         {/* <Ionicons name={"trash-outline"} size={100} color={"red"} /> */}
                         {/* <Entypo style={styles.IconError} name='circle-with-cross' size={100} />  */}
-                        <Text style={styles.alertContentTextError}>האם אתה בטוח רוצה למחוק את הפוסט הזה?</Text>
+                        <Text style={styles.alertContentTextError}>האם אתה בטוח שרוצה למחוק את הפוסט הזה?</Text>
                         <Button
                             style={styles.ButtonClose}
                             labelStyle={styles.ButtonCloseFont}
