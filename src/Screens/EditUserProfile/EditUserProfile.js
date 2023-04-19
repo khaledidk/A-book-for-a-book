@@ -12,7 +12,7 @@ import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 
 import { nameValidator } from "../../helpers/nameValidator";
 
-import PhoneInput from 'react-native-phone-number-input';
+// import PhoneInput from 'react-native-phone-number-input';
 import DateTimePicker from '@react-native-community/datetimepicker';
 export default function EditUserProfile({ navigation, route }) {
 
@@ -23,15 +23,11 @@ export default function EditUserProfile({ navigation, route }) {
     const [imageError, setImageError] = useState(false)
     const [userName, setUserName] = useState({ value: route.params.userName, error: "" });
     const [NumberValue, setNumberValue] = useState(route.params.phoneNumber.substring(4));
-    const [FormattedNumber, setFormattedNumber] = useState(route.params.phoneNumber);
     const [ValidNumber, setValidNumber] = useState(false);
     const [PhoneInputerror, setPhoneInputerror] = useState("");
     const [date, setDate] = useState(new Date());
-    const [FormattedDate, setFormattedDate] = useState(route.params.date);
-    const [IsDateEmpty, setIsDateEmpty] = useState(false);
-    const [ShowDatePicker, setShowDatePicker] = useState(false);
 
-    const phoneInput = useRef(null);
+
     const profileDefaultImageUri = Image.resolveAssetSource(require('../../../assets/defult_Profile.png')).uri;
     const pickImage = async () => {
         // No permissions request is necessary for launching the image library
@@ -57,18 +53,29 @@ export default function EditUserProfile({ navigation, route }) {
         setFormattedDate(fDate)
 
     };
+    function ValidatePhoneNumber(phoneNumber) { // check if the cell phone number is valid for israel
+        var regex = /^05\d([-]{0,1})\d{7}$/;
+        var phone = phoneNumber.match(regex);
+        if (phone) {
+            return true;
+        }
+        return false;
+    }
 
     async function onUpdatePressed() {
 
         const userNameError = nameValidator(userName.value)
 
 
-        const CheckValidPhoneNumber = phoneInput.current?.isValidNumber(NumberValue);
+        // const CheckValidPhoneNumber = phoneInput.current?.isValidNumber(NumberValue);
+        // setValidNumber(CheckValidPhoneNumber ? CheckValidPhoneNumber : false);
+        const CheckValidPhoneNumber = ValidatePhoneNumber(NumberValue)
+        console.log("CheckValidPhoneNumber", CheckValidPhoneNumber)
         setValidNumber(CheckValidPhoneNumber ? CheckValidPhoneNumber : false);
 
 
 
-        if (userNameError || !image || (!CheckValidPhoneNumber && FormattedNumber)) {
+        if (userNameError || !image || (!CheckValidPhoneNumber )) {
             if (!image) {
 
                 setImageError(true)
@@ -78,14 +85,8 @@ export default function EditUserProfile({ navigation, route }) {
             }
 
 
-            // if (!FormattedDate) {
 
-            //     setIsDateEmpty(true)
-            // } else {
-
-            //     setIsDateEmpty(false)
-            // }
-            if (!CheckValidPhoneNumber && FormattedNumber) {
+            if (!CheckValidPhoneNumber) {
                 setPhoneInputerror("* מספר טלפון אינו נכון")
 
             }
@@ -102,7 +103,7 @@ export default function EditUserProfile({ navigation, route }) {
             updateUserJson = {
 
                 name: userName.value,
-                phoneNumber: FormattedNumber,
+                phoneNumber: NumberValue,
 
                 image: null,
 
@@ -111,7 +112,7 @@ export default function EditUserProfile({ navigation, route }) {
             updateUserJson = {
 
                 name: userName.value,
-                phoneNumber: FormattedNumber,
+                phoneNumber: NumberValue,
                 image: image,
 
 
@@ -167,6 +168,22 @@ export default function EditUserProfile({ navigation, route }) {
                                     userIcon='user-o'
 
                                 />
+                                {/* <View style={styles.inputContainer2}> */}
+                                <TextInput
+                                    value={NumberValue}
+                                    onChangeText={(userPhone) => setNumberValue(userPhone)}
+                                    label="טלפון נייד"
+                                    keyboardType="numeric"
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    phoneIcon='phone'
+                                    style={styles.PhoneInputStyle}
+                                    error={!!PhoneInputerror}
+                                    errorText={PhoneInputerror}
+                                />
+
+
+                                {/* </View> */}
                                 {/* <View style={styles.DatePicker}>
                                     <View style={styles.DateFontContainer} >
                                         <Text style={styles.DateFont}>{FormattedDate}</Text>
@@ -185,7 +202,7 @@ export default function EditUserProfile({ navigation, route }) {
 
                                 </View>
                                 {IsDateEmpty ? <Text style={styles.DateErrorFont}> * לבחור תאריך חובה</Text> : null} */}
-
+                                {/* 
                                 {PhoneInputerror ? <PhoneInput
                                     ref={phoneInput}
                                     defaultValue={NumberValue}
@@ -242,7 +259,7 @@ export default function EditUserProfile({ navigation, route }) {
                                 /> : null}
 
                                 {PhoneInputerror ? <Text style={styles.error}>{PhoneInputerror}</Text> : null}
-
+ */}
 
                                 <Button
                                     style={styles.updateButton}

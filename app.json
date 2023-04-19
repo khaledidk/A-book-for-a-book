@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "A-book-for-a-book",
+    "name": "A book for a book - ספר תמורת ספר",
     "slug": "A-book-for-a-book",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -26,6 +26,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.khaledidk.Abookforabook",
+      "versionCode": 1,
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyD6-aSQWpkH0SN2pffG9pgWX60L0owkWhM"

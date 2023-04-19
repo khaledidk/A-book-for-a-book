@@ -11,14 +11,14 @@ import { nameValidator } from '../../helpers/nameValidator';
 import { Button, Modal } from "react-native-paper";
 
 import DateTimePicker from '@react-native-community/datetimepicker';
-import PhoneInputComponet from '../../components/PhoneInput/PhoneInputComponet';
+
 
 import { Entypo, ModelIcon, MaterialCommunityIcons } from '@expo/vector-icons';
 import { CreatNewUser } from '../../config/RealTimeDB';
 import { addNewItem } from '../../config/FireStoreDB';
 
 import DropDownPicker from 'react-native-dropdown-picker'
-import PhoneInput from 'react-native-phone-number-input';
+// import PhoneInput from 'react-native-phone-number-input';
 import createUser from '../../config/AuthDB'
 
 
@@ -56,6 +56,14 @@ export default function Register(props) {
         }
 
     }
+    function ValidatePhoneNumber(phoneNumber) { // check if the cell phone number is valid for israel
+        var regex = /^05\d([-]{0,1})\d{7}$/;
+        var phone = phoneNumber.match(regex);
+        if (phone) {
+            return true;
+        }
+        return false;
+    }
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -78,21 +86,17 @@ export default function Register(props) {
         const NameError = nameValidator(UserName.value)
 
 
-        const CheckValidPhoneNumber = phoneInput.current?.isValidNumber(NumberValue);
+        const CheckValidPhoneNumber = ValidatePhoneNumber(NumberValue);
         setValidNumber(CheckValidPhoneNumber ? CheckValidPhoneNumber : false);
 
 
-
-
-
-
-        if (emailError || passwordError || NameError || ConfirmPasswordError || (!CheckValidPhoneNumber && FormattedNumber)) {
+        if (emailError || passwordError || NameError || ConfirmPasswordError || (!CheckValidPhoneNumber)) {
             // if (!FormattedDate) {
             //     setIsDateEmpty(true)
             // } else {
             //     setIsDateEmpty(false)
             // }
-            if (!CheckValidPhoneNumber && FormattedNumber) {
+            if (!CheckValidPhoneNumber) {
                 setPhoneInputerror("* מספר טלפון אינו נכון")
 
             }
@@ -178,9 +182,20 @@ export default function Register(props) {
                                     keyboardType="email-address"
                                     emailicon="email-outline"
                                 />
+                                <TextInput
+                                    value={NumberValue}
+                                    onChangeText={(userPhone) => setNumberValue(userPhone)}
+                                    label="טלפון נייד"
+                                    keyboardType="numeric"
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    phoneIcon='phone'
+                                    style={styles.PhoneInputStyle}
+                                    error={!!PhoneInputerror}
+                                    errorText={PhoneInputerror}
+                                />
 
-
-                                <View style={styles.InputView}>
+                                {/* <View style={styles.InputView}>
 
                                     {PhoneInputerror ? <PhoneInput
                                         ref={phoneInput}
@@ -240,7 +255,7 @@ export default function Register(props) {
                                     /> : null}
 
                                     {PhoneInputerror ? <Text style={styles.error}>{PhoneInputerror}</Text> : null}
-                                </View>
+                                </View> */}
 
                                 {/* <View style={styles.DatePicker}>
                                     <View style={styles.DateFontContainer} >

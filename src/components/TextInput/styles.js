@@ -40,6 +40,13 @@ const styles = StyleSheet.create({
         top: 12,
         color: "#ff914d",
     },
+    phone : {
+        position: "absolute",
+        zIndex: 1,
+        left: 15,
+        top: 10,
+        color: "#ff914d",
+    },
     input: {
         paddingLeft: 50,
         backgroundColor: "#ffffff",

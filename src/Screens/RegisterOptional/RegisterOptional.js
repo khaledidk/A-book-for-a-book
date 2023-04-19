@@ -7,10 +7,10 @@ import styles from './styles';
 import { Octicons, Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { Button, Modal, Text } from "react-native-paper";
-import PhoneInput from 'react-native-phone-number-input';
+// import PhoneInput from 'react-native-phone-number-input';
 
 
-import PhoneInputComponet from '../../components/PhoneInput/PhoneInputComponet';
+// import PhoneInputComponet from '../../components/PhoneInput/PhoneInputComponet';
 import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper/KeyboardAvoidingWrapper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
@@ -55,7 +55,7 @@ export default function RegisterOptional(props) {
     // }
 
     const onRegisterOptionalPressed = () => {
-     
+
         const CheckValidPhoneNumber = phoneInput.current?.isValidNumber(NumberValue);
         setValidNumber(CheckValidPhoneNumber ? CheckValidPhoneNumber : false);
 
@@ -148,7 +148,7 @@ export default function RegisterOptional(props) {
                     {/* // input View  */}
 
                     <View style={styles.InputView}>
-
+                        {/* 
                         {PhoneInputerror ? <PhoneInput
                             ref={phoneInput}
                             defaultValue={NumberValue}
@@ -204,7 +204,7 @@ export default function RegisterOptional(props) {
 
                         /> : null}
 
-                        {PhoneInputerror ? <Text style={styles.error}>{PhoneInputerror}</Text> : null}
+                        {PhoneInputerror ? <Text style={styles.error}>{PhoneInputerror}</Text> : null} */}
 
 
                         {/* <SearchableDropdown

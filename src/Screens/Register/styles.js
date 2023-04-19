@@ -82,11 +82,8 @@ const styles = StyleSheet.create({
     },
     PhoneInputStyle: {
 
-        borderColor: "#ddb07f",
-        borderWidth: 1.5,
-        backgroundColor: "#ffffff",
-        borderRadius: 5,
-        marginTop: 20,
+        textAlign: "left",
+        paddingLeft : 50,
 
 
     },

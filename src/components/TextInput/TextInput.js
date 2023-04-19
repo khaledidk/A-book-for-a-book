@@ -5,13 +5,13 @@ import { Feather, MaterialCommunityIcons, AntDesign , FontAwesome } from '@expo/
 
 
 import styles from "./styles";
-export default function TextInput({ errorText, description, userIcon , emailicon, lockicon, book, label, error, ...props }) {
+export default function TextInput({ errorText, description, userIcon , emailicon, lockicon, book, label,phoneIcon, error, ...props }) {
 
     return (
 
         <View style={styles.container}>
 
-
+             <MaterialCommunityIcons name={phoneIcon} size={40} style={styles.phone} />
             <MaterialCommunityIcons style={styles.IconEmail} name={emailicon} size={50} />
             <AntDesign style={styles.IconLock} name={lockicon} size={50} />
             <FontAwesome style={styles.IconUser} name={userIcon} size={40} />
