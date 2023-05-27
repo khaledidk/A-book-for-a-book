@@ -6,14 +6,22 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     top: 10 + getStatusBarHeight(),
-    left: 10,
+    left: 20,
     zIndex: 1,
     elevation: 1,
     
   },
-  BackIcon : {
-    color : "#ff914d",
-  }
+  container2: {
+    position: 'absolute',
+    top: 10 + getStatusBarHeight(),
+    right: 20,
+    zIndex: 1,
+    elevation: 1,
+    
+  },
+  // BackIcon : {
+  //   color : "#ff914d",
+  // }
 });
 
 export default styles;

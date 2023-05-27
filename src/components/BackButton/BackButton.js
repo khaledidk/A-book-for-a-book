@@ -1,21 +1,34 @@
-import * as React from 'react';
-import { TouchableHighlight, Image,View , TouchableOpacity } from "react-native";
+
+import React, { useState, useEffect } from "react";
+import { TouchableHighlight, Image, View, TouchableOpacity, I18nManager, Pressable } from "react-native";
 
 import styles from "./styles";
 import { Feather } from '@expo/vector-icons';
 
-export default function BackButton({ goBack }) {
+export default function BackButton({navigation , goBack, color = "#ff914d" , params }) {
+
+  const [isPressed, setIsPressed] = useState(false);
+  const pressHandle = () => {
+    setIsPressed(true)
+    if (!isPressed) {
+      if(params ){
+        navigation.navigate("ChatRoom" , {from :params })
+      
+      }else{
+      goBack()
+      }
+    }
+  }
   return (
-    <TouchableOpacity onPress={goBack} style={styles.container}>
-    <Feather name= "arrow-left-circle"  style = {styles.BackIcon}size={30}/>
-    
-  </TouchableOpacity>
-    
+
+
+    <TouchableOpacity onPress={pressHandle} style={styles.container}>
+      <Feather name="arrow-left-circle" color={color} size={35} />
+    </TouchableOpacity>
+
+
+
+
   );
 }
 
-// BackButton.propTypes = {
-//   onPress: PropTypes.func,
-//   source: PropTypes.number,
-//   title: PropTypes.string,
-// };

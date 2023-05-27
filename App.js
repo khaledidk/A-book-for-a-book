@@ -1,10 +1,22 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import AppContainer from './src/navigations/AppNavigation';
+import { RootNavigator } from "./src/navigations/RootNavigator";
+import { AuthenticatedUserProvider } from "./src/providers";
+import { createStackNavigator } from "@react-navigation/stack";
+
+import { LogBox } from 'react-native';
+
+const Stack = createStackNavigator();
+
+LogBox.ignoreLogs(['Setting a timer']);
+LogBox.ignoreLogs(['AsyncStorage']);
 
 export default function App() {
   return (
-    <AppContainer/>
+    <AuthenticatedUserProvider>
+      <RootNavigator />
+    </AuthenticatedUserProvider>
+
   );
 }
 

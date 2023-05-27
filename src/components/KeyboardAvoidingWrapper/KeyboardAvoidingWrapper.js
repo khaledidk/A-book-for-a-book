@@ -7,10 +7,14 @@ const KeyboardAvoidingWrapper = ({ children }) => {
     return (
 
         <KeyboardAvoidingView 
-        style={{flex: 1}}
+       
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView 
+              style={{flex: 1}}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}>
+            
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     {children}
                 </TouchableWithoutFeedback>
