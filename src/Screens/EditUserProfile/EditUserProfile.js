@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState, useRef } from "react";
-import { TouchableOpacity, Text, View, KeyboardAvoidingView, ScrollView, Image } from "react-native";
+import { TouchableOpacity, Text, View, KeyboardAvoidingView, ScrollView, Image, I18nManager } from "react-native";
 
 import styles from "./styles";
 import KeyboardAvoidingWrapper from "../../components/KeyboardAvoidingWrapper/KeyboardAvoidingWrapper";
@@ -14,6 +14,8 @@ import { nameValidator } from "../../helpers/nameValidator";
 
 // import PhoneInput from 'react-native-phone-number-input';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import BackButton2 from "../../components/BackButton2/BackButton2";
+import LodingModel from "../../components/LodingModel/LodingModel";
 export default function EditUserProfile({ navigation, route }) {
 
 
@@ -22,13 +24,15 @@ export default function EditUserProfile({ navigation, route }) {
     const [image, setImage] = useState(route.params.image);
     const [imageError, setImageError] = useState(false)
     const [userName, setUserName] = useState({ value: route.params.userName, error: "" });
-    const [NumberValue, setNumberValue] = useState(route.params.phoneNumber.substring(4));
+    const [NumberValue, setNumberValue] = useState(route.params.phoneNumber);
     const [ValidNumber, setValidNumber] = useState(false);
     const [PhoneInputerror, setPhoneInputerror] = useState("");
-    const [date, setDate] = useState(new Date());
 
+    const [isLoadingModel, setIsLoadingModel] = useState(false);
 
     const profileDefaultImageUri = Image.resolveAssetSource(require('../../../assets/defult_Profile.png')).uri;
+
+    // this function help to pick image from library
     const pickImage = async () => {
         // No permissions request is necessary for launching the image library
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -44,17 +48,14 @@ export default function EditUserProfile({ navigation, route }) {
             setImage(result.assets[0].uri);
         }
     };
-    const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        setShowDatePicker(Platform.OS === 'ios')
-        setDate(currentDate);
-        let tempeDate = new Date(currentDate)
-        let fDate = tempeDate.getDate() + '/' + (tempeDate.getMonth() + 1) + '/' + tempeDate.getFullYear();
-        setFormattedDate(fDate)
 
-    };
+
+    // this functio check validation of phonw Number
     function ValidatePhoneNumber(phoneNumber) { // check if the cell phone number is valid for israel
         var regex = /^05\d([-]{0,1})\d{7}$/;
+        if (!phoneNumber) {
+            return true;
+        }
         var phone = phoneNumber.match(regex);
         if (phone) {
             return true;
@@ -62,6 +63,8 @@ export default function EditUserProfile({ navigation, route }) {
         return false;
     }
 
+    // this function implement when press on update button, they check the validation of book details 
+    // then upload the data to DB
     async function onUpdatePressed() {
 
         const userNameError = nameValidator(userName.value)
@@ -75,7 +78,7 @@ export default function EditUserProfile({ navigation, route }) {
 
 
 
-        if (userNameError || !image || (!CheckValidPhoneNumber )) {
+        if (userNameError || (!CheckValidPhoneNumber)) {
             if (!image) {
 
                 setImageError(true)
@@ -95,17 +98,16 @@ export default function EditUserProfile({ navigation, route }) {
             setUserName({ ...userName, error: userNameError });
             return;
         }
-        // setIsDateEmpty(false)
-        // setIsDateEmpty(false)
+        setIsLoadingModel(true)
+
         let updateUserJson;
-        console.log("image", image)
-        if (profileDefaultImageUri === image) {
+        console.log("image", image, profileDefaultImageUri)
+        if (profileDefaultImageUri === image || !image) {
             updateUserJson = {
 
                 name: userName.value,
                 phoneNumber: NumberValue,
 
-                image: null,
 
             }
         } else {
@@ -119,6 +121,8 @@ export default function EditUserProfile({ navigation, route }) {
             }
         }
         console.log(updateUserJson)
+        setIsLoadingModel(false)
+
         navigation.navigate("Profile", { updateUserJson: updateUserJson })
 
     };
@@ -128,7 +132,9 @@ export default function EditUserProfile({ navigation, route }) {
             behavior={Platform.OS === "ios" ? "padding" : ""}
 
         >
-            <BackButton goBack={navigation.goBack} />
+            {I18nManager.isRTL ?
+                <BackButton2 goBack={navigation.goBack} />
+                : <BackButton goBack={navigation.goBack} />}
             <ScrollView
                 style={styles.container}
 
@@ -146,11 +152,22 @@ export default function EditUserProfile({ navigation, route }) {
                             <View style={styles.addImageButton}  >
 
 
+                                {image ? <Image
+                                    style={styles.bookImage}
+                                    source={{ uri: image }}
+
+                                /> :
+                                    <Image
+                                        style={styles.bookImage}
+                                        source={{ uri: profileDefaultImageUri }}
+
+                                    />
+
+                                }
 
 
 
-                                {image && <Image source={{ uri: image }} style={styles.bookImage} />}
-                                {imageError ? <Text style={styles.typeErrorFont}>* לבחור תמונה  חובה</Text> : null}
+
                                 <MaterialCommunityIcons name={"image-edit"} size={50} color={"#ff914d"} onPress={pickImage} />
                             </View>
                             {/* // input View  */}
@@ -177,89 +194,12 @@ export default function EditUserProfile({ navigation, route }) {
                                     autoCapitalize="none"
                                     autoCorrect={false}
                                     phoneIcon='phone'
-                                    style={styles.PhoneInputStyle}
+                                    style={[I18nManager.isRTL && styles.PhoneInputStyle2 ,!I18nManager.isRTL && styles.PhoneInputStyle]}
                                     error={!!PhoneInputerror}
                                     errorText={PhoneInputerror}
                                 />
+                              <Text style = {[I18nManager.isRTL && styles.phoneStart2 ,!I18nManager.isRTL && styles.phoneStart]}>+972</Text>
 
-
-                                {/* </View> */}
-                                {/* <View style={styles.DatePicker}>
-                                    <View style={styles.DateFontContainer} >
-                                        <Text style={styles.DateFont}>{FormattedDate}</Text>
-                                    </View>
-
-                                    <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => setShowDatePicker(true)} >
-                                        <Entypo name='calendar' style={styles.IconDate} size={50} />
-                                        {ShowDatePicker && (<DateTimePicker
-                                            testID='dateTimepicker'
-                                            value={date}
-                                            mode='date'
-                                            onChange={onChange}
-
-                                        />)}
-                                    </TouchableOpacity>
-
-                                </View>
-                                {IsDateEmpty ? <Text style={styles.DateErrorFont}> * לבחור תאריך חובה</Text> : null} */}
-                                {/* 
-                                {PhoneInputerror ? <PhoneInput
-                                    ref={phoneInput}
-                                    defaultValue={NumberValue}
-                                    defaultCode="IL"
-                                    layout="first"
-                                    placeholder='מספר טלפון'
-
-
-                                    containerStyle={styles.PhoneInputBorderError}
-                                    textContainerStyle={{ backgroundColor: '#ffffff' }}
-                                    countryPickerButtonStyle={styles.PhoneInputButton}
-                                    countryPickerProps={{ region: 'Asia' }}
-                                    onChangeText={(text) => {
-                                        setNumberValue(text)
-                                    }}
-
-                                    onChangeFormattedText={(text) => {
-                                        console.log(text)
-                                        setFormattedNumber(text)
-                                    }}
-
-
-                                    filterProps={{ placeholder: 'תבחרו מדינה' }}
-
-                                    withShadow
-
-
-                                /> : null}
-                                {!PhoneInputerror ? <PhoneInput
-                                    ref={phoneInput}
-                                    defaultValue={NumberValue}
-                                    defaultCode="IL"
-                                    layout="first"
-                                    placeholder='מספר טלפון'
-
-
-                                    containerStyle={styles.PhoneInputStyle}
-                                    textContainerStyle={{ backgroundColor: '#ffffff' }}
-                                    countryPickerButtonStyle={styles.PhoneInputButton}
-                                    countryPickerProps={{ region: 'Asia' }}
-                                    onChangeText={(text) => {
-                                        setNumberValue(text)
-                                    }}
-                                    onChangeFormattedText={(text) => {
-
-                                        setFormattedNumber(text)
-                                    }}
-
-
-
-                                    withShadow
-
-
-                                /> : null}
-
-                                {PhoneInputerror ? <Text style={styles.error}>{PhoneInputerror}</Text> : null}
- */}
 
                                 <Button
                                     style={styles.updateButton}
@@ -284,6 +224,7 @@ export default function EditUserProfile({ navigation, route }) {
 
 
             </ScrollView>
+            <LodingModel isModelVisible={isLoadingModel} />
         </KeyboardAvoidingView>
 
     );

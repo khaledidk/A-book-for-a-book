@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
     left: 20,
     zIndex: 1,
     elevation: 1,
-    
+
   },
   container2: {
     position: 'absolute',
@@ -17,11 +17,9 @@ const styles = StyleSheet.create({
     right: 20,
     zIndex: 1,
     elevation: 1,
-    
+
   },
-  // BackIcon : {
-  //   color : "#ff914d",
-  // }
+ 
 });
 
 export default styles;

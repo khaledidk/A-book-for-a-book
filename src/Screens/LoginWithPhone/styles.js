@@ -1,5 +1,5 @@
 
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, I18nManager, StyleSheet } from 'react-native';
 
 
 const styles = StyleSheet.create({
@@ -35,8 +35,9 @@ const styles = StyleSheet.create({
     WelcomeFont: {
         color: "#ff914d",
         fontSize: 18,
-        alignSelf: "flex-end",
-        fontWeight : '800'
+      textAlign :  I18nManager.isRTL ? "left" : "right",
+
+        fontWeight : '800',
     },
   
 
@@ -93,14 +94,20 @@ const styles = StyleSheet.create({
         color : "#ff914d",
         fontWeight : '600'
     },
-    
+    relpaceFont: {
+        color: 'red',
+        fontStyle: 'italic',
+        fontSize : 17,
+        textAlign :  I18nManager.isRTL ? "left" : "right",
+
+    },
     PhoneInputStyle: {
 
-        borderColor: "#ddb07f",
-        borderWidth: 1.5,
-        backgroundColor: "#ffffff",
-        borderRadius: 5,
-        marginTop: 20,
+        // borderColor: "#ddb07f",
+        // borderWidth: 1.5,
+         backgroundColor: "#ffffff",
+        // borderRadius: 5,
+        // marginTop: 20,
     
     
     },
@@ -141,10 +148,11 @@ const styles = StyleSheet.create({
     alertContainer: {
         flexDirection: "column",
          width: "100%",
-        // height: "100%",
+     
         justifyContent: "center",
-        alignContent: "center",
+      
         alignItems: "center",
+        marginTop : 50,
        
       },
   alertContentContainer: {
@@ -185,12 +193,12 @@ IconError: {
 
   alertContentTextSucsess: {
 
-    textAlign: "right",
+    textAlign: I18nManager.isRTL ? "left" : "right",
     fontSize: 20,
     marginBottom: 10,
     color: "#ff914d",
     fontWeight : '800',
-    paddingRight: 8
+   
     
   },
   alertContentTextError: {

@@ -1,68 +1,136 @@
 import * as React from 'react';
 import { useState, useRef, useEffect } from "react";
 
-import { ScrollView, View, ImageBackground, TouchableOpacity, KeyboardAvoidingView, SafeAreaView, Keyboard, Platform } from "react-native";
+import { ScrollView, View, ImageBackground, TouchableOpacity, KeyboardAvoidingView, SafeAreaView, Keyboard, Platform, I18nManager, Alert } from "react-native";
 import BackButton from '../../components/BackButton/BackButton'
 import styles from './styles';
 import { Octicons, Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { Button, Modal, Text } from "react-native-paper";
-import PhoneInput from 'react-native-phone-number-input';
-import { SignInWithPhoneNumber } from '../../config/AuthDB';
-import { addNewUserByPhone } from '../../config/FireStoreDB';
+import TextInput from "../../components/TextInput/TextInput";
+import { signInWithCredential, PhoneAuthProvider, RecaptchaVerifier } from "firebase/auth";
+import { addNewUserWithPhone, checkUserInfo } from '../../config/FireStoreDB';
 import { auth } from '../../config/firebase';
+import BackButton2 from '../../components/BackButton2/BackButton2';
+import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
+import LodingModel from '../../components/LodingModel/LodingModel';
 
+export default function LoginWithPhone({ navigation }) {
 
-export default function LoginWithPhone(props) {
-    const { navigation } = props;
 
     const [NumberValue, setNumberValue] = useState("");
-    const [FormattedNumber, setFormattedNumber] = useState("");
-    const [ModelIcon, setModelIcon] = useState(false);
-    const [isAleretVisible, setIsAlertVisible] = useState(false);
-    const [ErrorOrSucsses, setErrorOrSucsses] = useState(true);
-    const [IsUserLoginByPhone, setIsUserLoginByPhone] = useState(false);
-
-    const [alertContent, setAlertContent] = useState("");
-
-    const [ValidNumber, setValidNumber] = useState(false);
+    const recaptchaVerifier = useRef(null);
     const [PhoneInputerror, setPhoneInputerror] = useState("");
+    const [isAleretVisible, setIsAlertVisible] = useState(false);
+    const [nameInputVisible, setNameInputVisible] = useState(false);
+    const [verificationId, setVerificationId] = useState(null);
+    const [alertContent, setAlertContent] = useState("");
+    const [userID, setUserID] = useState("");
+    const [isLoadingModel, setIsLoadingModel] = useState(false);
+    const [code, setCode] = useState('');
+    const [UserName, setUserName] = useState({ value: "", error: "" });
 
-    const phoneInput = useRef(null);
+    // this function check Validate of Phone Number
+    function ValidatePhoneNumber(phoneNumber) { // check if the cell phone number is valid for israel
+        var regex = /^05\d([-]{0,1})\d{7}$/;
+        var phone = phoneNumber.match(regex);
+        if (phone) {
+            return true;
+        }
+
+        return false;
+    }
+
+    // this function send code to phone for Verification
+    const sendVerification = async () => {
+        const phoneProvider = new PhoneAuthProvider(auth);
+        const FormattedNumber = "+972" + NumberValue
+        console.log("FormattedNumber", FormattedNumber)
+        const check = await checkUserInfo(NumberValue).catch(() => {
+
+            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+        });
+       
+        phoneProvider.verifyPhoneNumber(FormattedNumber, recaptchaVerifier.current)
+            .then((res) => {
+
+                setVerificationId(res)
+                setIsAlertVisible(true)
+                if (!check) {
+                    setNameInputVisible(true)
+                }
 
 
-    const [DropDownValue, setDropDownValue] = useState('');
-    const Data = require('../../data/data.json');
+            })
+            .catch((e) => {
+                console.log(e.code)
+                if (e.code == "ERR_FIREBASE_RECAPTCHA_CANCEL") {
+                    return;
+                }
+                Alert.alert("יותר מדי בקשות/קרתה שגיה", "לא יכול להתחבר נא לנסה שוב ", [{ text: "בסדר" }])
+            })
 
 
-    async function onLoginPressed() {
+
+    };
+
+    // this function check if the code is current
+    const confirmCode = async () => {
 
 
+        if (alertContent) {
+            setAlertContent("")
+        }
 
-        const CheckValidPhoneNumber = phoneInput.current?.isValidNumber(NumberValue);
-        setValidNumber(CheckValidPhoneNumber ? CheckValidPhoneNumber : false);
-        if (!FormattedNumber) {
+        const credential = PhoneAuthProvider.credential(
+            verificationId,
+            code
+        );
+        setIsLoadingModel(true)
+
+        signInWithCredential(auth, credential)
+            .then(async () => {
+                const user = auth.currentUser;
+                const uid = user.uid;
+
+                if (nameInputVisible) {
+                    await addNewUserWithPhone(uid, UserName.value, NumberValue).catch(() => {
+                        Alert.alert("קרתה שגיה", "לא יכול לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
+                    })
+                }
+                setIsLoadingModel(false)
+
+            })
+            .catch((error) => {
+                // show an alert in case of error
+                setIsLoadingModel(false)
+                console.log(error.code)
+                if (error.code == 'auth/missing-verification-id') {
+                    Alert.alert("קרתה שגיה", '* קוד אימות אינו נכון', [{ text: "בסדר" }])
+                } else if (error.code == 'auth/invalid-verification-code') {
+                    Alert.alert("קרתה שגיה", '* קוד אימות אינו נכון', [{ text: "בסדר" }])
+                }
+            })
+
+
+    };
+
+    // this function implement when press on login button,then do login
+  
+    const onLoginPressed = async () => {
+
+        const CheckValidPhoneNumber = ValidatePhoneNumber(NumberValue);
+        if (!NumberValue) {
             setPhoneInputerror("* מספר טלפון חובה")
             return;
         }
-        else if (!CheckValidPhoneNumber) {
+        if (!CheckValidPhoneNumber) {
             setPhoneInputerror("* מספר טלפון אינו נכון")
             return;
-        } else {
-            setPhoneInputerror('')
-
-
-            // let docID = await SignInWithPhoneNumber(FormattedNumber)
-            // if (docID) {
-            //     setIsUserLoginByPhone(true)
-            // }
-            // addNewUserByPhone("user", "uid")
-
-
-
         }
 
 
+        sendVerification();
 
     };
 
@@ -83,10 +151,26 @@ export default function LoginWithPhone(props) {
 
             >
 
+                <FirebaseRecaptchaVerifierModal
+                    ref={recaptchaVerifier}
 
+                    firebaseConfig={{
+                        apiKey: "AIzaSyBOTSiaTFlWUqRJvEUa9v9AVy7OaprGkiA",
+                        authDomain: "bookforbook-7dec4.firebaseapp.com",
+                        projectId: "bookforbook-7dec4",
+                        storageBucket: "bookforbook-7dec4.appspot.com",
+                        messagingSenderId: "569934775016",
+                        appId: "1:569934775016:web:049be6c3cc4705276c7f5d",
+                        measurementId: "G-SQGXTR8PZ1"
+                    }}
+                // attemptInvisibleVerification
+                // androidHardwareAccelerationDisabled
+                />
 
                 <View style={styles.container}>
-                    <BackButton goBack={props.navigation.goBack} />
+                    {I18nManager.isRTL ?
+                        <BackButton2 goBack={navigation.goBack} />
+                        : <BackButton goBack={navigation.goBack} />}
 
                     <View style={styles.ImageBackGround} ></View>
 
@@ -94,92 +178,75 @@ export default function LoginWithPhone(props) {
                     <View style={styles.BootomView}>
                         {/* Welcome you  */}
                         <View style={styles.WelcomeView} >
-
-                            <Text style={styles.WelcomeFont}>תכניס מספר טלפון...</Text>
-
+                            {isAleretVisible && !nameInputVisible ? <Text style={styles.alertContentTextSucsess}>נא להזין קוד אימות</Text> : null}
+                            {!isAleretVisible && !nameInputVisible ? <Text style={styles.WelcomeFont}>תכניס מספר טלפון</Text> : null}
+                            {nameInputVisible && isAleretVisible ? <Text style={styles.alertContentTextSucsess}>נא להזין קוד אימות ושם משתמש</Text>
+                                : null}
                             {/* // input View  */}
 
                             <View style={styles.InputView}>
 
-                                {PhoneInputerror ? <PhoneInput
-                                    ref={phoneInput}
-                                    defaultValue={NumberValue}
-                                    defaultCode="IL"
-                                    layout="first"
-                                    placeholder='מספר טלפון'
-
-
-                                    containerStyle={styles.PhoneInputBorderError}
-                                    textContainerStyle={{ backgroundColor: '#ffffff' }}
-                                    countryPickerButtonStyle={styles.PhoneInputButton}
-                                    countryPickerProps={{ region: 'Asia' }}
-                                    onChangeText={(text) => {
-                                        setNumberValue(text)
-                                    }}
-
-                                    onChangeFormattedText={(text) => {
-                                        console.log(text)
-                                        setFormattedNumber(text)
-                                    }}
-
-
-                                    filterProps={{ placeholder: 'תבחרו מדינה' }}
-
-                                    withShadow
-                                    {...props}
-
+                                {!isAleretVisible ? <TextInput
+                                    value={NumberValue}
+                                    onChangeText={(userPhone) => setNumberValue(userPhone)}
+                                    label="טלפון נייד"
+                                    keyboardType="numeric"
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    phoneIcon='phone'
+                                    style={styles.PhoneInputStyle}
+                                    error={!!PhoneInputerror}
+                                    errorText={PhoneInputerror}
                                 /> : null}
-                                {!PhoneInputerror ? <PhoneInput
-                                    ref={phoneInput}
-                                    defaultValue={NumberValue}
-                                    defaultCode="IL"
-                                    layout="first"
-                                    placeholder='מספר טלפון'
-
-
-                                    containerStyle={styles.PhoneInputStyle}
-                                    textContainerStyle={{ backgroundColor: '#ffffff' }}
-                                    countryPickerButtonStyle={styles.PhoneInputButton}
-                                    countryPickerProps={{ region: 'Asia' }}
-                                    onChangeText={(text) => {
-                                        setNumberValue(text)
-                                    }}
-                                    onChangeFormattedText={(text) => {
-
-                                        setFormattedNumber(text)
-                                    }}
-
-
-
-                                    withShadow
-                                    {...props}
-
-                                /> : null}
-
-                                {PhoneInputerror ? <Text style={styles.error}>{PhoneInputerror}</Text> : null}
 
 
                             </View>
 
-                            <Button
+                            {nameInputVisible && isAleretVisible ? <TextInput
+                                label="שם משתמש"
+                                returnKeyType="next"
+                                onChangeText={(text) => setUserName({ value: text, error: "" })}
+                                error={!!UserName.error}
+                                errorText={UserName.error}
+                                userIcon='user-o'
+
+                            /> : null}
+                            {isAleretVisible && <TextInput // input verify
+                                label="קוד אימות"
+                                returnKeyType="next"
+                                onChangeText={setCode}
+                                error={!!alertContent}
+                                errorText={alertContent}
+
+                            />}
+
+
+                            {isAleretVisible && <TouchableOpacity onPress={() => navigation.replace("LoginWithPhone")}>
+                                <Text style={styles.relpaceFont}>לא נשלח לך קוד תלחץ כאן</Text>
+                            </TouchableOpacity>}
+
+                            {isAleretVisible ? <Button // Button verify
                                 style={styles.ButtonRegister}
                                 labelStyle={styles.ButtonRegisterFont}
                                 mode="contained"
-                                onPress={onLoginPressed}
+                                onPress={confirmCode}
 
                             >
-                                התחבר
-                            </Button>
+                                לאשר
+                            </Button> :
 
-                            <Button
-                                style={styles.ButtonRegister}
-                                labelStyle={styles.ButtonRegisterFont}
-                                mode="contained"
-                                onPress={() => navigation.navigate("RegisterWithPhone")}
+                                <Button
+                                    style={styles.ButtonRegister}
+                                    labelStyle={styles.ButtonRegisterFont}
+                                    mode="contained"
+                                    onPress={onLoginPressed}
 
-                            >
-                                להרשים עם מספר תלפון
-                            </Button>
+                                >
+                                    התחבר
+                                </Button>}
+
+
+
 
                         </View>
 
@@ -190,6 +257,7 @@ export default function LoginWithPhone(props) {
 
 
             </ScrollView>
+            <LodingModel isModelVisible={isLoadingModel} />
         </KeyboardAvoidingView>
 
 

@@ -1,8 +1,8 @@
 import React, { useLayoutEffect, useState } from "react";
-import { TouchableOpacity, Text, View, KeyboardAvoidingView, ScrollView, Image } from "react-native";
+
+import { TouchableOpacity, Text, View, KeyboardAvoidingView, ScrollView, Image, ActivityIndicator, I18nManager, Alert } from "react-native";
 
 import styles from "./styles";
-import { Rating, AirbnbRating } from 'react-native-ratings';
 import { Button, Modal } from "react-native-paper";
 import TextInput from "../../components/TextInput/TextInput";
 import * as ImagePicker from 'expo-image-picker';
@@ -14,8 +14,15 @@ import { authorValidator } from "../../helpers/authorValidator";
 import { addNewbook } from "../../config/FireStoreDB";
 import { auth } from '../../config/firebase';
 import { fetchtUserNameAndImage } from "../../config/FireStoreDB";
+import OurActivityIndicator from "../../components/OurActivityIndicator/OurActivityIndicator";
+import LodingModel from "../../components/LodingModel/LodingModel";
+import BackButton2 from "../../components/BackButton2/BackButton2";
+import { Rating } from "react-native-rating-element";
+
 export default function AddBook(props) {
   const { navigation } = props;
+  const [isLoadingModel, setIsLoadingModel] = useState(false);
+  const [onPressRating, setOnPressRating] = useState(false);
   const [bookStatus, setBookStatus] = useState([
     { label: "בשימוש", value: "בשימוש" },
     { label: "חדש", value: "חדש" },
@@ -56,6 +63,7 @@ export default function AddBook(props) {
     { label: "הונגרי", value: "הונגרי" },
     { label: "סנסקריט", value: "סנסקריט" },
     { label: "שפות אחרות", value: "שפות אחרות" },
+    
   ]);
   const [bookTypes, setBookTypes] = useState([
     { label: "סיפורי הרפתקאות", value: "סיפורי הרפתקאות" },
@@ -77,6 +85,7 @@ export default function AddBook(props) {
     { label: "ספרות נשים", value: "ספרות נשים" },
     { label: "מבוגר צעיר", value: "מבוגר צעיר" },
     { label: "מחזות", value: "מחזות" },
+    { label: "סוגים אחרים", value:"סוגים אחרים" },
   ]);
   const [bookTypesVal, setBookTypesVal] = useState("")
   const [bookTypesError, setBookTypesError] = useState(false)
@@ -91,16 +100,14 @@ export default function AddBook(props) {
   const [authorName, setAuthorName] = useState({ value: "", error: "" });
   const [bookLanguageVal, setBookLanguageVal] = useState("");
   const [openLanguageDrop, setOpenLanguageDrop] = useState(false)
-  const [starRating, setStarRating] = useState(3)
+  const [starRating, setStarRating] = useState(3) // rating
   const bookLanguageSorted = [...bookLanguage].sort((a, b) => {
     return a.label.localeCompare(b.label);
   });
 
-  // const starRatingFunc = (value) =>{
-  //        console.log("starRating" ,value )
-  // }
+  // this function help to pick image from library
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
+
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -115,9 +122,12 @@ export default function AddBook(props) {
     }
   };
 
+  // this function implement when press on add button, they check the validation of book details 
+  // then upload the data to DB
   async function onAddPressed() {
     const bookNameError = bookValidator(bookName.value)
     const authorNameError = authorValidator(authorName.value)
+    
 
     if (bookNameError || authorNameError || !bookTypesVal || !bookStatusVal || !image || !bookLanguageVal) {
 
@@ -155,6 +165,7 @@ export default function AddBook(props) {
       setAuthorName({ ...authorName, error: authorNameError });
       return;
     }
+    setIsLoadingModel(() => true)
     setBookTypesError(false)
     setImageError(false)
     let tempeDate = new Date()
@@ -165,22 +176,41 @@ export default function AddBook(props) {
     fetchtUserNameAndImage(uid).then((userInfo) => {
       addNewbook(bookName.value, authorName.value, bookTypesVal, bookStatusVal, tempeDate, image, uid, userInfo.userImage, userInfo.userName, bookLanguageVal, starRating).then((bookId) => {
         console.log(bookId)
-        let newBookJson = {
-          id: bookId,
-          image: image,
-          title: bookName.value,
-          author_name: authorName.value,
-          book_type: bookTypesVal,
-          book_status: bookStatusVal,
-          user_image: userInfo.userImage,
-          user_name: userInfo.userName,
-          book_language: bookLanguageVal,
-          rating_value: starRating,
-          user_id: uid,
+        let newBookJson;
+        if (userInfo.userImage) {
+          newBookJson = {
+            id: bookId,
+            image: image,
+            title: bookName.value,
+            author_name: authorName.value,
+            book_type: bookTypesVal,
+            book_status: bookStatusVal,
+            user_image: userInfo.userImage,
+            user_name: userInfo.userName,
+            book_language: bookLanguageVal,
+            rating_value: starRating,
+            user_id: uid,
+          }
+        } else {
+          newBookJson = {
+            id: bookId,
+            image: image,
+            title: bookName.value,
+            author_name: authorName.value,
+            book_type: bookTypesVal,
+            book_status: bookStatusVal,
+            user_name: userInfo.userName,
+            book_language: bookLanguageVal,
+            rating_value: starRating,
+            user_id: uid,
+          }
         }
         navigation.navigate("Home", { newBookJson: newBookJson, status: 'add' })
+        setIsLoadingModel(false)
+      }).catch(() => {
 
-      })
+        Alert.alert("קרתה שגיה", "לא יכול לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
+      });
 
 
     })
@@ -192,11 +222,13 @@ export default function AddBook(props) {
   };
 
   return (
+
     <KeyboardAvoidingView style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : ""}
 
     >
-      <BackButton goBack={props.navigation.goBack} />
+
+      {I18nManager.isRTL ? <BackButton2 goBack={navigation.goBack} /> : <BackButton goBack={navigation.goBack} />}
       <ScrollView
         style={styles.container}
 
@@ -263,9 +295,9 @@ export default function AddBook(props) {
                   listItemLabelStyle={styles.listItemContainerFont}
                   dropDownContainerStyle={styles.DropDown}
                   listMode="SCROLLVIEW"
-                  scrollViewProps={{
-                    nestedScrollEnabled: true,
-                  }}
+                  // scrollViewProps={{
+                  //   nestedScrollEnabled: true,
+                  // }}
 
                 />
 
@@ -290,10 +322,10 @@ export default function AddBook(props) {
                   listItemLabelStyle={styles.listItemContainerFont}
                   dropDownContainerStyle={styles.DropDown}
                   listMode="SCROLLVIEW"
-                  scrollViewProps={{
-                    nestedScrollEnabled: true,
-                  }}
-                // zIndexInverse={1000}
+                  // scrollViewProps={{
+                  //   nestedScrollEnabled: true,
+                  // }}
+
                 />
 
                 {bookStatusError ? <Text style={styles.typeErrorFont}>* לבחור מצב הספר חובה</Text> : null}
@@ -312,26 +344,45 @@ export default function AddBook(props) {
                   listItemLabelStyle={styles.listItemContainerFont}
                   dropDownContainerStyle={styles.DropDown}
                   listMode="SCROLLVIEW"
-                  scrollViewProps={{
-                    nestedScrollEnabled: true,
-                  }}
+                  // scrollViewProps={{
+                  //   nestedScrollEnabled: true,
+                  // }}
 
                 />
                 {bookLanguageError ? <Text style={styles.typeErrorFont}>* לבחור שפת הספר חובה</Text> : null}
                 <View style={styles.starRating}>
                   <Text style={styles.ratingText} >הדירוג שלך לספר:</Text>
-                  <Rating
 
-                    startingValue={3}
-                    ratingCount={5}
-                    imageSize={30}
+                  {I18nManager.isRTL ? <Rating
+
+                    rated={starRating}
+                    totalCount={5}
+                    size={25}
+                    icon="ios-star"
+                    direction="row-reverse"
+                    onIconTap={(position) => setStarRating(position)}
 
 
-                    onFinishRating={setStarRating}
 
-                  />
+                  /> :
+                    <Rating
+
+                      rated={starRating}
+                      totalCount={5}
+                      size={25}
+                      icon="ios-star"
+                      direction="row"
+                      onIconTap={(position) => setStarRating(position)}
+
+
+
+                    />
+
+
+                  }
 
                 </View>
+
                 <Button
                   style={styles.addButton}
                   labelStyle={styles.addButtonFont}
@@ -357,6 +408,7 @@ export default function AddBook(props) {
 
 
       </ScrollView>
+      <LodingModel isModelVisible={isLoadingModel} />
     </KeyboardAvoidingView>
 
   );

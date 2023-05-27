@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, RefreshControl, Text, View, Image, TouchableOpacity, KeyboardAvoidingView, Keyboard } from "react-native";
+import { FlatList, RefreshControl, Text, View, Image, TouchableOpacity, KeyboardAvoidingView, Keyboard, I18nManager, Alert } from "react-native";
 import styles from "./styles";
 import { getStatusBarHeight } from 'react-native-status-bar-height'
 import { Button, Modal } from "react-native-paper";
 import * as ImagePicker from 'expo-image-picker';
-import BottomTab from '../../components/BottomTab/BottomTab'
+
 import TextInput from "../../components/TextInput/TextInput";
 import { MaterialIcons, Ionicons, FontAwesome, Entypo } from '@expo/vector-icons';
 import { fetchBookSorted } from "../../config/FireStoreDB";
@@ -13,8 +13,8 @@ import { fetchByUserId } from "../../config/FireStoreDB";
 import { auth } from '../../config/firebase';
 import { deletePost } from "../../config/FireStoreDB";
 import { useIsFocused } from '@react-navigation/native';
-export default function UserPost({ navigation, route }) {
 
+export default function UserPost({ navigation, route }) {
 
     const [bookData, setBookData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -26,36 +26,22 @@ export default function UserPost({ navigation, route }) {
     let [searchBookData, setSearchBookData] = useState([])
     const [isAleretVisible, setIsAlertVisible] = useState(false);
 
+
+    // this function handle to delete post
     const delete_post_handler = () => {
-
-
         console.log("delet id =>>", CurrId, "index ==>", getPostIndex(CurrId))
         bookData.splice(getPostIndex(CurrId), 1);
         setBookData(() => bookData);
         setSearchBookData(() => bookData)
-        deletePost(CurrId)
+        deletePost(CurrId).catch(() => {
+
+            Alert.alert("קרתה שגיה", "לא יכול למחוק הספר נא לנסה שוב", [{ text: "בסדר" }])
+        });
         setIsAlertVisible(false)
 
-
-
     }
-    const GfGApp = () => {
-        const keyboardShowListener = Keyboard.addListener('keyboardDidShow', () => {
 
-            setKeyboardOpen(true)
-
-
-        }
-        );
-        const keyboardHideListener = Keyboard.addListener(
-            'keyboardDidHide',
-            () => {
-
-                setKeyboardOpen(false)
-
-            }
-        );
-    }
+    // this function return index of post in array 
     const getPostIndex = (PostID) => {
 
         for (let currIndex = 0; currIndex < bookData.length; currIndex++) {
@@ -67,13 +53,17 @@ export default function UserPost({ navigation, route }) {
 
         return -1;
     }
+
+    // this function return the books in homr page
     const renderItem = ({ item }) => {
         return (
-            <Item title={item.title} author={item.author_name} type={item.book_type} status={item.book_status} image={item.image} id={item.id} language={item.book_language} starRating = {item.rating_value}/>
+            <Item title={item.title} author={item.author_name} type={item.book_type} status={item.book_status} image={item.image} id={item.id} language={item.book_language} starRating={item.rating_value} />
 
         );
     }
-    const Item = ({ title, author, type, status, image, id, language , starRating }) => (
+
+    // this function to disgin the books and books details like cards
+    const Item = ({ title, author, type, status, image, id, language, starRating }) => (
         <View style={styles.item}>
 
             {/* <View style={styles.firstPartItem}> */}
@@ -83,14 +73,15 @@ export default function UserPost({ navigation, route }) {
                     <Ionicons name={"trash-outline"} size={28} color={"red"} />
                 </TouchableOpacity>
 
-                <FontAwesome style={styles.Icons} name={"edit"} size={30} color={"#ff914d"} onPress={() => navigation.navigate('EditPost', { title: title, author: author, type: type, status: status, image: image, id: id, language: language , starRating : starRating})} />
+                <FontAwesome style={styles.Icons} name={"edit"} size={30} color={"#ff914d"} onPress={() => navigation.navigate('EditPost', { title: title, author: author, type: type, status: status, image: image, id: id, language: language, starRating: starRating })} />
 
             </View>
             {/* </View> */}
 
 
             <View style={styles.itemImageAndeDerails} >
-                {image && <Image source={{ uri: image }} style={styles.imageIteam} />}
+                {image && I18nManager.isRTL ? <Image source={{ uri: image }} style={styles.imageIteam2} /> : null}
+                {image && !I18nManager.isRTL ? <Image source={{ uri: image }} style={styles.imageIteam} /> : null}
                 <View style={styles.details}>
                     <Text style={styles.title}>{title}</Text>
                     <Text style={styles.txt}>שם הסופר: {author}</Text>
@@ -98,20 +89,26 @@ export default function UserPost({ navigation, route }) {
                     <Text style={styles.txt}>מצב הספר: {status}</Text>
                     <Text style={styles.txt}>שפת הספר: {language}</Text>
                     <View style={styles.starRating}>
-                        <View style={styles.ratingFontContiner}>
-                            <Text style={styles.ratingFont}> {starRating} </Text>
-                            <Text style={styles.txt} >/5</Text>
-                        </View>
                         <Image
                             style={styles.imageStar}
                             source={require("../../../assets/star.png")}
                         />
+                        <View style={styles.ratingFontContiner}>
+
+                            <Text style={styles.txt} >/5</Text>
+                            <Text style={styles.ratingFont}> {starRating} </Text>
+
+                        </View>
+
                     </View>
                 </View>
             </View>
 
         </View>
     );
+
+
+    // this function fetch all books then fill the bookData array and searckBookData array 
     const fetchAllBooksDocuments = async () => {
         const user = auth.currentUser;
         const uid = user.uid;
@@ -121,22 +118,32 @@ export default function UserPost({ navigation, route }) {
 
             setBookData(() => booksList);
             setSearchBookData(() => booksList)
+        }).catch(() => {
+
+            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
         });;
 
 
 
     };
+    
+
+
+    // this function fetch books on refresh flatlist then fill the bookData array and searckBookData array
     const onRefresh = async () => {
-
-
 
         setIsRefreshing(true);
 
         fetchAllBooksDocuments().then(() => {
             console.log("Refreshing");
             setIsRefreshing(false);
-        });
+        }).catch(() => {
+
+            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+          });
     }
+
+    // this function handle the search 
     const updateListBySearch = (searchString) => {
 
         searchString = searchString.toLowerCase().trim();
@@ -148,7 +155,7 @@ export default function UserPost({ navigation, route }) {
             return;
         }
 
-        let searcheableFileds = ["title", "author_name", "book_type", "book_status"];
+        let searcheableFileds = ["title", "author_name", "book_type", "book_status" , "book_language"];
         let newBookList = [];
         let isSuitable = false;
 
@@ -166,9 +173,7 @@ export default function UserPost({ navigation, route }) {
                 }
             }
 
-            // if(!isSuitable && getUserRankString(currBookInfoObj.rank).toLowerCase().includes(searchString)){
-            //   newBookList.push(currBookInfoObj);
-            // }
+
 
         });
 
@@ -176,47 +181,40 @@ export default function UserPost({ navigation, route }) {
 
     };
 
-    // useFocusEffect(
+    // this function handle when flatlist is empty
+    const listEmptyComponent = () => {
+        return (
+            <Text style={styles.emptyFont} >לא נמצא ספרים</Text>
+        )
+    }
 
-    //     React.useCallback(() => {
-    //   if(route.params?.status !== 'update'){
-    //         console.log("route.params?.updateBookJson status===>" ,route.params?.status )
-    //         setIsLoading(() => true);
-    //     fetchAllBooksDocuments().then(() => {
-
-    //         setIsLoading(() => false);
-    //     });
-    //     GfGApp();
-    //   }
-
-
-    // }, [])
-
-    // );
     const isFocused = useIsFocused();
+    // this useEffect when open the screen
     useEffect(() => {
 
 
-
-
         if (route.params?.status !== 'update' && route.params?.status !== 'end') {
-            // console.log("navigation", isFocused)
-            // console.log("route.params?.status", route.params?.status)
+
             setIsLoading(() => true);
 
             fetchAllBooksDocuments().then(() => {
 
                 setIsLoading(() => false);
-            });
+            }).catch(() => {
+
+                Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+              });
 
         } else {
             navigation.setParams({ status: "" })
         }
-        GfGApp();
+
 
 
 
     }, [isFocused]);
+
+    // this use effect when add new book
     useEffect(() => {
         if (route.params?.updateBookJson) {
 
@@ -224,9 +222,7 @@ export default function UserPost({ navigation, route }) {
             let updatedInfo = route.params?.updateBookJson;
 
             bookData.splice(getPostIndex(updatedInfo.id), 1, updatedInfo);
-            // setBookData(oldArray => [updatedInfo, ...oldArray]);
-            // searchBookData.splice(getPostIndex(updatedInfo.id), 1);
-            // setSearchBookData(oldArray => [updatedInfo, ...oldArray]);
+
             updateListBySearch("")
 
 
@@ -238,22 +234,6 @@ export default function UserPost({ navigation, route }) {
         }
 
     }, [route.params?.updateBookJson])
-    // useEffect(() => {
-    //     if (status && CurrId) {
-    //         console.log("status =>>", status, "currId ==>", CurrId)
-    //         if (status == 'delete') {
-    //             console.log("delet id =>>", CurrId, "index ==>", getPostIndex(CurrId))
-    //             bookData.splice(getPostIndex(CurrId), 1);
-    //             setBookData(() => bookData);
-    //             setSearchBookData(() => bookData)
-    //             deletePost(CurrId)
-    //             setStatus("")
-
-    //         }
-
-    //     }
-
-    // }, [status]);
 
 
     return (
@@ -266,7 +246,7 @@ export default function UserPost({ navigation, route }) {
                     mode="outlined"
                     activeOutlineColor="#ff914d"
                     outlineColor="#ff914d"
-                    style={styles.SearchInput}
+                    style={[!I18nManager.isRTL && styles.SearchInput, I18nManager.isRTL && styles.SearchInput2]}
                     onChangeText={(searchString) => { updateListBySearch(searchString) }}
                     placeholder="חיפוש"
                     // textColor = "#ddb07f"
@@ -274,11 +254,28 @@ export default function UserPost({ navigation, route }) {
                 />
 
 
-                <MaterialIcons style={styles.searchIcon} name={"search"} size={30} color={"#ddb07f"} />
+                <MaterialIcons style={[!I18nManager.isRTL && styles.searchIcon, I18nManager.isRTL && styles.searchIcon2]} name={"search"} size={30} color={"#ddb07f"} />
             </View>
-            {!keyboardOpen ? <FlatList
-                //  onRefresh={onRefresh}
-                //  refreshing={isRefreshing}
+            <View style={{ flexDirection: "column", justifyContent: 'center', }} >
+                <Button
+                    style={styles.ChangeRequestButton}
+                    labelStyle={styles.ChangeRequestButtonText}
+                    mode="Outlined"
+                    onPress={() => navigation.navigate("ChangeRequest")}>
+                    הבקשות שמגיעות אלי
+                </Button>
+                <Button
+                    style={styles.ChangeRequestButton}
+                    labelStyle={styles.ChangeRequestButtonText}
+                    mode="Outlined"
+                    onPress={() => navigation.navigate("MyChangeRequest")}>
+                    הבקשות שאני מציע
+                </Button>
+            </View>
+        
+
+            <FlatList
+
                 refreshControl={<RefreshControl
                     colors={["#ff914d", "#ff914d"]}
                     refreshing={isRefreshing}
@@ -286,29 +283,23 @@ export default function UserPost({ navigation, route }) {
                 data={searchBookData}
                 renderItem={renderItem}
                 keyExtractor={item => item.id}
-                //Platform.OS === "ios" ? getStatusBarHeight() + 90 :
-
+                ListEmptyComponent = {listEmptyComponent}
                 style={[{ marginBottom: Platform.OS === "ios" ? getStatusBarHeight() + 40 : 65 }, styles.flatList]}
 
-            /> :
-                <FlatList
-                    //  onRefresh={onRefresh}
-                    //  refreshing={isRefreshing}
-                    refreshControl={<RefreshControl
-                        colors={["#ff914d", "#ff914d"]}
-                        refreshing={isRefreshing}
-                        onRefresh={onRefresh} />}
-                    data={searchBookData}
-                    renderItem={renderItem}
-                    keyExtractor={item => item.id}
-                    //Platform.OS === "ios" ? getStatusBarHeight() + 90 :
+            />
+                {/* {!searchBookData.length ? <Text style={styles.emptyFont} >לא נמצא ספרים</Text> : null} */}
+             
+            {!I18nManager.isRTL ?
+                <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate("AddBook")} >
+                    <Ionicons size={50} name={"add"} color={"#ffffff"} />
+                </TouchableOpacity>
+                :
 
-                    style={[{ marginBottom: Platform.OS === "ios" ? getStatusBarHeight() + 200 : 10 }, styles.flatList]}
+                <TouchableOpacity style={styles.addButton2} onPress={() => navigation.navigate("AddBook")} >
+                    <Ionicons size={50} name={"add"} color={"#ffffff"} />
+                </TouchableOpacity>
 
-                />}
-                   <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate("AddBook")} >
-        <Ionicons size={50} name={"add"} color={"#ffffff"} />
-      </TouchableOpacity>
+            }
 
             <Modal visible={isAleretVisible}>
 
@@ -317,9 +308,8 @@ export default function UserPost({ navigation, route }) {
 
                     <View style={styles.alertContentContainer}>
 
-                        {/* <Ionicons name={"trash-outline"} size={100} color={"red"} /> */}
-                        {/* <Entypo style={styles.IconError} name='circle-with-cross' size={100} />  */}
-                        <Text style={styles.alertContentTextError}>האם אתה בטוח שרוצה למחוק את הפוסט הזה?</Text>
+
+                        <Text style={styles.alertContentTextError}> את/ה בטוח שרוצה למחוק את הפוסט הזה?</Text>
                         <Button
                             style={styles.ButtonClose}
                             labelStyle={styles.ButtonCloseFont}

@@ -1,18 +1,20 @@
-
 import React, { useState, useEffect } from "react";
-import { TouchableHighlight, Image, View, TouchableOpacity, I18nManager, Pressable } from "react-native";
+import { TouchableHighlight, Image, View, TouchableOpacity } from "react-native";
 
 import styles from "./styles";
 import { Feather } from '@expo/vector-icons';
 
-export default function BackButton({navigation , goBack, color = "#ff914d" , params }) {
-
+export default function BackButton2({ navigation ,goBack, color = "#ff914d" , params }) {
   const [isPressed, setIsPressed] = useState(false);
   const pressHandle = () => {
     setIsPressed(true)
+   
     if (!isPressed) {
+      console.log("enter on preees")
+
       if(params ){
-        navigation.navigate("ChatRoom" , {from :params })
+        console.log("======worke=====")
+        navigation.navigate("ChatRoom" , {from : params })
       
       }else{
       goBack()
@@ -22,7 +24,7 @@ export default function BackButton({navigation , goBack, color = "#ff914d" , par
   return (
 
 
-    <TouchableOpacity onPress={pressHandle} style={styles.container}>
+    <TouchableOpacity onPress={pressHandle} style={styles.container2}>
       <Feather name="arrow-left-circle" color={color} size={35} />
     </TouchableOpacity>
 

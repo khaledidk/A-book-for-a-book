@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, I18nManager, StyleSheet } from 'react-native';
 
 
 const styles = StyleSheet.create({
@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     ImageBackGround: {
         height: Dimensions.get('window').height / 2.5,
     },
- 
+
     BootomView: {
         flex: 1.5,
         bottom: 50,
@@ -32,15 +32,23 @@ const styles = StyleSheet.create({
     WelcomeFont: {
         color: "#ff914d",
         fontSize: 20,
-        alignSelf: "flex-end",
+        textAlign: I18nManager.isRTL ? "left" : "right",
     },
-   
-   
+
+
     InputView: {
         marginTop: 50,
 
     },
-  
+    relpaceFont: {
+        color: 'red',
+        fontStyle: 'italic',
+        fontSize : 17,
+        textAlign :  I18nManager.isRTL ? "left" : "right",
+        marginTop : 10,
+
+    },
+
     ButtonSend: {
         backgroundColor: "#ff914d",
         height: 50,

@@ -1,7 +1,7 @@
 
 
 
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, I18nManager, StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
  
   container : {
@@ -101,12 +101,12 @@ addButtonFont : {
 ratingText : {
   color:"#ff914d",
   fontWeight : '600',
-  fontSize: 15,
+  fontSize: 13,
   marginStart : 10,
   marginTop: 5,
 },
 starRating : {
-  flexDirection : "row-reverse",
+  flexDirection : I18nManager.isRTL ?  "row" : 'row-reverse',
   marginTop: 20,
 }
 });

@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, I18nManager, StyleSheet } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height'
 
 // const {height, width} = useWindowDimensions();
@@ -16,16 +16,19 @@ const styles = StyleSheet.create({
         height: 50,
         marginRight: 10,
     },
-
+    day: {
+    textAlign : 'center'
+    }
+,
     row: {
-        flexDirection: 'row',
+        flexDirection:I18nManager.isRTL ? 'row-reverse' : 'row' ,
         padding: 10,
         alignItems: 'center',
         borderBottomColor: '#cacaca',
         borderBottomWidth: 1,
     },
     addUser: {
-        flexDirection: 'row',
+        flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
         padding: 10,
     },
     inputSend: {
@@ -45,7 +48,7 @@ const styles = StyleSheet.create({
     },
     label : {
         //marginTop : getStatusBarHeight() + 10,
-        flexDirection: 'row',
+        flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row' ,
         backgroundColor: "#ff914d",
         justifyContent : "flex-end",
         alignItems : "center",
@@ -54,7 +57,7 @@ const styles = StyleSheet.create({
     },
     nameAndImage : {
         marginTop :  getStatusBarHeight(),
-        flexDirection: 'row',
+        flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
         justifyContent : "flex-end",
         alignItems : "center",
     },

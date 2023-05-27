@@ -1,5 +1,5 @@
 
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, I18nManager } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height'
 const styles = StyleSheet.create({
     container: {
@@ -16,10 +16,11 @@ const styles = StyleSheet.create({
     
     },
     filterButtonContainer: {
-      
-        flexDirection: 'row',
+        
+        flexDirection:  I18nManager.isRTL ? "row-reverse" : "row",
         justifyContent: 'center',
         marginTop: getStatusBarHeight() + 10,
+ 
 
 
     },
@@ -54,10 +55,11 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginStart: 100,
         marginEnd: 100,
+        marginBottom : 20,
 
     },
     filterButtonFont: {
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: '800',
         color: "#ff914d",
     },
@@ -124,6 +126,43 @@ const styles = StyleSheet.create({
         left : 10, 
         padding : 5
     },
+    newLocation2 : {
+        position: 'absolute',
+        bottom: Platform.OS === "ios" ? getStatusBarHeight() + 40 : 40,
+        backgroundColor: "#ffffff",
+        borderRadius: 100,
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection : 'row',
+        right : 10, 
+        padding : 5
+    },
+    refreshLocation : {
+        position: 'absolute',
+        bottom: Platform.OS === "ios" ? getStatusBarHeight() + 40 : 40,
+        backgroundColor: "#ffffff",
+        borderRadius: 100,
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection : 'row',
+        left : 120, 
+        
+        padding : 5,
+     
+        //"50%"
+    },
+    refreshLocation2 : {
+        position: 'absolute',
+        bottom: Platform.OS === "ios" ? getStatusBarHeight() + 40 : 40,
+        backgroundColor: "#ffffff",
+        borderRadius: 100,
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection : 'row',
+        right : 120, 
+    
+        padding : 5
+    },
     alertContainer: {
         flexDirection: "column",
          width: "100%",
@@ -141,7 +180,7 @@ const styles = StyleSheet.create({
     },
     alertContentTextError: {
     
-      textAlign: "right",
+      textAlign:  I18nManager.isRTL ? "left" : "right",
       fontSize: 20,
       marginBottom: 10,
       // color: "red",

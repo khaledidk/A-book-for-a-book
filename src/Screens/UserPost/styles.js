@@ -1,6 +1,6 @@
 
 
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, I18nManager, StyleSheet } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height'
 const styles = StyleSheet.create({
 
@@ -8,31 +8,70 @@ const styles = StyleSheet.create({
     flex: 1,
 
   },
-  SearchInput : {
-    
-    marginTop:  getStatusBarHeight() ,
+  SearchInput: {
+
+    marginTop: getStatusBarHeight(),
     fontSize: 20,
-    fontWeight : "650",
+    fontWeight: "650",
     textAlign: "right",
     borderColor: "#ff914d",
     backgroundColor: "#ffffff",
-    marginStart : 10,
-    marginEnd : 10,
+    marginStart: 10,
+    marginEnd: 10,
     paddingRight: 30,
- 
-    
+
+
     // borderRadius : 5,
   },
-  searchIcon : {
+  SearchInput2: {
+
+    marginTop: getStatusBarHeight(),
+    fontSize: 20,
+    fontWeight: "650",
+    textAlign: "right",
+    borderColor: "#ff914d",
+    backgroundColor: "#ffffff",
+    marginStart: 10,
+    marginEnd: 10,
+    paddingLeft: 30,
+
+
+    // borderRadius : 5,
+  },
+  ChangeRequestButton: {
+
+    marginTop: 10,
+    borderColor: "#ff914d",
+    borderWidth: 1,
+
+    backgroundColor: "#ffffff",
+    justifyContent: 'center',
+
+
+  },
+  ChangeRequestButtonText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: "#ff914d",
+  },
+
+  searchIcon: {
     position: "absolute",
     zIndex: 1,
     right: 20,
     top: getStatusBarHeight() + 30,
   },
+  searchIcon2: {
+    position: "absolute",
+    zIndex: 1,
+    left: 20,
+    top: getStatusBarHeight() + 30,
+  },
+
 
   flatList: {
     marginTop: 20,
-    // marginBottom: Platform.OS === "ios" ? getStatusBarHeight() + 90 : 100,
+
   },
   item: {
     backgroundColor: '#ffffff',
@@ -54,42 +93,55 @@ const styles = StyleSheet.create({
     color: "#ff914d",
     fontWeight: '900',
     // alignSelf : 'flex-end',
-    textAlign: "right",
+    textAlign: I18nManager.isRTL ? 'left' : "right",
+
     // flexWrap : 'wrap',
 
     marginBottom: 10,
-    
+
     // marginStart: 20,
 
 
   },
-  starRating : {
-    flexDirection : 'row',
-    alignSelf: "flex-end",
-    },
-    imageStar: {
-      height: 30,
-      width: 30,
-     
-    },
-  ratingFontContiner : {
-    flexDirection : 'row',
-    marginTop : 5,
-    marginEnd : 5,
-    },
-    ratingFont : {
-      fontSize: 18,
-      fontWeight: '800',
-      color: "#f8c40c",
-    },
+  starRating: {
+    flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse',
+    alignItems: 'center',
+  },
+  imageStar: {
+    height: 30,
+    width: 30,
+
+  },
+  ratingFontContiner: {
+    flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse',
+    marginTop: 10,
+    marginEnd: 10,
+  
+ 
+  },
+  ratingFont: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: "#f8c40c",
+  
+  },
+  emptyFont : {
+    fontSize: 20,
+    fontWeight: "800",
+    color: "#ff914d",  
+     marginTop : "25%",    
+     alignSelf: 'center',
+   //100%
+    
+  },
   txt: {
 
     // backgroundColor : 'red',
-    fontSize: 18,
+    fontSize: 15,
     color: "grey",
     fontWeight: '800',
     // alignSelf : 'flex-end',
-    textAlign: "right",
+    textAlign: I18nManager.isRTL ? "left" : "right",
     // flexWrap : 'wrap',
 
     // marginEnd: 20,
@@ -102,7 +154,7 @@ const styles = StyleSheet.create({
     height: 120,
     width: 120,
     marginStart: 20,
-    marginTop:10,
+    marginTop: 10,
     borderRadius: 20,
   },
   imageProfile: {
@@ -112,21 +164,29 @@ const styles = StyleSheet.create({
 
 
   },
+  imageIteam2: {
+    height: 120,
+    width: 120,
+    marginEnd: 20,
+    marginTop: 10,
+    borderRadius: 20,
+  },
   firstPartItem: {
-    flexDirection: 'row-reverse',
+    flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse',
     marginBottom: 10,
-    
+
     alignItems: 'center',
 
 
   },
+
   seconPartItem: {
     justifyContent: 'space-between',
     alignItems: 'center',
 
   },
   itemIcons: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
 
@@ -138,11 +198,11 @@ const styles = StyleSheet.create({
   },
   itemImageAndeDerails: {
     // flexGrow: 1,
-    flexDirection: 'row-reverse',
+    flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse',
     // justifyContent : 'space-between',
     // alignItems: 'center',
     marginEnd: 5,
-    marginTop : 20,
+    marginTop: 20,
 
 
   },
@@ -150,7 +210,7 @@ const styles = StyleSheet.create({
     // flexShrink : 1,
     flex: 1,
     flexDirection: 'column',
-    alignSelf: 'flex-end',
+
     marginTop: 10,
 
   },
@@ -162,79 +222,91 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignContent: 'center',
   },
+  addButton2: {
+    position: 'absolute',
+    bottom: Platform.OS === "ios" ? getStatusBarHeight() + 120 : 120,
+    backgroundColor: "#ff914d",
+    borderRadius: 100,
+    justifyContent: 'center',
+    alignContent: 'center',
+    right: 20,
+  },
   alertContainer: {
     flexDirection: "column",
-     width: "100%",
+    width: "100%",
     // height: "100%",
     justifyContent: "center",
     alignContent: "center",
     alignItems: "center",
-   
+
   },
   IconError: {
-  
+
     color: "red",
 
 
-},
-alertContentTextError: {
+  },
+  alertContentTextError: {
 
-  textAlign: "right",
-  fontSize: 20,
-  marginBottom: 10,
-  // color: "red",
-  fontWeight : '800',
-  paddingRight: 8,
-  color : "#ff914d",  
-  
-},
-alertContentContainer: {
+    textAlign: I18nManager.isRTL ? 'left' : "right",
+    fontSize: 20,
+    marginBottom: 10,
+    // color: "red",
+    fontWeight: '800',
+    paddingRight: 8,
+    color: "#ff914d",
 
-backgroundColor: "white",
-borderColor: "#ff914d",
-borderWidth: 1,
-borderRadius: 7,
-padding: 50,
-justifyContent: "center",
-alignContent: "center",
-alignItems: "center",
-width: "100%",
-},
+  },
+  alertContentContainer: {
 
-ButtonDelete: {
-  backgroundColor: "red",
-  height: 50,
-  width: "100%",
-  justifyContent: 'center',
-  borderRadius: 20,
-  marginTop:20,
-},
+    backgroundColor: "white",
+    borderColor: "#ff914d",
+    borderWidth: 1,
+    borderRadius: 7,
+    padding: 50,
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems: "center",
+    width: "100%",
+  },
 
-ButtonDeleteFont : {
-  fontSize: 18,
-  fontWeight : '800',
- 
-},
-ButtonClose :{
-  backgroundColor: "#ff914d",
-  height: 50,
-  width: "100%",
-  justifyContent: 'center',
-  borderRadius: 20,
-  marginTop:100,
-},
-ButtonCloseFont : {
-  fontSize: 18,
-  fontWeight : '800',  
-},
-addButton: {
-  position: 'absolute',
-  bottom: Platform.OS === "ios" ? getStatusBarHeight() + 120 : 120,
-  backgroundColor: "#ff914d",
-  borderRadius: 100,
-  justifyContent: 'center',
-  alignContent: 'center',
-},
+  ButtonDelete: {
+    backgroundColor: "red",
+    height: 50,
+    width: "100%",
+    justifyContent: 'center',
+    borderRadius: 20,
+    marginTop: 20,
+  },
+
+  ButtonDeleteFont: {
+    fontSize: 18,
+    fontWeight: '800',
+    width: "100%"
+
+  },
+  ButtonClose: {
+    backgroundColor: "#ff914d",
+    height: 50,
+    width: "100%",
+    justifyContent: 'center',
+    borderRadius: 20,
+    marginTop: 100,
+  },
+  ButtonCloseFont: {
+    fontSize: 18,
+    fontWeight: '800',
+    width: "100%"
+  },
+  addButton: {
+    position: 'absolute',
+    bottom: Platform.OS === "ios" ? getStatusBarHeight() + 120 : 120,
+    backgroundColor: "#ff914d",
+    borderRadius: 100,
+    justifyContent: 'center',
+    alignContent: 'center',
+    left: 20,
+  },
 });
 
 export default styles;

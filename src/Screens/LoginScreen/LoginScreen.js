@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useState } from "react";
-import { ScrollView, Text, View, ImageBackground, KeyboardAvoidingView, Keyboard, TouchableOpacity } from "react-native";
+import { ScrollView, Text, View, ImageBackground, KeyboardAvoidingView, NativeModules, TouchableOpacity, I18nManager } from "react-native";
 import { Button, Modal } from "react-native-paper";
 import KeyboardAvoidingWrapper from "../../components/KeyboardAvoidingWrapper/KeyboardAvoidingWrapper";
 import TextInput from "../../components/TextInput/TextInput";
@@ -10,12 +10,14 @@ import styles from "./styles";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { emailValidator } from "../../helpers/emailValidator";
 import { passwordValidator } from "../../helpers/passwordValidator";
-import { SignInWithProvider } from '../../config/AuthDB';
+import { SignInWithProvider, signInWithGoogle } from '../../config/AuthDB';
 import { SignIn } from '../../config/AuthDB';
 import { sendEmailVerification } from "firebase/auth";
 import { auth } from '../../config/firebase';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-export default function LoginScreen(props) {
+import { MaterialCommunityIcons ,Ionicons } from '@expo/vector-icons';
+import LodingModel from '../../components/LodingModel/LodingModel';
+import { useEffect } from 'react';
+export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: "", error: "" });
   const [password, setPassword] = useState({ value: "", error: "" });
   const [VerifyError, setVerifyError] = useState(false);
@@ -24,7 +26,9 @@ export default function LoginScreen(props) {
   const [alertContent, setAlertContent] = useState("קרתה שגיאה");
 
   const [IsError, setIsError] = useState(false);
-  const { navigation } = props;
+  const [isLoadingModel, setIsLoadingModel] = useState(false);
+
+  // this function send verification to email
   const SendEmailVerification = () => {
     const user = auth.currentUser;
 
@@ -32,14 +36,18 @@ export default function LoginScreen(props) {
 
   }
 
+  // this function implement when press on login button, they check the validation of user if Available then do login
+
   const onLoginPressed = () => {
 
 
     const emailError = emailValidator(email.value);
     const passwordError = passwordValidator(password.value);
-
-    SignIn(email.value, password.value).catch((error) => { // catch any error 
-
+    setIsLoadingModel(true)
+    SignIn(email.value, password.value).then(() => {
+      setIsLoadingModel(false)
+    }).catch((error) => { // catch any error 
+      setIsLoadingModel(false)
       if (emailError || passwordError) {
         setEmail({ ...email, error: emailError });
         setPassword({ ...password, error: passwordError });
@@ -64,14 +72,17 @@ export default function LoginScreen(props) {
         }
       }
 
-
+      setIsLoadingModel(false)
 
       return;
 
 
     });
 
+
   };
+
+
 
   return (
 
@@ -101,6 +112,7 @@ export default function LoginScreen(props) {
 
               <Text style={styles.WelcomeFont}>ברוכים הבאים</Text>
               <View style={styles.RegisterAndQustionFont}>
+
                 <Text style={styles.QustionFontFont} > אין לך חשבון עדיין?</Text>
                 <TouchableOpacity
                   onPress={() => navigation.navigate("Register")}
@@ -169,18 +181,21 @@ export default function LoginScreen(props) {
 
                 התחבר
               </Button>
-
-              {/* <Button
-                style={styles.ButtonPhoneRegister}
+              <View>
+              <Button
+                style={styles.ButtonLoginWithPhone}
                 labelStyle={styles.ButtonLoginFont}
                 mode="contained"
                 onPress={() => navigation.navigate("LoginWithPhone")}
 
               >
 
-                התחבר עם מספר תלפון
-              </Button> */}
+                התחבר עם הטלפון 
+            
+              </Button>
 
+              <Ionicons style = {[!I18nManager.isRTL &&styles.phoneIcon , I18nManager.isRTL && styles.phoneIcon2]} name={"phone-portrait-outline"} size={30} color={"#ffffff"} />
+              </View>
             </View>
 
 
@@ -218,6 +233,7 @@ export default function LoginScreen(props) {
 
 
       </ScrollView>
+      <LodingModel isModelVisible={isLoadingModel} />
     </KeyboardAvoidingView>
 
   );

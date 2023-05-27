@@ -8,6 +8,15 @@ const styles = StyleSheet.create({
     flex: 1,
 
   },
+  emptyFont : {
+    fontSize: 20,
+    fontWeight: "800",
+    color: "#ff914d",  
+    marginTop : "40%",    
+     alignSelf: 'center',
+   //100%
+    
+  },
   SearchInput : {
     
     marginTop:  getStatusBarHeight() + 40,
@@ -51,9 +60,19 @@ const styles = StyleSheet.create({
     top: getStatusBarHeight() + 70,
   },
 
+
   flatList: {
     marginTop: 20,
     // marginBottom: Platform.OS === "ios" ? getStatusBarHeight() + 90 : 100,
+  },
+  ChangeRequestText :{
+    fontSize: 18,
+    color: "#ff914d",
+    fontWeight: '900',
+    alignSelf : 'center',
+    marginTop : 10,
+   
+   
   },
   item: {
     backgroundColor: '#ffffff',
@@ -75,13 +94,13 @@ const styles = StyleSheet.create({
     color: "#ff914d",
     fontWeight: '900',
     // alignSelf : 'flex-end',
-    textAlign:   I18nManager.isRTL ? "left":"right",
+    textAlign : I18nManager.isRTL ? "left" : "right",
     // flexWrap : 'wrap',
 
     marginBottom: 10,
     
     marginStart: 20,
-  
+    marginEnd: 20,
 
 
   },
@@ -92,11 +111,18 @@ const styles = StyleSheet.create({
     color: "grey",
     fontWeight: '800',
     // alignSelf : 'flex-end',
-    textAlign:  I18nManager.isRTL ? "left":"right",
+    textAlign : I18nManager.isRTL ? "left" : "right",
     // flexWrap : 'wrap',
 
     marginEnd: 5,
     marginStart: 5,
+  },
+  txt2: {
+
+
+    fontWeight: '800',
+    textAlign: "right",
+   
   },
   ImageBackGround: {
     height: Dimensions.get('window').height / 5,
@@ -116,11 +142,11 @@ const styles = StyleSheet.create({
 
   },
   firstPartItem: {
-    flexDirection:  I18nManager.isRTL ? "row" :"row-reverse",
+    flexDirection: 'row-reverse',
     marginBottom: 10,
     
     alignItems: 'center',
-   
+
 
   },
   seconPartItem: {
@@ -139,18 +165,9 @@ const styles = StyleSheet.create({
     marginStart: 10,
 
   },
-  emptyFont: {
-    fontSize: 20,
-    fontWeight: "800",
-    color: "#ff914d",
-    marginTop: "25%",
-    alignSelf: 'center',
-    //100%
-
-  },
   itemImageAndeDerails: {
     // flexGrow: 1,
-    flexDirection:  I18nManager.isRTL ? "row" :"row-reverse",
+    flexDirection: I18nManager.isRTL ?  "row" : 'row-reverse',
     // justifyContent : 'space-between',
     // alignItems: 'center',
     marginEnd: 5,
@@ -162,7 +179,7 @@ const styles = StyleSheet.create({
     // flexShrink : 1,
     flex: 1,
     flexDirection: 'column',
-    textAlign:   I18nManager.isRTL ? "left":"right",
+     textAlign : I18nManager.isRTL ? "left" : "right",
     marginTop: 10,
 
   },
@@ -191,13 +208,23 @@ const styles = StyleSheet.create({
 },
 alertContentTextError: {
 
-  textAlign: "right",
+  textAlign : I18nManager.isRTL ? "left" : "right",
   fontSize: 20,
   marginBottom: 10,
   // color: "red",
   fontWeight : '800',
   paddingRight: 8,
   color : "#ff914d",  
+  
+},
+alertContentTextError1: {
+
+  textAlign : I18nManager.isRTL ? "left" : "right",
+  fontSize: 20,
+  marginBottom: 10,
+  color: "red",
+  fontWeight : '800',
+
   
 },
 alertContentContainer: {
@@ -239,6 +266,29 @@ ButtonCloseFont : {
   fontSize: 18,
   fontWeight : '800',  
 },
+modelAnswer : {
+    marginTop : 20,
+    flexDirection : I18nManager.isRTL ? 'row' : 'row-reverse',
+    justifyContent : 'center'
+
+   },
+   ModealButtons: {
+    // height: 50,
+    backgroundColor: "#ffffff",
+    justifyContent: 'center',
+    borderRadius: 20,
+    borderColor: '#ff914d',
+    borderWidth: 1,
+    marginEnd: 20,
+    marginStart : 20,
+
+},
+filterButtonFont: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: "#ff914d",
+},
+
 });
 
 export default styles;

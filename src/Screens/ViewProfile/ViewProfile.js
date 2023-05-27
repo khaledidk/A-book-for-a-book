@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { FlatList, Text, View, Image, ImageBackground, RefreshControl, TouchableOpacity } from "react-native";
+import { FlatList, Text, View, Image, ImageBackground, I18nManager, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, ScrollView } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons, Entypo, Ionicons } from '@expo/vector-icons';
 import Checkbox from 'expo-checkbox';
 import TextInput from "../../components/TextInput/TextInput";
 import { Button, Modal } from "react-native-paper";
-import BottomTab from '../../components/BottomTab/BottomTab'
+
 import styles from "./styles";
 import { addFeedBack, fetchCurrentUserInfo, fetchCurrentUserLoction, fetchFeedBack, fetchFeedBackWithUserDetails } from "../../config/FireStoreDB";
 import { updateUser } from "../../config/FireStoreDB";
@@ -14,8 +14,11 @@ import { AddFriend } from "../../config/RealTimeDB";
 import BackButton from "../../components/BackButton/BackButton";
 import * as SMS from 'expo-sms';
 import { fetchtUserNameAndImage } from "../../config/FireStoreDB";
-import { Rating } from 'react-native-ratings';
+
+import BackButton2 from "../../components/BackButton2/BackButton2";
 import { getDistance, getPreciseDistance } from 'geolib';
+import { Rating } from "react-native-rating-element";
+import OurActivityIndicator from "../../components/OurActivityIndicator/OurActivityIndicator";
 
 export default function ViewProfile({ navigation, route }) {
 
@@ -29,74 +32,20 @@ export default function ViewProfile({ navigation, route }) {
   const [remarks, setRemarks] = useState("");
   const [starRating, setStarRating] = useState(3)
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [myData, setMyData] = useState({});
+  const [myData, setMyData] = useState([]); // current user data
   const [feedBackArray, setFeedBackArray] = useState([]);
   const [otherUserCor, setOtherUserCor] = useState();
   const [currUserCor, setCurrUserCor] = useState();
-  var [pdis, setPdis] = useState();
-
-  const renderItem = ({ item }) => {
-    return (
-      <Item remarks={item.Remarks} rating={item.rating} userName={item.user_name} userImage={item.user_image} currUserID={item.currUserID} />
-
-    );
-  }
-  const Item = ({ remarks, rating, userName, userImage, currUserID }) => (
-    <View>
-      <View style={styles.item} >
-        <TouchableOpacity style={styles.userNameAndImage} onPress={() => PressOnUserProfileHandler(currUserID)}>
-          <Text style={styles.otherUserName}> {userName} </Text>
-          {userImage ? <Image
-            style={styles.imageProfileOtherUser}
-            source={{ uri: userImage }}
-
-          /> :
-            <Image
-              source={{ uri: profileDefaultImageUri }}
-              style={styles.imageProfileOtherUser}
-            />
-          }
-
-        </TouchableOpacity>
-
-
-        <View style={styles.details}>
-
-          <Text style={styles.txt}>הערות: {remarks}</Text>
-          <View style={styles.starRating}>
-            <Text style={styles.ratingText} >הדירוג:</Text>
-            <Rating
-              startingValue={rating}
-              ratingCount={5}
-              imageSize={30}
-              readonly={true}
-            />
-
-          </View>
-        </View>
+  const [isLoading, setIsLoading] = useState(true);
+  var [pdis, setPdis] = useState(); // distance
 
 
 
-
-      </View>
-
-    </View>
-  );
-  const PressOnUserProfileHandler = (userId) => {
-    const user = auth.currentUser;
-    const uid = user.uid;
-    console.log("result", userId, uid)
-    if (uid === userId) {
-      navigation.navigate("Profile")
-    } else {
-      navigation.push("ViewProfile", { userId: userId })
-
-    }
-  }
+  // this function when click on send message they route the user to singleChat page 
   const smsSend = async () => {
 
 
-    console.log("my data", myData);
+
     const uid = route.params.userId;
     let selectedUser = {
       avatar: currUserInfo.image,
@@ -107,26 +56,30 @@ export default function ViewProfile({ navigation, route }) {
     await AddFriend(uid).then((newChatroomId) => {
 
 
-      console.log("newChatroomId=========", newChatroomId)
 
 
 
-      navigation.navigate("SingleChat", { selectedUser: selectedUser, MyData: myData, chatRoomID: newChatroomId })
+      navigation.navigate("SingleChat", { selectedUser: selectedUser, MyData: myData[0], chatRoomID: newChatroomId, from: "ViewProfile" })
 
     });
   }
-  const fetchuserInfo = async () => {
 
+  // this function fetch user info
+  const fetchuserInfo = async () => {
+    setIsLoading(true)
 
     const uid = route.params.userId;
 
     await fetchCurrentUserInfo(uid).then((userInfo) => {
 
       let userJSONObj = { name: userInfo.name, image: userInfo.image === null ? profileDefaultImageUri : userInfo.image, email: userInfo.email, date: userInfo.date, phoneNumber: userInfo.phoneNumber === null ? "" : userInfo.phoneNumber };
-
+           console.log("currUserInfo" , userInfo)
       setCurrUserInfo(() => userJSONObj);
 
-    })
+    }).catch(() => {
+
+      Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+    });;
 
     await fetchFeedBackWithUserDetails(uid).then((feedBackArray) => {
 
@@ -135,19 +88,26 @@ export default function ViewProfile({ navigation, route }) {
     })
 
     await fetchtUserNameAndImage(auth.currentUser.uid).then((userInfo) => {
-      userInfo["id"] = auth.currentUser.uid
-      setMyData(userInfo)
-    })
+      let temp = userInfo;
+      console.log("temp", temp)
+      temp["id"] = auth.currentUser.uid
+      if (!temp.userImage) {
+        temp["userImage"] = profileDefaultImageUri;
+      }
 
+      setMyData(() => [temp])
+    }).catch(() => {
+
+      Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+    });
+    setIsLoading(false)
 
 
 
   };
-  const isSmsAvailable = async () => {
-    const checkAvailable = await SMS.isAvailableAsync()
-    setIsAvailable("ASDasd", checkAvailable)
-  }
+ 
 
+  // this functoin calculate precise distance for current user and picker user
   const calculatePreciseDistance = async () => {
     const OtherUser = route.params.userId;
     const user = auth.currentUser;
@@ -155,6 +115,7 @@ export default function ViewProfile({ navigation, route }) {
 
     const corOtherUser = await fetchCurrentUserLoction(OtherUser)
     const corCurrUser = await fetchCurrentUserLoction(currid)
+    console.log("corOtherUser" , corOtherUser)
 
     if (corOtherUser && corCurrUser) {
       var tempPdis = getPreciseDistance(
@@ -168,243 +129,273 @@ export default function ViewProfile({ navigation, route }) {
     }
 
   };
-  const onRefresh = async () => {
 
 
-    const uid = route.params.userId;
-    setIsRefreshing(true);
 
-    await fetchFeedBackWithUserDetails(uid).then((feedBackArray) => {
-
-      setIsRefreshing(false);
-      setFeedBackArray(feedBackArray)
-
-    })
-  }
-
+  // this function addd new deedback to picker user
   const sendFeedBack = async () => {
     const uid = route.params.userId;
     const user = auth.currentUser;
     const currid = user.uid;
     await addFeedBack(remarks, starRating, uid).then((feedBackID) => {
-      let newFeedBackJson = {
-        id: feedBackID,
-        Remarks: remarks,
-        rating: starRating,
-        user_name: myData.userName,
-        user_image: myData.userImage,
-        user_id: uid,
-        currUserID: currid,
-      }
-      if (feedBackArray.length == 0) {
-        setFeedBackArray([newFeedBackJson]);
 
-      } else {
-        setFeedBackArray((old) => [...old, newFeedBackJson]);
-      }
 
-    })
+    }).catch(() => {
+
+      Alert.alert("קרתה שגיה", "לא יכול לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
+    });
     setIsModelVisible(false)
   }
 
+  // this useEffeect fetch data whem open the page
   const isFocused = useIsFocused();
   useEffect(() => {
-    isSmsAvailable()
+
     fetchuserInfo()
     calculatePreciseDistance();
 
-    // setIsAvailable(isAvailable)
-  }, [isFocused]);
+
+  }, []);
 
 
 
 
   return (
-    <View style={styles.Container} >
-      <BackButton goBack={navigation.goBack} />
-      <ImageBackground
+    <KeyboardAvoidingView style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : ""}
 
-        style={styles.ImageBackGround} >
+    >
+      {isLoading ? <OurActivityIndicator /> :
 
-      </ImageBackground>
-      <View style={styles.BootomView}>
+        <ScrollView
+          style={styles.Container}
 
-        <View style={styles.profileImageName} >
-          <Image
-            style={styles.imageProfile}
-            source={{ uri: currUserInfo.image }}
-
-          />
-          <View style={styles.nameAndFeedBack}>
-            <Text style={styles.userName}> {currUserInfo.name}</Text>
-
-            <Button
-              style={styles.ButtonFeedBack}
-              labelStyle={styles.buttonFeedBackFont}
-              mode="contained"
-              onPress={() => setIsModelVisible(true)}
-            >
-              משוב החלפה
-
-            </Button>
-          </View>
+          showsVerticalScrollIndicator={false}
+        >
 
 
-        </View>
-        <View style={styles.userDetails}>
-          <View style={styles.Details}>
-            <MaterialCommunityIcons style={styles.icon} name={"email"} size={40} color={"#ff914d"} />
-            <Text style={styles.detailsFont}> {currUserInfo.email}</Text>
-          </View>
 
-          {currUserInfo.phoneNumber ? <View style={styles.Details}>
-            <MaterialCommunityIcons style={styles.icon} name={"phone"} size={40} color={"#ff914d"} />
-            <Text style={styles.detailsFont}> {currUserInfo.phoneNumber}</Text>
-          </View> : null}
+          {I18nManager.isRTL ?
+            <BackButton2 goBack={navigation.goBack} />
+            : <BackButton goBack={navigation.goBack} />}
+          <ImageBackground
 
-          {otherUserCor && currUserCor ? <TouchableOpacity onPress={() => navigation.navigate("OtherUserMap", { otherUserInfo: currUserInfo, otherUserCor: otherUserCor, userId: route.params.userId })} style={styles.Details}>
-            <MaterialIcons style={styles.icon} name={"location-pin"} size={40} color={"#ff914d"} />
-            <Text style={styles.detailsFont}> {pdis / 1000} ק"מ</Text>
+            style={styles.ImageBackGround} >
 
-          </TouchableOpacity> : null}
+          </ImageBackground>
 
-          <View style={styles.buttonContiner}>
-            <View>
 
+          <View style={styles.BootomView}>
+
+            <View style={styles.profileImageName} >
+              <Image
+                style={styles.imageProfile}
+                source={{ uri: currUserInfo.image }}
+
+              />
+              <View style={styles.nameAndFeedBack}>
+             
+                <Text style={styles.userName}> {currUserInfo.name}</Text>
+       
+                <Button
+                  style={styles.ButtonFeedBack}
+                  labelStyle={styles.buttonFeedBackFont}
+                  mode="contained"
+                  onPress={() => setIsModelVisible(true)}
+                >
+                  לעשות משוב 
+
+                </Button>
+              </View>
+
+
+            </View>
+            <View style={styles.userDetails}>
+              {currUserInfo.email ? <View style={styles.Details}>
+                <MaterialCommunityIcons style={styles.icon} name={"email"} size={40} color={"#ff914d"} />
+                <Text style={styles.detailsFont}> {currUserInfo.email}</Text>
+              </View> : null}
+
+              {currUserInfo.phoneNumber ? <View style={styles.Details}>
+                <MaterialCommunityIcons style={styles.icon} name={"phone"} size={40} color={"#ff914d"} />
+               
+                <Text style={styles.detailsFont}> {currUserInfo.phoneNumber}</Text>
+               
+              </View> : null}
+
+              {otherUserCor && currUserCor ? <View  style={styles.Details2}>
+                <MaterialIcons style={styles.icon} name={"location-pin"} size={40} color={"#ff914d"} />
+                <Text style={styles.detailsFont}> {pdis / 1000} ק"מ</Text>
+                <TouchableOpacity  onPress={() => navigation.navigate("OtherUserMap", { otherUserInfo: currUserInfo, otherUserCor: otherUserCor, userId: route.params.userId })}>
+                <Entypo  name={"arrow-left"} size={40} color={"#ff914d"} />
+                 </TouchableOpacity>
+               
+              </View> : null}
+
+              <View style={styles.buttonContiner}>
+                <View style={{ width: "100%" }}>
+
+                  <Button
+                    style={styles.ButtonSendSms}
+                    labelStyle={[I18nManager.isRTL && styles.buttonFont2, !I18nManager.isRTL && styles.buttonFont]}
+                    mode="contained"
+                    onPress={smsSend}
+                  >
+                    שלח הודעה
+
+                  </Button>
+
+                  {I18nManager.isRTL ? <MaterialIcons name='sms' style={styles.iconSMS2} size={30} color={"#ffffff"} />
+                    :
+                    <MaterialIcons name='sms' style={styles.iconSMS} size={30} color={"#ffffff"} />
+                  }
+
+
+                </View>
+                <View style={{ width: "100%" }}>
+
+                  <Button
+                    style={[I18nManager.isRTL && styles.viewPostsButton2, !I18nManager.isRTL && styles.viewPostsButton]}
+                    labelStyle={[I18nManager.isRTL && styles.buttonFont2, !I18nManager.isRTL && styles.buttonFont]}
+
+                    mode="contained"
+                    onPress={() => navigation.navigate("OtherUserPost", { userId: route.params.userId })}
+                  >
+                    ספרים של {currUserInfo.name}
+
+                  </Button>
+                  {I18nManager.isRTL ? <Ionicons name='list' style={styles.IconList2} size={30} color={"#ffffff"} />
+                    :
+                    <Ionicons name='list' style={styles.IconList} size={30} color={"#ffffff"} />
+                  }
+                </View>
+
+
+              </View>
               <Button
-                style={styles.viewPostsButton}
-                labelStyle={styles.buttonFont}
+                style={styles.ButtonClose}
+                labelStyle={styles.ButtonCloseFont}
                 mode="contained"
-                onPress={() => navigation.navigate("OtherUserPost", { userId: route.params.userId })}
+                onPress={() => navigation.navigate("FeedBack", { userId: route.params.userId })}
+
               >
-                ספרים של {currUserInfo.name}
 
+                לראות משובים של {currUserInfo.name}
               </Button>
-              <Ionicons name='list' style={styles.IconList} size={30} color={"#ffffff"} />
             </View>
-            <View>
-
-              <Button
-                style={styles.ButtonSendSms}
-                labelStyle={styles.buttonFont}
-                mode="contained"
-                onPress={smsSend}
-              >
-                שלח הודעה
-
-              </Button>
-
-              <MaterialIcons name='sms' style={styles.iconSMS} size={30} color={"#ffffff"} />
-
-
-            </View>
-          </View>
-        </View>
-
-
-      </View>
-      {feedBackArray.length ? <Text style={styles.feedBackLebal}>מושבים:</Text> : null}
-      <FlatList
-
-        refreshControl={<RefreshControl
-          colors={["#ff914d", "#ff914d"]}
-          refreshing={isRefreshing}
-          onRefresh={onRefresh}
-        />}
-        data={feedBackArray}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-
-
-        style={styles.flatList}
-
-      />
-      <Modal visible={isModelVisible}>
-
-        <View style={styles.modelContainer}>
-
-
-          <View style={styles.modelContentContainer}>
-
-
-            <Text style={styles.alertContentTextError}>האם בצעת החלפה עם {currUserInfo.name}?</Text>
-            <View style={styles.checkboxContiner} >
-
-              <View style={styles.checkboxAndText}>
-                <Text style={styles.checkBoxText} >כן</Text>
-                <Checkbox
-                  style={styles.checkbox} value={isCheckedYes} onValueChange={() => setisCheckedYes(!isCheckedYes) || setisCheckedNo(false)}
-                />
-              </View>
-              <View style={styles.checkboxAndText}>
-                <Text style={styles.checkBoxText} >לא</Text>
-                <Checkbox
-                  style={styles.checkbox} value={isCheckedNo} onValueChange={() => setisCheckedYes(false) || setisCheckedNo(!isCheckedNo)}
-                />
-              </View>
-            </View>
-
-            {isCheckedYes &&
-              <TextInput
-                label="הערות"
-                returnKeyType="next"
-                value={remarks}
-                onChangeText={(text) => setRemarks(text)}
-                autoCapitalize="none"
-                style={styles.input}
-
-                underlineColor="#ddb07f"
-                mode="outlined"
-                activeOutlineColor="#ddb07f"
-                outlineColor="#ddb07f"
-
-
-              />}
-
-            {isCheckedYes &&
-              <View style={styles.starRating}>
-                <Text style={styles.ratingText} >הדירוג שלך ל{currUserInfo.name}:</Text>
-                <Rating
-
-                  startingValue={3}
-                  ratingCount={5}
-                  imageSize={30}
-
-
-                  onFinishRating={setStarRating}
-
-                />
-
-              </View>
-
-            }
-            <Button
-              style={styles.ButtonClose}
-              labelStyle={styles.ButtonCloseFont}
-              mode="contained"
-              onPress={sendFeedBack}
-
-            >
-
-              לשלוח
-            </Button>
-            <Button
-              style={styles.ButtonClose}
-              labelStyle={styles.ButtonCloseFont}
-              mode="contained"
-              onPress={() => setIsModelVisible(false)}
-            >
-              לסגור
-            </Button>
-
-
 
 
           </View>
 
-        </View>
 
-      </Modal>
-    </View>
+
+
+          <Modal visible={isModelVisible}>
+
+            <View style={styles.modelContainer}>
+
+
+              <View style={styles.modelContentContainer}>
+
+
+                <Text style={styles.alertContentTextError}>האם בצעת החלפה עם {currUserInfo.name}?</Text>
+                <View style={styles.checkboxContiner} >
+
+                  <View style={styles.checkboxAndText}>
+                    <Text style={styles.checkBoxText} >כן</Text>
+                    <Checkbox
+                      style={styles.checkbox} value={isCheckedYes} onValueChange={() => setisCheckedYes(!isCheckedYes) || setisCheckedNo(false)}
+                    />
+                  </View>
+                  <View style={styles.checkboxAndText}>
+                    <Text style={styles.checkBoxText} >לא</Text>
+                    <Checkbox
+                      style={styles.checkbox} value={isCheckedNo} onValueChange={() => setisCheckedYes(false) || setisCheckedNo(!isCheckedNo)}
+                    />
+                  </View>
+                </View>
+
+                {isCheckedYes &&
+                  <TextInput
+                    label="הערות"
+                    returnKeyType="next"
+                    value={remarks}
+                    onChangeText={(text) => setRemarks(text)}
+                    autoCapitalize="none"
+                    style={styles.input}
+
+                    underlineColor="#ddb07f"
+                    mode="outlined"
+                    activeOutlineColor="#ddb07f"
+                    outlineColor="#ddb07f"
+
+
+                  />}
+
+                {isCheckedYes &&
+                  <View style={styles.starRating}>
+                    <Text style={styles.ratingText} >הדירוג שלך ל{currUserInfo.name}:</Text>
+                    {I18nManager.isRTL ? <Rating
+
+                      rated={starRating}
+                      totalCount={5}
+                      size={25}
+                      icon="ios-star"
+                      direction="row-reverse"
+                      onIconTap={(position) => setStarRating(position)}
+
+
+
+                    /> :
+                      <Rating
+
+                        rated={starRating}
+                        totalCount={5}
+                        size={25}
+                        icon="ios-star"
+                        direction="row"
+                        onIconTap={(position) => setStarRating(position)}
+
+
+
+                      />
+
+
+                    }
+
+                  </View>
+
+                }
+                {isCheckedYes && <Button
+                  style={styles.ButtonClose}
+                  labelStyle={styles.ButtonCloseFont}
+                  mode="contained"
+                  onPress={sendFeedBack}
+
+                >
+
+                  לשלוח
+                </Button>}
+                <Button
+                  style={styles.ButtonClose}
+                  labelStyle={styles.ButtonCloseFont}
+                  mode="contained"
+                  onPress={() => setIsModelVisible(false)}
+                >
+                  לסגור
+                </Button>
+
+
+
+
+              </View>
+
+            </View>
+
+          </Modal>
+
+        </ScrollView>}
+
+    </KeyboardAvoidingView>
   );
 }

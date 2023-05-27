@@ -1,20 +1,17 @@
-
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions, I18nManager } from 'react-native';
 
 const styles = StyleSheet.create({
   Container: {
     flex: 1,
-
-    // justifyContent: 'center',
-    // alignItems: 'center',
+  
 
   },
   ImageBackGround: {
     height: Dimensions.get('window').height / 6,
   },
   BootomView: {
-   
 
+    // marginBottom : 10,
     backgroundColor: '#ffffff',
     borderTopStartRadius: 60,
     borderTopEndRadius: 60,
@@ -26,17 +23,20 @@ const styles = StyleSheet.create({
     marginTop: 50,
     marginStart: 20,
     alignItems: 'center',
+   
+    flex : 1,
+ 
   },
   profileImageName: {
     marginTop: 10,
     marginStart: 20,
-    flexDirection: "row",
-
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems: 'center',
+
   },
   userName: {
     color: "#ff914d",
-    fontSize: 30,
+    fontSize: 25,
 
     fontWeight: '700',
 
@@ -44,15 +44,29 @@ const styles = StyleSheet.create({
 
   },
   Details: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems: 'center',
     marginTop: 20,
+    
+   
+    flex: 1,
+   
+  },
+  Details2: {
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
+    alignItems: 'center',
+    marginTop: 20,
+   justifyContent : 'space-between',
+    flex: 1,
+   
   },
   detailsFont: {
     fontSize: 20,
     fontWeight: '700',
     color: 'grey',
-    marginStart: 20,
+ 
+   
+   
   },
 
   imageProfile: {
@@ -85,16 +99,30 @@ const styles = StyleSheet.create({
   },
   buttonContiner: {
     marginTop: 10,
-    flexDirection: 'row',
+    flexDirection:  'column',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    width : "100%"
   },
   viewPostsButton: {
     backgroundColor: "#ff914d",
     height: 50,
     justifyContent: 'center',
     borderRadius: 20,
-    marginEnd: 10,
+    // marginEnd: 5,
+    marginTop : 30,
+    width : "100%"
+   
+
+  },
+  viewPostsButton2: {
+    backgroundColor: "#ff914d",
+    height: 50,
+    justifyContent: 'center',
+    borderRadius: 20,
+    // marginStart: "100%"
+    marginTop : 30,
+    width : "100%"
   },
   ButtonFeedBack: {
     backgroundColor: "#ff914d",
@@ -121,13 +149,21 @@ const styles = StyleSheet.create({
 
     justifyContent: 'center',
     borderRadius: 20,
-    marginStart: 10,
+    // marginStart: 5,
+    marginTop : 10,
+    width : "100%"
+  
   },
 
   buttonFont: {
     fontSize: 15,
     fontWeight: '800',
     marginLeft: 40,
+  },
+  buttonFont2: {
+    fontSize: 15,
+    fontWeight: '800',
+    marginRight: 40,
   },
 
   signOutButton: {
@@ -150,13 +186,25 @@ const styles = StyleSheet.create({
     position: "absolute",
     zIndex: 1,
     left: 10,
-    top: 9,
+    top: 40,
+  },
+  IconList2: {
+    position: "absolute",
+    zIndex: 1,
+    right: 10,
+    top: 40,
   },
   iconSMS: {
     position: "absolute",
     zIndex: 1,
-    left: 18,
-    top: 12,
+    left: 8,
+    top: 20,
+  },
+  iconSMS2: {
+    position: "absolute",
+    zIndex: 1,
+    right: 10,
+    top: 20,
   },
   modelContainer: {
     flexDirection: "column",
@@ -198,14 +246,15 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: 'center',
     borderRadius: 20,
-    marginTop: 50,
+    marginTop: 30,
   },
   ButtonCloseFont: {
     fontSize: 18,
     fontWeight: '800',
+    width : '100%'
   },
   checkboxContiner: {
-    flexDirection: 'row-reverse',
+    flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse' ,
 
   },
 
@@ -244,8 +293,9 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   starRating: {
-    flexDirection: "row-reverse",
+    flexDirection:  I18nManager.isRTL ? "row" :"row-reverse",
     marginTop: 20,
+    
   },
   flatList: {
     // marginTop: 10,
@@ -305,12 +355,17 @@ const styles = StyleSheet.create({
     borderRadius: 100,
 
   },
-  feedBackLebal : {
-    marginTop : 10,
+  feedBackLebal: {
+    marginTop: 10,
     fontSize: 20,
     color: "#ff914d",
     fontWeight: '800',
-  alignSelf : 'center'
+    alignSelf: 'center'
+  },
+  feedBackEmpty: {
+    fontWeight: '800',
+    alignSelf: 'center',
+    color: 'grey',
   },
   details: {
     // flexShrink : 1,

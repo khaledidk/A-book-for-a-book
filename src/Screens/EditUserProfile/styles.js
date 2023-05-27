@@ -101,17 +101,31 @@ DateErrorFont : {
   paddingTop: 8,
   alignSelf: 'flex-end'
 },
-  
+phoneStart2 : {
+position : 'absolute',
+zIndex: 1,
+right: 15,
+top: 119,
+},
+phoneStart : {
+  position : 'absolute',
+  zIndex: 1,
+  left: 15,
+  top: 119,
+  },
 PhoneInputStyle: {
 
-    // borderColor: "#ddb07f",
-    // borderWidth: 1.5,
-    // backgroundColor: "#ffffff",
-    // borderRadius: 5,
-    // marginTop: 20,
+  backgroundColor : '#ffffff',
     textAlign: "left",
-    paddingLeft : 50,
+   paddingLeft: 50,
 
+
+},
+PhoneInputStyle2: {
+
+  backgroundColor : '#ffffff',
+  textAlign: "left",
+  paddingRight : 50,
 
 },
 PhoneInputButton: {

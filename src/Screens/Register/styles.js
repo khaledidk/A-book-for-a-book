@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, I18nManager, StyleSheet } from 'react-native';
 
 
 const styles = StyleSheet.create({
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
 
     },
     PhoneInputStyle: {
-
+        backgroundColor : '#ffffff',
         textAlign: "left",
         paddingLeft : 50,
 
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
 
     alertContentTextSucsess: {
 
-        textAlign: "right",
+        textAlign: I18nManager.isRTL ? "left" : "right",
         fontSize: 20,
         marginBottom: 10,
         color: "#ff914d",

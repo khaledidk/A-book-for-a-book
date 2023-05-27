@@ -1,8 +1,8 @@
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, PhoneAuthProvider, signInWithCredential, signOut, sendEmailVerification, sendPasswordResetEmail, signInWithPhoneNumber } from "firebase/auth";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, PhoneAuthProvider, signInWithRedirect, signOut, sendEmailVerification, sendPasswordResetEmail, signInWithPhoneNumber, GoogleAuthProvider, getRedirectResult } from "firebase/auth";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import addNewUser from './FireStoreDB'
 import { DBFire, auth } from "./firebase";
-import { Alert } from "react-native";
+
 
 
 
@@ -56,7 +56,7 @@ export async function SignOut() {
 }
 
 // creat user by email and password
-export default async function createUser(email, password, name, number ) {
+export default async function createUser(email, password, name, number) {
 
 
     await createUserWithEmailAndPassword(auth, email, password)
@@ -71,7 +71,7 @@ export default async function createUser(email, password, name, number ) {
 
             addNewUser(userID, name, email, number)
 
-            //  addNewUser(userID, name, email, phoneNumber);
+
 
         }).catch((error) => {
             const errorCode = error.code;
@@ -124,10 +124,10 @@ export async function SignInWithPhoneNumber(phoneNumber) {
     let verificationId;
     let code;
 
-    
-   
+
+
     let docId = null;
-     await getDocs(collection(DBFire, 'users')).then((querySnapshot) => {
+    await getDocs(collection(DBFire, 'users')).then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             if (doc.data()['phoneNumber'] == phoneNumber) {
                 console.log(doc.id)
@@ -136,8 +136,9 @@ export async function SignInWithPhoneNumber(phoneNumber) {
 
         })
     })
-    
+
     return docId;
 
 
 }
+

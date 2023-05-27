@@ -1,19 +1,20 @@
 import * as React from 'react';
 import { useState } from "react";
 
-import { ScrollView, Text, View, ImageBackground, KeyboardAvoidingView, Keyboard, TouchableOpacity } from "react-native";
+import { ScrollView, Text, View, ImageBackground, KeyboardAvoidingView, I18nManager, TouchableOpacity } from "react-native";
 import BackButton from '../../components/BackButton/BackButton'
 import TextInput from '../../components/TextInput/TextInput';
 import { Button } from "react-native-paper";
 import styles from './styles';
 import { emailValidator } from '../../helpers/emailValidator';
 import { resetEmailPassword } from "../../config/AuthDB";
+import BackButton2 from '../../components/BackButton2/BackButton2';
 export default function ForgotPassword(props) {
     const { navigation } = props;
 
     const [email, setEmail] = useState({ value: "", error: "" });
 
-
+    // this function send link to email for reset Password
     const onSendPressed = () => {
         const emailError = emailValidator(email.value);
 
@@ -38,7 +39,8 @@ export default function ForgotPassword(props) {
             behavior={Platform.OS === "ios" ? "padding" : ""}
 
         >
-            <BackButton goBack={navigation.goBack} />
+            {I18nManager.isRTL ? <BackButton2 goBack={navigation.goBack} /> : <BackButton goBack={navigation.goBack} />}
+
             <ScrollView
                 style={styles.container}
 
@@ -85,6 +87,7 @@ export default function ForgotPassword(props) {
 
                             </View>
 
+
                             <Button
                                 style={styles.ButtonSend}
                                 mode="contained"
@@ -95,6 +98,9 @@ export default function ForgotPassword(props) {
 
                                 שלח
                             </Button>
+                            <TouchableOpacity onPress={() => navigation.replace("ForgotPassword")}>
+                                <Text style={styles.relpaceFont}>לא נשלח לך מייל תלחץ כאן</Text>
+                            </TouchableOpacity>
 
                         </View>
 

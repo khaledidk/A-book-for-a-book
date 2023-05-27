@@ -13,13 +13,20 @@ import ItemScreen from '../Screens/Item/Item';
 import UserPostScreen from "../Screens/UserPost/UserPost";
 import EditPostScreen from "../Screens/EditPost/EditPost";
 import ViewProfileScreen from "../Screens/ViewProfile/ViewProfile";
-import OtherUserPostScreen from "../Screens/OtherUserPost/OtherUserFile";
+import OtherUserPostScreen from "../Screens/OtherUserPost/OtherUserPost";
 import EditUserProfileScreen from "../Screens/EditUserProfile/EditUserProfile";
 import ChatRoomScreen from "../Screens/ChatRoom/ChatRoom";
 import MapUserScreen from "../Screens/MapUser/MapUser";
 import SingleChatScreen from "../Screens/SingleChat/SingleChat";
 import OtherUserMapScreen from "../Screens/OtherUserMap/OtherUserMap";
+import ChangeRequestScreen from "../Screens/ChangeRequest/ChangeRequest";
+import ChooseBookToChangeScreen from "../Screens/ChooseBookToChange/ChooseBookToChange";
+import MyChangeRequestScreen from "../Screens/MyChangeRequest/MychangeRequest";
+import FeedBackScreen from "../Screens/FeedBack/FeedBack";
+
+
 import { getStatusBarHeight } from 'react-native-status-bar-height'
+
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Entypo, MaterialIcons, Ionicons, FontAwesome } from '@expo/vector-icons';
 
@@ -33,6 +40,7 @@ export const AppStack = () => {
       screenOptions={{
         headerShown: false
       }}
+      initialRouteName="Main"
     >
       <Stack.Screen name='Main' component={TabStack} />
       <Stack.Screen name='AddBook' component={AddBookScreen} />
@@ -43,6 +51,11 @@ export const AppStack = () => {
       <Stack.Screen name='OtherUserPost' component={OtherUserPostScreen} />
       <Stack.Screen name='SingleChat' component={SingleChatScreen} />
       <Stack.Screen name='OtherUserMap' component={OtherUserMapScreen} />
+      <Stack.Screen name='ChangeRequest' component={ChangeRequestScreen} />
+      <Stack.Screen name='ChooseBookToChange' component={ChooseBookToChangeScreen} />
+      <Stack.Screen name='MyChangeRequest' component={MyChangeRequestScreen} />
+      <Stack.Screen name='FeedBack' component={FeedBackScreen} />
+      
     </Stack.Navigator>
 
   );
@@ -110,18 +123,24 @@ export const TabStack = () => {
 
           backgroundColor: 'white',
           position: 'absolute',
-          // right: 10,
-          // left: 10,
-          // bottom: Platform.OS === "ios" ? getStatusBarHeight() : 0,
+
           height: Platform.OS === "ios" ? 80 : 60,
-          // borderRadius: 15,
-          // paddingBottom: 5,
+
         },
 
         tabBarShowLabel: true,
         tabBarLabelStyle: {
-          fontSize: 15
+
+
+          fontSize: 10,
+
+          width: "100%"
+
         },
+        tabBarItemStyle: {
+          borderColor: "black",
+          //  flexGrow: 1
+        }
 
       })}
 
@@ -141,6 +160,7 @@ export const TabStack = () => {
         options={{
 
           tabBarLabel: "ספרים שלי",
+
 
 
         }}

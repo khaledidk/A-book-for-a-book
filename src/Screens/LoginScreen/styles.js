@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, I18nManager , StyleSheet } from 'react-native';
 
 
 const styles = StyleSheet.create({
@@ -28,37 +28,42 @@ const styles = StyleSheet.create({
     WelcomeView: {
         padding: 40,
 
-
-
-
     },
     WelcomeFont: {
         color: "#ff914d",
-        fontSize: 34,
-        alignSelf: "flex-end",
+        fontSize: 30,
+        // textAlign : 'right',
+        writingDirection: "rtl" 
+     
     },
     RegisterAndQustionFont: {
-        flexDirection: 'row-reverse'
-
+        flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse',
+        alignItems : 'center',
+      
+        // direction : 'rtl',
+       
     },
     QustionFontFont: {
-        alignSelf: "flex-end",
+        // alignSelf: "flex-end",
+        // textAlign : 'right',
+        // fontSize: 1,  fontSize : 10,
+        writingDirection: "rtl" 
     },
     RegisterFont: {
         color: 'red',
         fontStyle: 'italic',
-
-        alignSelf: "flex-end",
+        fontSize : 17,
+      
 
     },
     InputView: {
-        marginTop: 50,
+        marginTop: 30,
 
     },
     ForgetPassword: {
         height: 50,
         marginTop: 20,
-        flexDirection: 'row-reverse',
+        flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse',
 
     },
     ForgetPasswordFront: {
@@ -76,6 +81,27 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 20,
     },
+    ButtonLoginWithPhone: {
+        backgroundColor: "#ff914d",
+        height: 50,
+        width: "100%",
+        justifyContent: 'center',
+        borderRadius: 20,
+        marginTop: 10,
+    },
+    phoneIcon : {
+        position: "absolute", 
+        zIndex: 1, 
+        left: 15, 
+        top: 20, 
+    },
+    phoneIcon2 : {
+        position: "absolute", 
+        zIndex: 1, 
+        right: 15, 
+        top: 20, 
+    },
+  
     ButtonLoginFont: {
         fontSize: 18,
         fontWeight: '800'
@@ -116,7 +142,7 @@ const styles = StyleSheet.create({
     },
     alertContentTextSucsess: {
 
-        textAlign: "right",
+        textAlign: I18nManager.isRTL ? "left" : "right",
         fontSize: 20,
         marginBottom: 10,
         color: "#ff914d",

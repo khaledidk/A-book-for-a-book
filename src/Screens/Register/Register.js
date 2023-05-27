@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { useState, useRef } from "react";
 
-import { ScrollView, Text, View, ImageBackground, KeyboardAvoidingView, Keyboard, TouchableOpacity, Platform } from "react-native";
+import { ScrollView, Text, View, I18nManager, KeyboardAvoidingView, Keyboard, TouchableOpacity, Platform } from "react-native";
 import BackButton from '../../components/BackButton/BackButton'
+import BackButton2 from '../../components/BackButton2/BackButton2'
 import styles from './styles';
 import TextInput from "../../components/TextInput/TextInput";
 import { emailValidator } from "../../helpers/emailValidator";
@@ -20,6 +21,7 @@ import { addNewItem } from '../../config/FireStoreDB';
 import DropDownPicker from 'react-native-dropdown-picker'
 // import PhoneInput from 'react-native-phone-number-input';
 import createUser from '../../config/AuthDB'
+import LodingModel from '../../components/LodingModel/LodingModel';
 
 
 export default function Register(props) {
@@ -39,10 +41,11 @@ export default function Register(props) {
     const [FormattedNumber, setFormattedNumber] = useState("");
     const [isAleretVisible, setIsAlertVisible] = useState(false);
     const [ModelIcon, setModelIcon] = useState(false);
+    const [isLoadingModel, setIsLoadingModel] = useState(false);
 
     const [alertContent, setAlertContent] = useState("");
 
-
+    // this function check if FirstPassword and SecondPassword is equal
     const ConfirmPassowrdFunc = (FirstPassword, SecondPassword) => {
 
 
@@ -56,29 +59,28 @@ export default function Register(props) {
         }
 
     }
-    function ValidatePhoneNumber(phoneNumber) { // check if the cell phone number is valid for israel
+
+// check if the cell phone number is valid for israel
+    function ValidatePhoneNumber(phoneNumber) { 
         var regex = /^05\d([-]{0,1})\d{7}$/;
         var phone = phoneNumber.match(regex);
+        if (!phoneNumber) {
+            return true;
+        }
         if (phone) {
             return true;
         }
         return false;
     }
 
-    const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        setShowDatePicker(Platform.OS === 'ios')
-        setDate(currentDate);
-        let tempeDate = new Date(currentDate)
-        let fDate = tempeDate.getDate() + '/' + (tempeDate.getMonth() + 1) + '/' + tempeDate.getFullYear();
-        setFormattedDate(fDate)
+ 
 
-    };
-
-
+  // this function implement when press on Register button, they check the validation of  details 
+  // then upload the data to DB and creat new user
     const onRegisterPressed = () => {
 
-
+        setIsLoadingModel(true)
+        setPhoneInputerror("")
         const emailError = emailValidator(email.value);
         const equalPassword = ConfirmPassowrdFunc(password.value, ConfirmPassowrd.value)
         const passwordError = passwordValidator(password.value);
@@ -91,11 +93,7 @@ export default function Register(props) {
 
 
         if (emailError || passwordError || NameError || ConfirmPasswordError || (!CheckValidPhoneNumber)) {
-            // if (!FormattedDate) {
-            //     setIsDateEmpty(true)
-            // } else {
-            //     setIsDateEmpty(false)
-            // }
+        
             if (!CheckValidPhoneNumber) {
                 setPhoneInputerror("* מספר טלפון אינו נכון")
 
@@ -104,6 +102,7 @@ export default function Register(props) {
             setPassword({ ...password, error: passwordError });
             setConfirmPassowrd({ ...ConfirmPassowrd, error: ConfirmPasswordError });
             setUserName({ ...UserName, error: NameError })
+            setIsLoadingModel(false)
             return;
 
 
@@ -111,6 +110,7 @@ export default function Register(props) {
         // setIsDateEmpty(false)
         createUser(email.value, password.value, UserName.value, FormattedNumber).then(() => {
             setAlertContent("שלחנו אליך הודעת אימות, נא לוודא לדוא״ל שלך.")
+            setIsLoadingModel(false)
             setIsAlertVisible(true)
             setModelIcon(true)
 
@@ -119,6 +119,7 @@ export default function Register(props) {
             setAlertContent(error)
             setModelIcon(false)
             setIsAlertVisible(true)
+            setIsLoadingModel(false)
 
 
         });
@@ -134,7 +135,7 @@ export default function Register(props) {
             behavior={Platform.OS === "ios" ? "padding" : ""}
 
         >
-            <BackButton goBack={navigation.goBack} />
+            {I18nManager.isRTL ? <BackButton2 goBack={navigation.goBack}/>: <BackButton goBack={navigation.goBack} />   }
 
             <ScrollView
                 style={styles.container}
@@ -195,92 +196,7 @@ export default function Register(props) {
                                     errorText={PhoneInputerror}
                                 />
 
-                                {/* <View style={styles.InputView}>
-
-                                    {PhoneInputerror ? <PhoneInput
-                                        ref={phoneInput}
-                                        defaultValue={NumberValue}
-                                        defaultCode="IL"
-                                        layout="first"
-                                        placeholder='מספר טלפון'
-
-
-                                        containerStyle={styles.PhoneInputBorderError}
-                                        textContainerStyle={{ backgroundColor: '#ffffff' }}
-                                        countryPickerButtonStyle={styles.PhoneInputButton}
-                                        countryPickerProps={{ region: 'Asia' }}
-                                        onChangeText={(text) => {
-                                            setNumberValue(text)
-                                            setPhoneInputerror("")
-                                        }}
-
-                                        onChangeFormattedText={(text) => {
-                                            console.log(text)
-                                            setFormattedNumber(text)
-                                        }}
-
-
-                                        filterProps={{ placeholder: 'תבחרו מדינה' }}
-
-                                        withShadow
-                                        {...props}
-
-                                    /> : null}
-                                    {!PhoneInputerror ? <PhoneInput
-                                        ref={phoneInput}
-                                        defaultValue={NumberValue}
-                                        defaultCode="IL"
-                                        layout="first"
-                                        placeholder='מספר טלפון'
-
-
-                                        containerStyle={styles.PhoneInputStyle}
-                                        textContainerStyle={{ backgroundColor: '#ffffff' }}
-                                        countryPickerButtonStyle={styles.PhoneInputButton}
-                                        countryPickerProps={{ region: 'Asia' }}
-                                        onChangeText={(text) => {
-                                            setNumberValue(text)
-                                            setPhoneInputerror("")
-                                        }}
-                                        onChangeFormattedText={(text) => {
-
-                                            setFormattedNumber(text)
-                                        }}
-
-
-
-                                        withShadow
-                                        {...props}
-
-                                    /> : null}
-
-                                    {PhoneInputerror ? <Text style={styles.error}>{PhoneInputerror}</Text> : null}
-                                </View> */}
-
-                                {/* <View style={styles.DatePicker}>
-                                    <View style={styles.DateFontContainer} >
-                                        <Text style={styles.DateFont}>{FormattedDate}</Text>
-                                    </View>
-
-                                    <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => setShowDatePicker(true)} >
-                                        <Entypo name='calendar' style={styles.IconDate} size={50} />
-
-
-                                        {ShowDatePicker && (<DateTimePicker
-                                            testID='dateTimepicker'
-                                            value={date}
-                                            mode='date'
-                                            onChange={onChange}
-
-
-
-                                        />)}
-
-
-                                    </TouchableOpacity>
-
-                                </View> */}
-                                {/* {IsDateEmpty ? <Text style={styles.DateErrorFont}> * לבחור תאריך חובה</Text> : null} */}
+                     
 
                                 <TextInput
                                     label="סיסמה"
@@ -361,6 +277,7 @@ export default function Register(props) {
                 </Modal>
 
             </ScrollView>
+            <LodingModel isModelVisible = {isLoadingModel}/>
         </KeyboardAvoidingView>
 
 

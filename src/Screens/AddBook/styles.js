@@ -1,7 +1,7 @@
 
 
 
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, I18nManager, StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
  
   container : {
@@ -25,10 +25,7 @@ BootomView: {
 
 },
 WelcomeView: {
-    padding: 40,
-
-
-
+    padding: 30,
 
 },
 WelcomeFont: {
@@ -76,8 +73,8 @@ listItemContainerFont : {
   fontSize:15,
   color : "#ff914d",
   fontWeight : '600',
-  textAlign:"left",
-  direction:'rtl',
+  // textAlign:"left",
+  // direction:'rtl',
 },
 typeErrorFont : {
   alignSelf : 'flex-end',
@@ -101,13 +98,15 @@ addButtonFont : {
 ratingText : {
   color:"#ff914d",
   fontWeight : '600',
-  fontSize: 15,
+  fontSize: 13,
   marginStart : 10,
   marginTop: 5,
 },
 starRating : {
-  flexDirection : "row-reverse",
+  flexDirection :I18nManager.isRTL ?   'row' : 'row-reverse',
   marginTop: 20,
+  
+ 
 }
 });
 

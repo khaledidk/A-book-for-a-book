@@ -1,53 +1,65 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, RefreshControl, Text, View, Image, TouchableOpacity, Keyboard, Pressable } from "react-native";
+import { FlatList, RefreshControl, Text, View, Image, TouchableOpacity, Keyboard, I18nManager, Alert } from "react-native";
 import styles from "./styles";
 import { DBReal, auth } from "../../config/firebase";
-import { ref, onValue, onChildChanged } from "firebase/database";
+import { ref, onValue, onChildChanged, get } from "firebase/database";
 import { fetchtUserNameAndImage } from "../../config/FireStoreDB";
 import { MaterialIcons } from '@expo/vector-icons';
 import BackButton from "../../components/BackButton/BackButton";
 import TextInput from "../../components/TextInput/TextInput"
-import { getRoomChat } from "../../config/RealTimeDB";
-
+import { fetchChatRoom, getRoomChat } from "../../config/RealTimeDB";
+import { getStatusBarHeight } from 'react-native-status-bar-height'
 import { useIsFocused } from '@react-navigation/native';
 import { UpdateNotify } from "../../config/RealTimeDB";
-export default function ChatRoom({ navigation, route }) {
+import OurActivityIndicator from "../../components/OurActivityIndicator/OurActivityIndicator";
 
-    const [users, setUsers] = useState([]);
-    let [searchUsersList, setSearchUsersList] = useState([])
+export default function ChatRoom({ navigation, route }) {
+    const [isLoading, setIsLoading] = useState(true);
+    const [users, setUsers] = useState([]);// flatlist array
+    let [searchUsersList, setSearchUsersList] = useState([]) // flatlist array and search
     const [oneTime, setOneTime] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const [myData, setMyData] = useState(null);
+    const [myData, setMyData] = useState(null);// current user data
+    const profileDefaultImageUri = Image.resolveAssetSource(require('../../../assets/defult_Profile.png')).uri;
     const isFocused = useIsFocused();
+
+    // this useEffect fetch the data hen open screen
     useEffect(() => {
         fetchtUserNameAndImage(auth.currentUser.uid).then((userInfo) => {
             userInfo["id"] = auth.currentUser.uid
+            if (!userInfo.userImage) {
+                userInfo["userImage"] = profileDefaultImageUri;
+            }
             setMyData(userInfo)
-        })
-        ListenerData();
-        // getData();
-        // onUpdateLister();
-        console.log("is foucos", isFocused)
-        if (!isFocused) {
+        }).catch(() => {
 
-            UpdateNotify(auth.currentUser.uid, 0)
+            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+        });
+
+        fetchChatRoomData()
+        console.log("==========params========", route.params?.from)
+
+        if (!isFocused) {
+            navigation.setParams({ from: "" })
         }
 
     }, [isFocused])
+
+    // this function fetch chatrooms on refresh flatlist then fill the users array and SearchUsersList array 
     const onRefresh = async () => {
 
         console.log("Refreshing");
 
         setIsRefreshing(true);
-        // getData().then(() => {
 
-        //     setIsRefreshing(false);
-        // });
-        ListenerData().then(() => {
-
+        await fetchChatRoom().then(ChatRoomarray => {
+            setSearchUsersList(() => ChatRoomarray)
+            setUsers(() => ChatRoomarray)
             setIsRefreshing(false);
         });
+        navigation.setParams({ from: "" })
     }
+    // this function handle the search 
     const updateListBySearch = (searchString) => {
 
         searchString = searchString.toLowerCase().trim();
@@ -83,118 +95,102 @@ export default function ChatRoom({ navigation, route }) {
         setSearchUsersList(() => newUsersList);
 
     };
+
+    // this function display the chatrooms on screen
     const renderUser = ({ item }) => {
         return (
-            <TouchableOpacity onPress={() => navigation.navigate("SingleChat", { selectedUser: item, MyData: myData, chatRoomID: item.chatroomId })} style={styles.row}>
-                <Image style={styles.avatar} source={{ uri: item.avatar }} />
+            <TouchableOpacity onPress={() => navigation.navigate("SingleChat", { selectedUser: item, MyData: myData, chatRoomID: item.chatroomId, from: "ChatRoom" })} style={styles.row}>
+
+                {item.avatar ? <Image
+                    style={styles.avatar}
+                    source={{ uri: item.avatar }}
+
+                /> :
+                    <Image
+                        style={styles.avatar}
+                        source={{ uri: profileDefaultImageUri }}
+
+                    />
+
+                }
                 <View style={styles.userNameAndLastMassage} >
                     <Text style={styles.userName} >{item.username}</Text>
-                    {item.seen ? <Text style={styles.lastMassageSeen} >{item.lastMassage}</Text> :
+
+                    {route.params?.from == item.chatroomId || item.seen ? <Text style={styles.lastMassageSeen} >{item.lastMassage}</Text> :
                         <Text style={styles.lastMassageNotSeen} >{item.lastMassage}</Text>}
                 </View>
             </TouchableOpacity>
         );
     };
-    const getPostIndex = (PostID) => {
-        console.log("searchUsersList", searchUsersList)
-        for (let currIndex = 0; currIndex < searchUsersList.length; currIndex++) {
-
-            if (searchUsersList[currIndex].chatroomId === PostID) {
-                return currIndex;
-            }
-        }
-
-        return -1;
-    }
-    // const onUpdateLister = async () => {
-    //     const myUserRef = ref(DBReal, '/users/' + auth.currentUser.uid + '/friends/');
-
-    //     onChildChanged(myUserRef, snapshot => {
-    //         const snapshotChange = snapshot.val();
-    //         console.log("=======change=============", snapshotChange.chatroomId);
-    //         // users.splice(getPostIndex(snapshot.id), 1, snapshot);
-    //         const index = getPostIndex(snapshotChange.chatroomId)
-
-    //         console.log("index", index)
-    //         // let temp = users[index];
-    //         // console.log("temp", temp)
-    //         // temp.lastMassage = snapshotChange.lastMassage;
-
-    //         // searchUsersList.splice(index, 1, temp);
-    //         // users.splice(index, 1, temp);
-    //         // console.log("searchUsersList", searchUsersList)
-    //         // searchUsersList.splice(getPostIndex(snapshot.id), 1, snapshot);
 
 
+    // this function fetch all chatrooms from DB
+    const fetchChatRoom = async () => {
 
-    //     });
-    //     return () => off(myUserRef);
 
-    // }
-
-    const getData = async () => {
-
-        getRoomChat().then((dataArray) => {
-
-            setSearchUsersList(dataArray)
-            setUsers(dataArray)
-        })
-    }
-    const ListenerData = async () => {
-        let friendList;
-        const myUserRef = ref(DBReal, '/users/' + auth.currentUser.uid);
-
-        onValue(myUserRef, snapshot => {
-
-            const array = [];
-            setUsers([])
-            setSearchUsersList([])
-            const userData = snapshot.val();
-            friendList = userData.friends;
-
+        let element;
+        const mySnapshot = await get(ref(DBReal, '/users/' + auth.currentUser.uid));
+        let array = [];
+        if (mySnapshot.val()) {
+            const userData = mySnapshot.val();
+            let friendList = userData.friends;
             if (friendList) {
+                for (let i = 0; i < friendList.length; i++) {
+                    element = friendList[i]
 
-
-                friendList.forEach(element => {
-
-                    fetchtUserNameAndImage(element.id).then((userInfo) => {
+                    await fetchtUserNameAndImage(element.id).then((userInfo) => {
                         element["username"] = userInfo.userName
-                        element["avatar"] = userInfo.userImage
+                        if (userInfo.userImage) {
+                            element["avatar"] = userInfo.userImage;
+                        } else {
+                            element["avatar"] = profileDefaultImageUri;
+                        }
+
                         array.push(element)
-                        setSearchUsersList(() => array)
-                        setUsers(() => array)
-                        // setSearchUsersList(() => [...oldArray, element])
-
-                        // setUsers((oldArray) => [...oldArray, element])
-
-                    })
-
-
-                });
 
 
 
-            } else {
-                setUsers([])
-                setSearchUsersList([])
+                    }).catch(() => {
 
+                        Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+                    });;
+                }
             }
 
 
 
+        }
+        return array;
 
-        });
+    }
+  // this function handle when flatlist is empty
+  const listEmptyComponent = () => {
+    return (
+        <Text style={styles.emptyFont} >לא נמצא משתמשים</Text>
+    )
+}
 
+    // this function fetch all chatrooms from DB
+    const fetchChatRoomData = async () => {
+        setIsLoading(true);
+        setUsers([])
+        setSearchUsersList([])
 
+        await fetchChatRoom().then((ChatRoomarray) => {
 
-        return () => off(myUserRef);
-    };
+            setSearchUsersList(() => ChatRoomarray)
+            setUsers(() => ChatRoomarray)
+            setIsLoading(false);
+        })
+
+    }
+
     return (
         <View style={styles.container}>
-
+            {isLoading && <OurActivityIndicator />}
             <View style={styles.label}>
 
-                {/* <BackButton goBack={navigation.goBack} color={"#ffffff"} /> */}
+
 
             </View>
             <View>
@@ -203,7 +199,7 @@ export default function ChatRoom({ navigation, route }) {
                     mode="outlined"
                     activeOutlineColor="#ff914d"
                     outlineColor="#ff914d"
-                    style={styles.SearchInput}
+                    style={[!I18nManager.isRTL && styles.SearchInput, I18nManager.isRTL && styles.SearchInput2]}
                     onChangeText={(searchString) => { updateListBySearch(searchString) }}
                     placeholder="חיפוש"
                     placeholderTextColor="#ddb07f"
@@ -211,16 +207,17 @@ export default function ChatRoom({ navigation, route }) {
 
 
 
-                <MaterialIcons style={styles.searchIcon} name={"search"} size={30} color={"#ddb07f"} />
+                <MaterialIcons style={[!I18nManager.isRTL && styles.searchIcon, I18nManager.isRTL && styles.searchIcon2]} name={"search"} size={30} color={"#ddb07f"} />
             </View>
-            <FlatList
+          <FlatList
                 data={searchUsersList}
                 refreshControl={<RefreshControl
                     colors={["#ff914d", "#ff914d"]}
                     refreshing={isRefreshing}
                     onRefresh={onRefresh} />}
                 renderItem={renderUser}
-                style={styles.flatList}
+             ListEmptyComponent = {listEmptyComponent}
+                style={[{ marginBottom: Platform.OS === "ios" ? getStatusBarHeight() + 40 : 65 }, styles.flatList]}
                 keyExtractor={item => item.chatroomId}
             />
         </View>

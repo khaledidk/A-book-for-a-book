@@ -1,5 +1,5 @@
 
-import { StyleSheet , Dimensions } from 'react-native';
+import { StyleSheet , Dimensions, I18nManager } from 'react-native';
 
 const styles = StyleSheet.create({
   Container: {
@@ -10,12 +10,12 @@ const styles = StyleSheet.create({
   
   },
   ImageBackGround: {
-    height: Dimensions.get('window').height / 6,
+    height: Dimensions.get('window').height / 10,
 },
   BootomView: {
     // flex: 0.8,
  
-
+   marginBottom : 100,
     backgroundColor: '#ffffff',
     borderTopStartRadius: 60,
     borderTopEndRadius: 60,
@@ -26,21 +26,27 @@ const styles = StyleSheet.create({
   profileImageName : {
   
   padding: 10,
-  flexDirection :"row",
-  
+  flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
+
   alignItems: 'center',
+
+
+  
   },
   userName :{
     color: "#ff914d",
     fontSize: 34,
-    marginStart : 20,
-    fontWeight: '700'
+   
+    fontWeight: '700',
+   
+    
+
     
   },
   Details : {
-    flexDirection : 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems : 'center',
-    marginTop : 20,
+    marginTop : 10,
   },
   detailsFont : {
     fontSize: 20,
@@ -59,8 +65,13 @@ const styles = StyleSheet.create({
    marginTop : 30,
    marginEnd : 30,
 
- 
   },
+  iconUserEdit2 : {
+    alignSelf : 'flex-start',
+    marginTop : 30,
+    marginStart : 30,
+ 
+   },
   input: {
     paddingLeft: 50,
     backgroundColor: "#ffffff",
@@ -88,14 +99,13 @@ inputError: {
     width: "100%",
    
    },
- 
+
   signOutButton : {
    marginTop : 20,
    marginBottom : 10,
-  //  marginStart : 20,
-  //  marginEnd : 20,
    height: 50,
    justifyContent: 'center',
+   alignItems : 'center',
    borderRadius: 20,
    backgroundColor : "red",
    width: "100%",
@@ -103,7 +113,8 @@ inputError: {
   },
   ButtonsignOutFont: {
     fontSize: 18,
-    fontWeight: '800'
+    fontWeight: '800',
+    width: "100%"
 },
 alertContainer: {
   flexDirection: "column",
@@ -147,17 +158,25 @@ ButtonClose :{
   width: "100%",
   justifyContent: 'center',
   borderRadius: 20,
-  marginTop:50,
+  marginTop:10,
+  marginBottom : 10,
 },
 ButtonCloseFont : {
   fontSize: 18,
   fontWeight : '800',  
+  width: "100%"
 },
 iconSignOut: {
    position: "absolute", 
    zIndex: 1, 
    left: 15, 
-   top: 20, 
+   top: 90, 
+},
+iconSignOut2: {
+  position: "absolute", 
+  zIndex: 1, 
+  right: 15, 
+  top: 90, 
 },
 flatList: {
   // marginTop: 10,
@@ -226,6 +245,11 @@ feedBackLebal : {
   color: "#ff914d",
   fontWeight: '800',
 alignSelf : 'center'
+},
+feedBackEmpty : {
+  color: "grey",
+  fontWeight: '800',
+  alignSelf : 'center'
 },
 details: {
   // flexShrink : 1,

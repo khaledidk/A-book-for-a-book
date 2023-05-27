@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import MapView, { Callout, Marker } from 'react-native-maps';
 import { PROVIDER_GOOGLE } from 'react-native-maps';
-import { View, Text, Alert, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Alert, Image, TouchableOpacity, I18nManager } from 'react-native';
 import styles from "./styles";
 import BackButton from '../../components/BackButton/BackButton';
 import * as Location from 'expo-location';
 import { fetchOtherUsers } from "../../config/FireStoreDB";
-import { fetchByUserId } from "../../config/FireStoreDB";
 import { auth } from '../../config/firebase';
 import { MaterialIcons } from '@expo/vector-icons';
 import OurActivityIndicator from "../../components/OurActivityIndicator/OurActivityIndicator";
@@ -16,7 +15,9 @@ import { useIsFocused } from '@react-navigation/native';
 import { Svg, Image as ImageSvg } from 'react-native-svg';
 import DropDownPicker from "react-native-dropdown-picker";
 import { Button, Modal } from "react-native-paper";
+
 export default function MapUser({ navigation, route }) {
+
   const profileDefaultImageUri = Image.resolveAssetSource(require('../../../assets/defult_Profile.png')).uri;
   const [mapRegion, setMapRegion] = useState({
     latitude: 37.78825,
@@ -84,11 +85,12 @@ export default function MapUser({ navigation, route }) {
     { label: "ספרות נשים", value: "ספרות נשים" },
     { label: "מבוגר צעיר", value: "מבוגר צעיר" },
     { label: "מחזות", value: "מחזות" },
+    { label: "סוגים אחרים", value: "סוגים אחרים" },
   ]);
+
   const [otherUsersInfo, setOtherUsersInfo] = useState([])
   const [currUserInfo, setCurrUserInfo] = useState([])
   const [isLoading, setIsLoading] = useState(true);
-
   const [bookByFilterInfo, setBookByFilterInfo] = useState([])
   const [dropsVisible, setDropsVisible] = useState(false);
   const [booksVisible, setBooksVisible] = useState(false);
@@ -101,27 +103,27 @@ export default function MapUser({ navigation, route }) {
 
   const [latitude, setLatitude] = useState("")
   const [longitude, setLongitude] = useState("")
-
   const [bookStatusVal, setBookStatusVal] = useState([])
   const [openStatusDrop, setOpenStatusDrop] = useState(false)
   const [statusArray, setStatusArray] = useState([])
-
-
-
   const [bookTypesVal, setBookTypesVal] = useState([])
+  const [refreshingLoction, setRefreshingLoction] = useState(false)
   const [openTypeDrop, setOpenTypeDrop] = useState(false)
   const [typeArray, setTypeArray] = useState([])
-
   const [isAleretVisible, setIsAlertVisible] = useState(false);
-
   const user = auth.currentUser;
   const uid = user.uid;
+
+  // this function get current user loction
   const userLocation = async () => {
 
     const user = auth.currentUser;
     const uid = user.uid;
+    setRefreshingLoction(true)
+    const locationObj = await fetchCurrentUserLoction(uid).catch(() => {
 
-    const locationObj = await fetchCurrentUserLoction(uid);
+      Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+    });;;
 
     if (locationObj) {
       setLatitude(locationObj.latitude);
@@ -141,26 +143,23 @@ export default function MapUser({ navigation, route }) {
         setCurrUserInfo(() => [userInfo])
       })
       await fetchallUserLoctions();
+    
     } else {
 
-      let { status } = await Location.requestForegroundPermissionsAsync({
-        enableHighAccuracy: false,
-        maximumAge: 10000,
-        timeout: 5000
-      }).catch((error) => {
-        console.log("error : ", error)
-
-      });
+      let { status } = await Location.requestForegroundPermissionsAsync().catch((error) => {
+        Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }] ) })
       if (status !== "granted") {
         Alert.alert('', "סירבת לאפליקציה הזו לגשת למיקום שלך, עליך לשנות זאת ולאפשר גישה על מנת לקבל ביצועים טובים יותר", [, , { text: "אישור" }]);
         setCurrUserInfo([]);
         setOtherUsersInfo([]);
+        setRefreshingLoction(false)
         return;
       }
 
       let location;
       if (!longitude && !latitude) {
-        location = await Location.getCurrentPositionAsync();
+        location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Highest, maximumAge: 10000 }).catch((error) => {
+          Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }] ) })
         setLatitude(location.coords.latitude);
         setLongitude(location.coords.longitude);
 
@@ -186,31 +185,38 @@ export default function MapUser({ navigation, route }) {
 
 
         await fetchallUserLoctions();
-        updateUserLoction(currUserLocation)
+        updateUserLoction(currUserLocation).catch(() => {
+
+          Alert.alert("קרתה שגיה", "לא יכול לעדכן מקום שלך נא לנסה שוב", [{ text: "בסדר" }])
+        });
       }
+
+     
     }
+    setRefreshingLoction(false)
   }
+
+  // this function update user loction in database
   const updateLoction = async () => {
     setIsAlertVisible(false)
     setIsLoading(true);
-    let { status } = await Location.requestForegroundPermissionsAsync({
-      enableHighAccuracy: false,
-      maximumAge: 10000,
-      timeout: 5000
-    }).catch((error) => {
-      console.log("error : ", error)
+    setRefreshingLoction(true)
+    let { status } = await Location.requestForegroundPermissionsAsync().catch((error) => {
+      Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
 
     });
     if (status !== "granted") {
       Alert.alert('', "סירבת לאפליקציה הזו לגשת למיקום שלך, עליך לשנות זאת ולאפשר גישה על מנת לקבל ביצועים טובים יותר", [, , { text: "אישור" }]);
       setCurrUserInfo([]);
       setOtherUsersInfo([]);
+      setRefreshingLoction(false)
       return;
     }
 
     let location;
 
-    location = await Location.getCurrentPositionAsync();
+    location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Highest, maximumAge: 10000 }).catch((error) => {
+      Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }] ) })
     console.log("locationObj", location)
     setLatitude(location.coords.latitude);
     setLongitude(location.coords.longitude);
@@ -234,12 +240,14 @@ export default function MapUser({ navigation, route }) {
       setCurrUserInfo(() => [userInfo])
     })
     setIsLoading(false)
-
+    setRefreshingLoction(false)
   }
 
+
+  // this function fetch all users loction and details
   const fetchallUserLoctions = async () => {
     await fetchOtherUsers().then((arrayUserInfo) => {
-      // setUser_info(() => arrayUserInfo)
+
 
       setOtherUsersInfo(() => []);
 
@@ -256,13 +264,17 @@ export default function MapUser({ navigation, route }) {
         }
 
       })
-      // console.log("User_info", otherUsersInfo)
 
 
-    })
+
+    }).catch(() => {
+
+      Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+    });
 
   }
 
+  // this function fetch user location the with loading
   const fetchByUsersLoction = async () => {
     setIsLoading(true);
 
@@ -272,11 +284,15 @@ export default function MapUser({ navigation, route }) {
     })
   }
 
+  // this function filter the book search by book language , book type , book status
   const onSelectFilter = async () => {
     setIsLoading(true);
 
     let result_array = [];
-    let temp = await fetchBookLoction();
+    let temp = await fetchBookLoction().catch(() => {
+
+      Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+    });
 
     if (statusArray.length == 0 && languageArray.length == 0 && typeArray.length == 0) {
       setBookByFilterInfo(() => temp);
@@ -348,7 +364,7 @@ export default function MapUser({ navigation, route }) {
 
   }
 
-
+  // this useEffect when open the screen
   const isFocused = useIsFocused();
 
 
@@ -361,6 +377,8 @@ export default function MapUser({ navigation, route }) {
 
 
   }, [isFocused])
+
+
   return (
 
     <View style={styles.container}>
@@ -381,7 +399,7 @@ export default function MapUser({ navigation, route }) {
             labelStyle={styles.filterButtonFont}
             mode="Outlined"
             onPress={() => setDropsVisible(false) || setBooksVisible(false)}>
-            הציג לפי בעלי ספרים
+            הציג בעלי ספרים
           </Button>
 
         </View>
@@ -426,7 +444,7 @@ export default function MapUser({ navigation, route }) {
           onSelectItem={(items) => setStatusArray(items)}
           placeholder="בחר מצב הספר"
           translation={{
-            SELECTED_ITEMS_COUNT_TEXT: "{count} שפות נבחרות"
+            SELECTED_ITEMS_COUNT_TEXT: "{count} מצב שנבחר"
           }}
           containerStyle={styles.ContainerDropDown}
           textStyle={styles.listItemContainerFont}
@@ -455,7 +473,7 @@ export default function MapUser({ navigation, route }) {
           onSelectItem={(items) => setTypeArray(items)}
           placeholder="בחר סוג הספר"
           translation={{
-            SELECTED_ITEMS_COUNT_TEXT: "{count} שפות נבחרות"
+            SELECTED_ITEMS_COUNT_TEXT: "{count} סוגים נבחרים"
           }}
           containerStyle={styles.ContainerDropDown}
           textStyle={styles.listItemContainerFont}
@@ -550,7 +568,7 @@ export default function MapUser({ navigation, route }) {
               key={i + 1}
               coordinate={book}
             >
-              <Callout >
+              <Callout onPress={() => navigation.navigate("Item", { item: book, status: true })}>
                 <View style={styles.bubble}>
                   <Text style={styles.txtFont}>{book.title}</Text>
                   {book.user_id === uid ? <Text style={styles.txtFont}>(ספר שלי )</Text> : null}
@@ -572,10 +590,14 @@ export default function MapUser({ navigation, route }) {
           ))}
 
         </MapView>}
-        <TouchableOpacity style={styles.newLocation} onPress={() => setIsAlertVisible(true)} >
+        {refreshingLoction && <TouchableOpacity style={[!I18nManager.isRTL && styles.refreshLocation, I18nManager.isRTL && styles.refreshLocation2]} onPress={updateLoction}>
+          <MaterialIcons style={styles.icon} name={"refresh"} size={40} color={"#ff914d"} />
+          {/* <Text>עדכון מקום</Text> */}
+        </TouchableOpacity>}
+        {!dropsVisible && <TouchableOpacity style={[!I18nManager.isRTL && styles.newLocation, I18nManager.isRTL && styles.newLocation2]} onPress={() => setIsAlertVisible(true)} >
           <MaterialIcons style={styles.icon} name={"location-pin"} size={40} color={"#ff914d"} />
           <Text>עדכון מקום</Text>
-        </TouchableOpacity>
+        </TouchableOpacity>}
       </View>
 
       <Modal visible={isAleretVisible}>
@@ -586,7 +608,7 @@ export default function MapUser({ navigation, route }) {
           <View style={styles.alertContentContainer}>
 
 
-            <Text style={styles.alertContentTextError}>האם אתה רוצה לעדכן המקום שלך במקמך הנוכחי?</Text>
+            <Text style={styles.alertContentTextError}>האם אתה רוצה לעדכן המקום שלך במקום הנוכחי?</Text>
 
             <View style={styles.modelAnswer}>
 

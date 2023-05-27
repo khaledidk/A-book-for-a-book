@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity, Text, View, KeyboardAvoidingView, ScrollView, Image } from "react-native";
+import { TouchableOpacity, Text, View, KeyboardAvoidingView, ScrollView, Image, I18nManager } from "react-native";
 
 import styles from "./styles";
 import KeyboardAvoidingWrapper from "../../components/KeyboardAvoidingWrapper/KeyboardAvoidingWrapper";
@@ -8,14 +8,15 @@ import TextInput from "../../components/TextInput/TextInput";
 import * as ImagePicker from 'expo-image-picker';
 import BackButton from "../../components/BackButton/BackButton";
 import DropDownPicker from "react-native-dropdown-picker";
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { bookValidator } from "../../helpers/bookValidator";
 import { authorValidator } from "../../helpers/authorValidator";
 import { addNewbook } from "../../config/FireStoreDB";
 import { auth } from '../../config/firebase';
-import { Rating, AirbnbRating } from 'react-native-ratings';
-
+import BackButton2 from "../../components/BackButton2/BackButton2";
+import { Rating } from "react-native-rating-element";
 import { updatePost } from "../../config/FireStoreDB";
+import LodingModel from "../../components/LodingModel/LodingModel";
 export default function EditPost({ navigation, route }) {
   const [bookLanguage, setBookLanguage] = useState([
     { label: "אנגלית", value: "אנגלית" },
@@ -78,6 +79,7 @@ export default function EditPost({ navigation, route }) {
     { label: "ספרות נשים", value: "ספרות נשים" },
     { label: "מבוגר צעיר", value: "מבוגר צעיר" },
     { label: "מחזות", value: "מחזות" },
+    { label: "סוגים אחרים", value: "סוגים אחרים" },
   ]);
   const [bookTypesVal, setBookTypesVal] = useState(route.params.type)
   const [bookTypesError, setBookTypesError] = useState(false)
@@ -92,12 +94,14 @@ export default function EditPost({ navigation, route }) {
   const [bookLanguageVal, setBookLanguageVal] = useState(route.params.language);
   const [openLanguageDrop, setOpenLanguageDrop] = useState(false)
   const [starRating, setStarRating] = useState(route.params.starRating)
+  const [isLoadingModel, setIsLoadingModel] = useState(false);
   const bookLanguageSorted = [...bookLanguage].sort((a, b) => {
     return a.label.localeCompare(b.label);
   });
   const [bookLanguageError, setBookLanguageError] = useState(false)
+
+  // this function help to pick image from library
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -112,9 +116,14 @@ export default function EditPost({ navigation, route }) {
     }
   };
 
+  
+  // this function implement when press on edit button, they check the validation of book details 
+  // then upload the data to DB
   async function onEditPressed() {
+
     const bookNameError = bookValidator(bookName.value)
     const authorNameError = authorValidator(authorName.value)
+
 
     if (bookNameError || authorNameError || !bookTypesVal || !bookStatusVal || !image || !bookLanguageVal) {
       if (!image) {
@@ -151,6 +160,7 @@ export default function EditPost({ navigation, route }) {
       setAuthorName({ ...authorName, error: authorNameError });
       return;
     }
+   setIsLoadingModel(true)
     setBookTypesError(false)
     setImageError(false)
     let tempeDate = new Date()
@@ -167,8 +177,8 @@ export default function EditPost({ navigation, route }) {
       book_type: bookTypesVal,
       book_status: bookStatusVal,
       user_id: uid,
-      book_language : bookLanguageVal,
-      rating_value : starRating,
+      book_language: bookLanguageVal,
+      rating_value: starRating,
 
     }
     let updateInfoDB = {
@@ -179,14 +189,18 @@ export default function EditPost({ navigation, route }) {
       book_type: bookTypesVal,
       book_status: bookStatusVal,
       user_id: uid,
-      book_language : bookLanguageVal,
-      rating_value : starRating,
+      book_language: bookLanguageVal,
+      rating_value: starRating,
     }
+
     navigation.navigate("UserPost", { updateBookJson: updateInfo, status: 'update' })
-    updatePost(route.params.id, updateInfoDB, tempeDate)
+    updatePost(route.params.id, updateInfoDB, tempeDate).catch(() => {
+
+      Alert.alert("קרתה שגיה", "לא יכול לעדכן דאטה נא לנסה שוב", [{ text: "בסדר" }])
+    });
 
 
-
+    setIsLoadingModel(false)
 
 
   };
@@ -196,7 +210,9 @@ export default function EditPost({ navigation, route }) {
       behavior={Platform.OS === "ios" ? "padding" : ""}
 
     >
-      <BackButton goBack={navigation.goBack} />
+      {I18nManager.isRTL ?
+        <BackButton2 goBack={navigation.goBack} />
+        : <BackButton goBack={navigation.goBack} />}
       <ScrollView
         style={styles.container}
 
@@ -214,7 +230,7 @@ export default function EditPost({ navigation, route }) {
               <View style={styles.addImageButton}  >
 
 
-                <MaterialIcons name={"add-photo-alternate"} size={100} color={"#ff914d"} onPress={pickImage} />
+                <MaterialCommunityIcons name={"image-edit"} size={100} color={"#ff914d"} onPress={pickImage} />
 
 
                 {image && <Image source={{ uri: image }} style={styles.bookImage} />}
@@ -319,20 +335,37 @@ export default function EditPost({ navigation, route }) {
                 />
                 {bookLanguageError ? <Text style={styles.typeErrorFont}>* לבחור שפת הספר חובה</Text> : null}
 
-                <View style = {styles.starRating}>
-                <Text style = {styles.ratingText} >הדירוג שלך לספר:</Text>
-                <Rating
-                 
-                 startingValue = {route.params.starRating}
-                  ratingCount={5}
-                  imageSize={30}
-                
-                 
-                  onFinishRating={setStarRating}
-                
-                />
-               
-              </View>
+                <View style={styles.starRating}>
+                  <Text style={styles.ratingText} >הדירוג שלך לספר:</Text>
+                  {I18nManager.isRTL ? <Rating
+
+                    rated={starRating}
+                    totalCount={5}
+                    size={25}
+                    icon="ios-star"
+                    direction="row-reverse"
+                    onIconTap={(position) => setStarRating(position)}
+
+
+
+                  /> :
+                    <Rating
+
+                      rated={starRating}
+                      totalCount={5}
+                      size={25}
+                      icon="ios-star"
+                      direction="row"
+                      onIconTap={(position) => setStarRating(position)}
+
+
+
+                    />
+
+
+                  }
+
+                </View>
                 <Button
                   style={styles.addButton}
                   labelStyle={styles.addButtonFont}
@@ -356,6 +389,7 @@ export default function EditPost({ navigation, route }) {
 
 
       </ScrollView>
+      <LodingModel isModelVisible={isLoadingModel} />
     </KeyboardAvoidingView>
 
   );
