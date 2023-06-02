@@ -35,7 +35,7 @@ export default function UserPost({ navigation, route }) {
         setSearchBookData(() => bookData)
         deletePost(CurrId).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול למחוק הספר נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל למחוק הספר נא לנסה שוב", [{ text: "בסדר" }])
         });
         setIsAlertVisible(false)
 
@@ -120,7 +120,7 @@ export default function UserPost({ navigation, route }) {
             setSearchBookData(() => booksList)
         }).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
         });;
 
 
@@ -139,7 +139,7 @@ export default function UserPost({ navigation, route }) {
             setIsRefreshing(false);
         }).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
           });
     }
 
@@ -202,7 +202,7 @@ export default function UserPost({ navigation, route }) {
                 setIsLoading(() => false);
             }).catch(() => {
 
-                Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+                Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
               });
 
         } else {
@@ -271,6 +271,13 @@ export default function UserPost({ navigation, route }) {
                     onPress={() => navigation.navigate("MyChangeRequest")}>
                     הבקשות שאני מציע
                 </Button>
+                <Button
+                    style={styles.ChangeRequestButton}
+                    labelStyle={styles.ChangeRequestButtonText}
+                    mode="Outlined"
+                    onPress={() => navigation.navigate("RequestHistory")}>
+                    היסטוריה של בקשות
+                </Button>
             </View>
         
 
@@ -284,7 +291,7 @@ export default function UserPost({ navigation, route }) {
                 renderItem={renderItem}
                 keyExtractor={item => item.id}
                 ListEmptyComponent = {listEmptyComponent}
-                style={[{ marginBottom: Platform.OS === "ios" ? getStatusBarHeight() + 40 : 65 }, styles.flatList]}
+                style={[{ marginBottom: Platform.OS === "ios" ? getStatusBarHeight() + 30 : 65 }, styles.flatList]}
 
             />
                 {/* {!searchBookData.length ? <Text style={styles.emptyFont} >לא נמצא ספרים</Text> : null} */}

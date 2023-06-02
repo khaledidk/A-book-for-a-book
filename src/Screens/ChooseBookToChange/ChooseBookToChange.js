@@ -10,7 +10,8 @@ import { addBookRequest, checkBookRequest, fetchByUserId } from "../../config/Fi
 import { auth } from '../../config/firebase';
 import BackButton from "../../components/BackButton/BackButton";
 import BackButton2 from "../../components/BackButton2/BackButton2";
-
+import moment from 'moment-timezone';
+import 'moment/locale/he'
 export default function ChooseBookToChange({ navigation, route }) {
     const [bookData, setBookData] = useState([]);// flatlist array
     const [isLoading, setIsLoading] = useState(true);
@@ -37,7 +38,7 @@ export default function ChooseBookToChange({ navigation, route }) {
 
         const check = await checkBookRequest(route.params.firstBook_id, id).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
         });
 
         if (check) {
@@ -55,24 +56,33 @@ export default function ChooseBookToChange({ navigation, route }) {
 
     // this function add a request to DB
     const changeRequest = () => {
-
+        console.log("enter ==== chose")
+        let a = moment.tz('Asia/Jerusalem'); // hebrew
         let changeRequestObj = {
             SecondBook_ID: clickedBookId,
             FirstBook_ID: route.params.firstBook_id,
             sender_ID: auth.currentUser.uid,
             receive_ID: clickedUserId,
+            date: a.format("LL"),
         }
+       
+
+        console.log("date===========",
+            a.format("LL"),
+        );
+
         setIsAlertVisible(false);
         addBookRequest(changeRequestObj).catch(() => {
-            Alert.alert("קרתה שגיה", "לא יכול לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
         })
         navigation.navigate("Home")
     }
 
     // this function to disgin the books and books details like cards
-    const Item = ({ title, author, type, status, image, id }) => (
+    const Item = ({ title, author, type, status, image, id  , date}) => (
         <TouchableOpacity style={styles.item} onPress={() => ChooseBook(id)}>
             <View style={styles.itemImageAndeDerails} >
+      
                 {image && <Image source={{ uri: image }} style={styles.imageIteam} />}
                 <View style={styles.details}>
                     <Text style={styles.title}>{title}</Text>
@@ -99,7 +109,7 @@ export default function ChooseBookToChange({ navigation, route }) {
             setIsLoading(false)
         }).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
         });
 
     };
@@ -221,19 +231,11 @@ export default function ChooseBookToChange({ navigation, route }) {
                     <View style={styles.alertContentContainer}>
 
 
-                        <Text style={styles.alertContentTextError}>האם את/ה רוצה לשלוח בקשה החלפה עם הספר הזה?</Text>
+                        <Text style={styles.alertContentTextError}>האם את/ה רוצה לשלוח בקשת החלפה עם הספר הזה?</Text>
 
                         <View style={styles.modelAnswer}>
 
-                            <Button
-                                style={styles.ModealButtons}
-                                labelStyle={styles.filterButtonFont}
-                                mode="Outlined"
-                                onPress={changeRequest}
-                            >
-
-                                כן
-                            </Button>
+                         
                             <Button
                                 style={styles.ModealButtons}
                                 labelStyle={styles.filterButtonFont}
@@ -242,6 +244,15 @@ export default function ChooseBookToChange({ navigation, route }) {
                             >
 
                                 לא
+                            </Button>
+                            <Button
+                                style={styles.ModealButtons}
+                                labelStyle={styles.filterButtonFont}
+                                mode="Outlined"
+                                onPress={changeRequest}
+                            >
+
+                                כן
                             </Button>
 
 

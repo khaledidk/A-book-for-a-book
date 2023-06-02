@@ -209,7 +209,7 @@ export default function AddBook(props) {
         setIsLoadingModel(false)
       }).catch(() => {
 
-        Alert.alert("קרתה שגיה", "לא יכול לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
+        Alert.alert("קרתה שגיה", "נכשל לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
       });
 
 

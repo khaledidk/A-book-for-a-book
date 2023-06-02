@@ -57,7 +57,7 @@ export default function OtherUserMap({ navigation, route }) {
 
 
         }).catch(() => {
-            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
         });;
     }
 

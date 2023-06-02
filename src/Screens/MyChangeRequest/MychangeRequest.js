@@ -75,18 +75,19 @@ export default function MyChangeRequest({ navigation, route }) {
     const renderItem = ({ item }) => {
 
         return (
-            <Item item={item} status={item[0].status} requestId={item[0].id} bookId1={item[0].bookId1} bookId2={item[1].bookId2} title1={item[0].title} title2={item[1].title2} image1={item[0].image} image2={item[1].image2} userImage={item[0].user_image} userName={item[0].user_name} userId={item[0].user_id} />
+            <Item item={item} status={item[0].status} requestId={item[0].id} bookId1={item[0].bookId1} bookId2={item[1].bookId2} title1={item[0].title} title2={item[1].title2} image1={item[0].image} image2={item[1].image2} userImage={item[0].user_image} userName={item[0].user_name} userId={item[0].user_id} requestDate = {item[0].requestDate} />
 
         );
     }
 
   // this function to disgin the requests like cards
-    const Item = ({ item, status, title1, title2, image1, image2, userImage, userName, userId, requestId, bookId1, bookId2 }) => (
+    const Item = ({ item, status, title1, title2, image1, image2,requestDate , userImage, userName, userId, requestId, bookId1, bookId2 }) => (
         <View style={styles.item}>
+              <Text style={styles.txt}> {requestDate}</Text>
             <View style={styles.itemUpper} >
-
+          
                 <View style={styles.itemIcons}>
-
+             
                     {status === 'מקובל'  ? <TouchableOpacity onPress={() => setIsFeedBackModelVisible(true) || setRequestId(requestId) || setCurrUserName(userName) || setCurrUserID(userId)} >
                         <Entypo name={"circle-with-cross"} size={30} color={"red"} />
                     </TouchableOpacity> :
@@ -94,7 +95,7 @@ export default function MyChangeRequest({ navigation, route }) {
                             <Entypo name={"circle-with-cross"} size={30} color={"red"} />
                         </TouchableOpacity>}
 
-
+                     
 
                 </View>
                 <TouchableOpacity style={styles.profile} onPress={() => PressOnUserProfileHandler(userId)}  >
@@ -108,8 +109,9 @@ export default function MyChangeRequest({ navigation, route }) {
                             style={styles.imageProfile}
                         />
                     }
-
+           <View style = {{   flexShrink : 1,}}>
                     <Text style={styles.title}>{userName}</Text>
+                    </View>
                 </TouchableOpacity>
             </View>
 
@@ -153,7 +155,7 @@ export default function MyChangeRequest({ navigation, route }) {
         const currid = user.uid;
         await addFeedBack(remarks, starRating, uid).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
         });
         rejectChange()
     }
@@ -167,7 +169,7 @@ export default function MyChangeRequest({ navigation, route }) {
         setSearchBookData(() => bookRequestArray);
         deleteRequest(requestId).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
           });
         setIsAlertVisible2(false)
         setIsFeedBackModelVisible(false)
@@ -198,7 +200,7 @@ export default function MyChangeRequest({ navigation, route }) {
 
         }).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
           });
     };
 
@@ -218,7 +220,7 @@ export default function MyChangeRequest({ navigation, route }) {
             setIsRefreshing(false);
         }).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
           });
 
 

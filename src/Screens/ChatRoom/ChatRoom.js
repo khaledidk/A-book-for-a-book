@@ -33,7 +33,7 @@ export default function ChatRoom({ navigation, route }) {
             setMyData(userInfo)
         }).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
         });
 
         fetchChatRoomData()
@@ -152,7 +152,7 @@ export default function ChatRoom({ navigation, route }) {
 
                     }).catch(() => {
 
-                        Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+                        Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
                     });;
                 }
             }

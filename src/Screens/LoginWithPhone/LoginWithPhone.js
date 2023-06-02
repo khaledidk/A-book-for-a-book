@@ -48,7 +48,7 @@ export default function LoginWithPhone({ navigation }) {
         console.log("FormattedNumber", FormattedNumber)
         const check = await checkUserInfo(NumberValue).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
         });
        
         phoneProvider.verifyPhoneNumber(FormattedNumber, recaptchaVerifier.current)
@@ -67,7 +67,7 @@ export default function LoginWithPhone({ navigation }) {
                 if (e.code == "ERR_FIREBASE_RECAPTCHA_CANCEL") {
                     return;
                 }
-                Alert.alert("יותר מדי בקשות/קרתה שגיה", "לא יכול להתחבר נא לנסה שוב ", [{ text: "בסדר" }])
+                Alert.alert("יותר מדי בקשות/קרתה שגיה", "נכשל להתחבר נא לנסה שוב ", [{ text: "בסדר" }])
             })
 
 
@@ -95,7 +95,7 @@ export default function LoginWithPhone({ navigation }) {
 
                 if (nameInputVisible) {
                     await addNewUserWithPhone(uid, UserName.value, NumberValue).catch(() => {
-                        Alert.alert("קרתה שגיה", "לא יכול לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
+                        Alert.alert("קרתה שגיה", "נכשל לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
                     })
                 }
                 setIsLoadingModel(false)

@@ -23,7 +23,7 @@ import ChangeRequestScreen from "../Screens/ChangeRequest/ChangeRequest";
 import ChooseBookToChangeScreen from "../Screens/ChooseBookToChange/ChooseBookToChange";
 import MyChangeRequestScreen from "../Screens/MyChangeRequest/MychangeRequest";
 import FeedBackScreen from "../Screens/FeedBack/FeedBack";
-
+import RequestHistoryScreen from "../Screens/RequestHistory/RequestHistory";
 
 import { getStatusBarHeight } from 'react-native-status-bar-height'
 
@@ -55,7 +55,8 @@ export const AppStack = () => {
       <Stack.Screen name='ChooseBookToChange' component={ChooseBookToChangeScreen} />
       <Stack.Screen name='MyChangeRequest' component={MyChangeRequestScreen} />
       <Stack.Screen name='FeedBack' component={FeedBackScreen} />
-      
+      <Stack.Screen name='RequestHistory' component={RequestHistoryScreen} />
+
     </Stack.Navigator>
 
   );

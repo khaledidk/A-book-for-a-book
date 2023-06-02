@@ -78,7 +78,7 @@ export default function ViewProfile({ navigation, route }) {
 
     }).catch(() => {
 
-      Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+      Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
     });;
 
     await fetchFeedBackWithUserDetails(uid).then((feedBackArray) => {
@@ -98,7 +98,7 @@ export default function ViewProfile({ navigation, route }) {
       setMyData(() => [temp])
     }).catch(() => {
 
-      Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+      Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
     });
     setIsLoading(false)
 
@@ -142,7 +142,7 @@ export default function ViewProfile({ navigation, route }) {
 
     }).catch(() => {
 
-      Alert.alert("קרתה שגיה", "לא יכול לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
+      Alert.alert("קרתה שגיה", "נכשל לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
     });
     setIsModelVisible(false)
   }
