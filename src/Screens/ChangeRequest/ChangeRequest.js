@@ -9,9 +9,10 @@ import OurActivityIndicator from "../../components/OurActivityIndicator/OurActiv
 import Checkbox from 'expo-checkbox';
 import { auth } from '../../config/firebase';
 import BackButton from "../../components/BackButton/BackButton";
-
+import moment from 'moment-timezone';
+import 'moment/locale/he'
 import { Rating } from "react-native-rating-element";
-import { addFeedBack, fetchBooksRequests, fetchBooksRequestsAndData, updateBookRequest } from "../../config/FireStoreDB";
+import { addFeedBack, addToRequestHistory, fetchBooksRequestsAndData, updateBookRequest } from "../../config/FireStoreDB";
 import BackButton2 from "../../components/BackButton2/BackButton2";
 const profileDefaultImageUri = Image.resolveAssetSource(require('../../../assets/defult_Profile.png')).uri;
 export default function ChangeRequest({ navigation, route }) {
@@ -31,6 +32,7 @@ export default function ChangeRequest({ navigation, route }) {
     const [currUserID, setCurrUserID] = useState("");
     const [remarks, setRemarks] = useState("");
     const [starRating, setStarRating] = useState(3)
+    const [item, setItem] = useState("");
 
     // this function handle the search 
     const updateListBySearch = (searchString) => {
@@ -75,21 +77,22 @@ export default function ChangeRequest({ navigation, route }) {
     const renderItem = ({ item }) => {
 
         return (
-            <Item item={item} requestId={item[0].id} bookId1={item[0].bookId1} bookId2={item[1].bookId2} title1={item[0].title} title2={item[1].title2} image1={item[0].image} image2={item[1].image2} userImage={item[1].user_image2} userName={item[1].user_name2} userId={item[1].user_id2} />
+            <Item item={item} requestId={item[0].id} bookId1={item[0].bookId1} bookId2={item[1].bookId2} title1={item[0].title} title2={item[1].title2} image1={item[0].image} image2={item[1].image2} userImage={item[1].user_image2} userName={item[1].user_name2} userId={item[1].user_id2} requestDate={item[0].requestDate} />
 
         );
     }
 
     // this function to disgin the books and books details like cards
-    const Item = ({ item, title1, title2, image1, image2, userImage, userName, userId, requestId, bookId1, bookId2 }) => (
+    const Item = ({ item, title1, title2, requestDate, image1, image2, userImage, userName, userId, requestId, bookId1, bookId2 }) => (
         <View style={styles.item}>
+            <Text style={styles.txt}> {requestDate}</Text>
             <View style={styles.itemUpper} >
 
                 <View style={styles.itemIcons}>
                     <TouchableOpacity onPress={() => setRequestId(requestId) || setIsAlertVisible2(true)} >
                         <Entypo name={"circle-with-cross"} size={30} color={"red"} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setRequestId(requestId) || setIsAlertVisible1(true) || setBookId1(bookId1) || setBookId2(bookId2) || setCurrUserName(userName) || setCurrUserID(userId)} >
+                    <TouchableOpacity onPress={() => setRequestId(requestId) || setIsAlertVisible1(true) || setBookId1(bookId1) || setBookId2(bookId2) || setCurrUserName(userName) || setCurrUserID(userId) || setItem(item)} >
                         <FontAwesome5 style={styles.Icons} name={"check-circle"} size={30} color={"green"} />
                     </TouchableOpacity>
                 </View>
@@ -104,8 +107,9 @@ export default function ChangeRequest({ navigation, route }) {
                             style={styles.imageProfile}
                         />
                     }
-
+                   <View style = {{   flexShrink : 1,}}>
                     <Text style={styles.title}>{userName}</Text>
+                    </View>
                 </TouchableOpacity>
             </View>
 
@@ -144,6 +148,28 @@ export default function ChangeRequest({ navigation, route }) {
     // this function implement when the user accept the request
     const acceptChange = () => {
 
+
+
+        let a = moment.tz('Asia/Jerusalem'); // hebrew
+        console.log("item,", item)
+
+
+        let requestObj = {
+            sender_ID: item[1].user_id2,
+            receive_ID: item[0].user_id,
+            creat_date: item[0].requestDate,
+            accepted_date: a.format("LL"),
+            FirstBook_ID: item[0].bookId1,
+            SecondBook_ID: item[1].bookId2,
+          
+        }
+
+       
+        addToRequestHistory(requestObj).catch(() => {
+
+            Alert.alert("קרתה שגיה", "נכשל לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            return;
+        });
         updateBookRequest(requestId, { status: "מקובל" })
         bookRequestArray.splice(getPostIndex(requestId), 1);
         setBookRequestArray(() => bookRequestArray);
@@ -159,7 +185,7 @@ export default function ChangeRequest({ navigation, route }) {
         const currid = user.uid;
         await addFeedBack(remarks, starRating, uid).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
         });
         setIsFeedBackModelVisible(false)
     }
@@ -169,7 +195,7 @@ export default function ChangeRequest({ navigation, route }) {
 
         updateBookRequest(requestId, { status: "נדחה" }).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול לעדכן דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל לעדכן דאטה נא לנסה שוב", [{ text: "בסדר" }])
         });
         bookRequestArray.splice(getPostIndex(requestId), 1);
         setBookRequestArray(() => bookRequestArray);
@@ -190,26 +216,31 @@ export default function ChangeRequest({ navigation, route }) {
             navigation.navigate("ViewProfile", { userId: userId })
         }
     }
-      // this function handle when flatlist is empty
-  const listEmptyComponent = () => {
-    return (
-        <Text style={styles.emptyFont} >לא נמצא בקשות</Text>
-    )
-}
+    // this function handle when flatlist is empty
+    const listEmptyComponent = () => {
+        return (
+            <Text style={styles.emptyFont} >לא נמצא בקשות</Text>
+        )
+    }
 
     // this function fetch all requests from DB
     const fetchAllBooksRequests = async () => {
         setIsLoading(true)
 
         await fetchBooksRequestsAndData(auth.currentUser.uid).then((booksList) => {
-
+            booksList.sort(function(a,b){
+                // Turn your strings into dates, and then subtract them
+                // to get a value that is either negative, positive, or zero.
+          
+                return  b[0].requestAT - a[0].requestAT  ;
+              });
             setBookRequestArray(() => booksList);
             setSearchBookData(() => booksList)
             setIsLoading(false)
 
         }).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", " נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
         });;
     };
 
@@ -228,7 +259,7 @@ export default function ChangeRequest({ navigation, route }) {
             setIsRefreshing(false);
         }).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
         });;
 
 
@@ -269,7 +300,7 @@ export default function ChangeRequest({ navigation, route }) {
                 <MaterialIcons style={[!I18nManager.isRTL && styles.searchIcon, I18nManager.isRTL && styles.searchIcon2]} name={"search"} size={30} color={"#ddb07f"} />
             </View>
             {searchBookData.length > 0 && <Text style={styles.ChangeRequestText}>כל הבקשות שמגיעות אליך:</Text>}
-           <FlatList
+            <FlatList
 
                 refreshControl={<RefreshControl
                     colors={["#ff914d", "#ff914d"]}
@@ -279,7 +310,7 @@ export default function ChangeRequest({ navigation, route }) {
                 renderItem={renderItem}
                 keyExtractor={item => item[0].id}
 
-                ListEmptyComponent = {listEmptyComponent}
+                ListEmptyComponent={listEmptyComponent}
                 style={[{ marginBottom: Platform.OS === "ios" ? getStatusBarHeight() + 20 : 20 }, styles.flatList]}
 
             />

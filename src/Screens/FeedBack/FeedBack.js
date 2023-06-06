@@ -96,7 +96,7 @@ export default function FeedBack({ navigation, route }) {
             setSearchfeedBackArray(feedBackArray)
         }).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
         });;
     }
 
@@ -111,7 +111,7 @@ export default function FeedBack({ navigation, route }) {
 
         }).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
         });;
     }
 
@@ -172,7 +172,7 @@ export default function FeedBack({ navigation, route }) {
             setIsLoading(() => false);
         }).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
         });;
 
 

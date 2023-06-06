@@ -108,6 +108,33 @@ export async function addNewbook(bookName, authorName, bookType, bookStatus, dat
     throw new Error(error.message);
   }
 }
+// this functiion add request to history
+export async function addToRequestHistory(requestObj) {
+  try {
+
+    console.log("requestObj enter", requestObj)
+
+    await addDoc(collection(DBFire, 'requestHistory'), {
+      sender_ID: requestObj.sender_ID,
+      receive_ID: requestObj.receive_ID,
+      creat_date: requestObj.creat_date,
+      FirstBook_ID: requestObj.FirstBook_ID,
+      SecondBook_ID: requestObj.SecondBook_ID,
+      Date: Timestamp.fromDate(new Date()).toDate(),
+   
+      accepted_date: requestObj.accepted_date,
+
+    })
+
+
+
+
+  } catch (error) {
+    console.log("error : ", error, error.message)
+    throw new Error(error.message);
+  }
+
+}
 
 // this function add feedback to firestore 
 export async function addFeedBack(Remarks, rating, userID) {
@@ -137,6 +164,8 @@ export async function addBookRequest(requestObj) {
       SecondBook_ID: requestObj.SecondBook_ID,
       sender_ID: requestObj.sender_ID,
       receive_ID: requestObj.receive_ID,
+      creat_date: requestObj.date,
+      Date: Timestamp.fromDate(new Date()).toDate(),
     })
 
   } catch (error) {
@@ -233,7 +262,7 @@ async function fetchFeedBack(userId) {
 export async function fetchMyBooksRequestsById(userId) {
 
   try {
-    const qry = query(collection(DBFire, 'BookRequest'), where('sender_ID', '==', userId));
+    const qry = query(collection(DBFire, 'BookRequest'), where('sender_ID', '==', userId) );
 
 
     const Mycollection = await getDocs(qry);
@@ -250,20 +279,107 @@ export async function fetchMyBooksRequestsById(userId) {
 
 
     });
+  
 
 
     return arr;
   } catch (error) {
+    console.log(error)
     throw new Error(error.message);
   }
 
+}
+// this function fetch requset history
+export async function fetchRequestHistory() {
+
+  try {
+    const uid = auth.currentUser.uid
+    const qry1 = query(collection(DBFire, 'requestHistory'), where('sender_ID', '==', uid) );
+    const qry2 = query(collection(DBFire, 'requestHistory'), where('receive_ID', '==', uid));
+
+
+    const Mycollection1 = await getDocs(qry1);
+    const Mycollection2 = await getDocs(qry2);
+    let arr1 = [], arr2 = [], resultArray;
+
+    if (Mycollection1.size > 0) {
+      Mycollection1.forEach(element => {
+        let elementWithID = element.data();
+        elementWithID["id"] = element.id //add ID to JSON 
+
+        arr1.push(elementWithID);
+
+
+
+
+      });
+    }
+
+    if (Mycollection2.size > 0) {
+      Mycollection2.forEach(element => {
+        let elementWithID = element.data();
+        elementWithID["id"] = element.id //add ID to JSON 
+
+        arr2.push(elementWithID);
+
+
+
+
+      });
+    }
+
+    resultArray = arr1.concat(arr2)
+
+
+    return resultArray;
+  } catch (error) {
+    console.log("error:", error.message)
+    throw new Error(error.message);
+  }
+
+}
+// this function fetch requset history with users data
+export async function fetchRequestHistoryAndUserData() {
+
+  try {
+    let temp_array = await fetchRequestHistory();
+    let result_array = [], element, temp_receive, temp_receive_book, temp_sender, temp_sender_book;
+    for (let i = 0; i < temp_array.length; i++) {
+      element = temp_array[i];
+      temp_receive = await fetchtUserNameAndImage(element.receive_ID)
+      temp_sender = await fetchtUserNameAndImage(element.sender_ID)
+      temp_receive_book = await fetchBookDataById(element.FirstBook_ID)
+      temp_sender_book = await fetchBookDataById(element.SecondBook_ID)
+      element["receive_userName"] = temp_receive.userName;
+      element["receive_userImage"] = temp_receive.userImage;
+   
+      element["sender_userName"] = temp_sender.userName;
+      element["sender_userImage"] = temp_sender.userImage;
+
+      element["FirstBook_image"] = temp_receive_book[0].image
+      element["FirstBook_title"] = temp_receive_book[0].title
+
+      element["SecondBook_image"] = temp_sender_book[0].image
+      element["SecondBook_title"] = temp_sender_book[0].title
+  
+      result_array.push(element)
+
+    }
+
+ 
+    return result_array;
+  } catch (error) {
+    console.log("error:", error.message)
+    throw new Error(error.message);
+
+  }
 }
 
 // this function fetch book request for receiver buy  user ID
 export async function fetchBooksRequestsById(userId) {
 
   try {
-    const qry = query(collection(DBFire, 'BookRequest'), where('receive_ID', '==', userId));
+    const qry = query(collection(DBFire, 'BookRequest'), where('receive_ID', '==', userId) );
 
 
     const Mycollection = await getDocs(qry);
@@ -317,12 +433,14 @@ export async function fetchMyBooksRequestsAndData(userId) {
         user_id2: temp2[0].user_id,
         user_image2: temp2[0].user_image,
         user_name2: temp2[0].user_name,
+        requestDate: requestArray[i].creat_date,
       }]
 
       temp1[0]["bookId1"] = temp1[0].id
       temp1[0]["id"] = requestArray[i].id
-      temp1[0]["status"] = requestArray[i].status
-
+      temp1[0]["requestDate"] = requestArray[i].creat_date,
+        temp1[0]["status"] = requestArray[i].status
+        temp1[0]["requestAT"] = requestArray[i].Date
       resultArray.push(temp1.concat(temp2obj))
     }
 
@@ -360,12 +478,14 @@ export async function fetchBooksRequestsAndData(userId) {
         user_id2: temp2[0].user_id,
         user_image2: temp2[0].user_image,
         user_name2: temp2[0].user_name,
+        requestDate: requestArray[i].creat_date,
       }]
 
       temp1[0]["bookId1"] = temp1[0].id
       temp1[0]["id"] = requestArray[i].id
-
-      resultArray.push(temp1.concat(temp2obj))
+      temp1[0]["requestAT"] = requestArray[i].Date
+      temp1[0]["requestDate"] = requestArray[i].creat_date,
+        resultArray.push(temp1.concat(temp2obj))
     }
     // console.log("resultArray"  ,  resultArray)
     return resultArray;

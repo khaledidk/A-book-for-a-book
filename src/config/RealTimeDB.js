@@ -218,8 +218,10 @@ export async function fetchMessages(chatRoomID, userID) {
         const checkOnListFriendsIndex = await FindUserOnFriendList(auth.currentUser.uid, userID, 0);
         const checkOnListFriends = await FindUserOnFriendList(auth.currentUser.uid, userID, 1);
         const checkOnOtherListFriends = await FindUserOnFriendList(userID, auth.currentUser.uid, 1);
+        console.log("checkOnOtherListFriends", checkOnOtherListFriends)
+
         if (checkOnListFriends != null && checkOnOtherListFriends != null && checkOnOtherListFriends != checkOnListFriends) {
-            console.log("enter our bug")
+            console.log("===============enter our bug===================")
 
             update(ref(DBReal, '/users/' + auth.currentUser.uid + '/friends/' + checkOnListFriendsIndex), {
 

@@ -23,15 +23,15 @@ const styles = StyleSheet.create({
 
         // borderRadius : 5,
     },
-    emptyFont : {
+    emptyFont: {
         fontSize: 20,
         fontWeight: "800",
-        color: "#ff914d",  
-        marginTop : "30%",    
-         alignSelf: 'center',
-       //100%
-        
-      },
+        color: "#ff914d",
+        marginTop: "30%",
+        alignSelf: 'center',
+        //100%
+
+    },
     SearchInput2: {
 
         marginTop: getStatusBarHeight() + 40,
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     Books: {
         justifyContent: 'space-between',
         borderColor: "#ff914d",
-        flexDirection:  I18nManager.isRTL ? 'row' :'row-reverse',
+        flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse',
         alignItems: 'center',
     },
 
@@ -99,30 +99,40 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flex: 1,
     },
-    status1 : {
+    status1: {
         fontWeight: "800",
-        fontSize : 20,
-        color :  "#ff914d",
-    }, 
-    status2 : {
+        fontSize: 20,
+        color: "#ff914d",
+    },
+    status2: {
         fontWeight: "800",
-        fontSize : 20,
-        color :  "green",
-    }, 
-    status3 : {
+        fontSize: 20,
+        color: "green",
+    },
+    status3: {
         fontWeight: "800",
-        fontSize : 20,
-        color :  "red",
+        fontSize: 20,
+        color: "red",
     },
     profile: {
-        flexDirection:  I18nManager.isRTL ? 'row' : 'row-reverse',
+        flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse',
         alignItems: 'center',
-       flex : 1,
-    
+        flex : 1,
+       
+    },
+    ChangeRequestText: {
+        fontSize: 18,
+        color: "#ff914d",
+        fontWeight: '900',
+        alignSelf: 'center',
+        marginTop: 10,
+
+
     },
     itemUpper: {
+        marginTop: 10,
         justifyContent: 'space-between',
-        flexDirection:  I18nManager.isRTL ?  'row-reverse' : 'row',
+        flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
         width: '100%',
     },
     ChangeRequestText: {
@@ -134,24 +144,36 @@ const styles = StyleSheet.create({
 
 
     },
+    senderAndReceiveFont :{
+        justifyContent : 'space-between' , 
+        flexDirection : I18nManager.isRTL ? 'row-reverse' : 'row',
+         width : "100%",
+         marginTop : 10,
+        
+        },
+    txt2 : {
+        fontSize: 13,
+     
+        fontWeight: '900',
+    },
     title: {
 
         // backgroundColor : 'red',
-        fontSize: 15,
+        fontSize: 13,
         color: "#ff914d",
         fontWeight: '900',
         // alignSelf : 'flex-end',
-        textAlign: "right",
-        // flexWrap : 'wrap',
+         textAlign:  I18nManager.isRTL ? "left" : "right" ,
+        //  flexWrap : 'wrap',
 
-       
+
 
         // marginStart: 20,
 
 
     },
     starRating: {
-        flexDirection:  I18nManager.isRTL ? 'row' : 'row-reverse',
+        flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse',
         alignSelf: "flex-end",
     },
     imageStar: {
@@ -160,7 +182,7 @@ const styles = StyleSheet.create({
 
     },
     ratingFontContiner: {
-        flexDirection:  I18nManager.isRTL ? 'row' : 'row-reverse',
+        flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse',
         marginTop: 5,
         marginEnd: 5,
     },
@@ -169,14 +191,20 @@ const styles = StyleSheet.create({
         fontWeight: '800',
         color: "#f8c40c",
     },
+    txt_accepted: {
+        fontSize: 18,
+        color: "green",
+        fontWeight: '800',
+        textAlign: "right",
+    },
     txt: {
 
-        
+
         fontSize: 18,
         color: "grey",
         fontWeight: '800',
         textAlign: "right",
-      
+
     },
     ImageBackGround: {
         height: Dimensions.get('window').height / 5,
@@ -192,12 +220,12 @@ const styles = StyleSheet.create({
         width: 50,
         borderRadius: 100,
         marginStart: 10,
-        marginEnd : 10,
+        marginEnd: 10,
 
 
     },
     firstPartItem: {
-        flexDirection:  I18nManager.isRTL ? 'row-reverse' : 'row',
+        flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
         marginBottom: 10,
 
         alignItems: 'center',
@@ -210,7 +238,7 @@ const styles = StyleSheet.create({
 
     },
     itemIcons: {
-        flexDirection:  I18nManager.isRTL ? 'row' : 'row-reverse',
+        flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse',
         justifyContent: 'space-between',
         alignItems: 'center',
 
@@ -222,7 +250,7 @@ const styles = StyleSheet.create({
     },
     itemImageAndeDerails: {
         // flexGrow: 1,
-        flexDirection:  I18nManager.isRTL ?  'row-reverse' : 'row',
+        flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
         // justifyContent : 'space-between',
         // alignItems: 'center',
         marginEnd: 5,
@@ -322,7 +350,7 @@ const styles = StyleSheet.create({
     },
     modelAnswer: {
         marginTop: 20,
-        flexDirection:  I18nManager.isRTL ?  'row-reverse' : 'row',
+        flexDirection: 'row',
         justifyContent: 'center'
 
     },
@@ -359,8 +387,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignContent: "center",
         alignItems: "center",
-    
-      },
+
+    },
     modelContentContainer: {
 
         backgroundColor: "white",
@@ -372,50 +400,50 @@ const styles = StyleSheet.create({
         alignContent: "center",
         alignItems: "center",
         width: "100%",
-      },
-      checkboxContiner: {
+    },
+    checkboxContiner: {
         flexDirection: 'row-reverse',
-    
-      },
-    
-    
-      checkBoxText: {
-    
+
+    },
+
+
+    checkBoxText: {
+
         textAlign: "right",
         fontSize: 20,
         fontWeight: '800',
         paddingRight: 8,
         color: "#ff914d",
         marginEnd: 10,
-      },
-      checkboxAndText: {
+    },
+    checkboxAndText: {
         justifyContent: 'center',
         flexDirection: 'row-reverse',
-      },
-      input: {
+    },
+    input: {
 
         backgroundColor: "#ffffff",
         textAlign: "right",
         height: 55,
         // marginTop:20,
-    
-      },
-      checkbox: {
+
+    },
+    checkbox: {
         marginEnd: 10,
         marginTop: Platform.OS === "ios" ? 0 : 5,
-    
-      },
-      ratingText: {
+
+    },
+    ratingText: {
         color: "#ff914d",
         fontWeight: '600',
         fontSize: 15,
         marginStart: 10,
         marginTop: 5,
-      },
-      starRating: {
-        flexDirection: I18nManager.isRTL ? "row" :"row-reverse",
+    },
+    starRating: {
+        flexDirection: I18nManager.isRTL ? "row" : "row-reverse",
         marginTop: 20,
-      },
+    },
 });
 
 export default styles;

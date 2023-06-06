@@ -61,6 +61,15 @@ const styles = StyleSheet.create({
     right: 20,
     top: getStatusBarHeight() + 30,
   },
+  CounterFont: {
+    fontSize: 18,
+    color: "#ff914d",
+    fontWeight: '900',
+    alignSelf: 'center',
+marginTop : 10,
+
+
+},
   searchIcon2: {
     position: "absolute",
     zIndex: 1,

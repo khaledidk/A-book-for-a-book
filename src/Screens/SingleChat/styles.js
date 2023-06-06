@@ -17,11 +17,11 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     day: {
-    textAlign : 'center'
+        textAlign: 'center'
     }
-,
+    ,
     row: {
-        flexDirection:I18nManager.isRTL ? 'row-reverse' : 'row' ,
+        flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
         padding: 10,
         alignItems: 'center',
         borderBottomColor: '#cacaca',
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
 
     },
     sendingButtonContainer: {
-       
+
         justifyContent: 'center',
         alignItems: 'center',
 
@@ -46,32 +46,35 @@ const styles = StyleSheet.create({
     rotate90: {
         transform: [{ rotate: '180deg' }]
     },
-    label : {
+    label: {
         //marginTop : getStatusBarHeight() + 10,
-        flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row' ,
-        backgroundColor: "#ff914d",
-        justifyContent : "flex-end",
-        alignItems : "center",
-        
-        height : 100,
-    },
-    nameAndImage : {
-        marginTop :  getStatusBarHeight(),
         flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
-        justifyContent : "flex-end",
-        alignItems : "center",
+        backgroundColor: "#ff914d",
+        justifyContent: "flex-end",
+        alignItems: "center",
+
+        height: 100,
+    },
+    nameAndImage: {
+        marginTop: getStatusBarHeight(),
+        flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
+        justifyContent: "flex-end",
+        alignItems: "center",
+        width: "50%",
     },
 
-    name : {
-  marginEnd : 10,
-  fontWeight: "800",
-  fontSize: 15,
+    name: {
+        marginEnd: 10,
+        fontWeight: "800",
+        fontSize: 15,
+
     },
+    //
     avatar: {
         width: 50,
         height: 50,
         marginRight: 10,
-        borderRadius : 50,
+        borderRadius: 50,
     },
 });
 export default styles;

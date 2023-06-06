@@ -28,7 +28,7 @@ export default function SingleChat({ navigation, route }) {
     const loadData = async () => {
         const myChatroom = await fetchMessages(route.params.chatRoomID , route.params.selectedUser.id).catch((e) => {
             console.log(e)
-            Alert.alert("קרתה שגיה", "לא יכול להביא הודעות נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל להביא הודעות נא לנסה שוב", [{ text: "בסדר" }])
         });
 
         console.log("After my data maydata")
@@ -43,27 +43,27 @@ export default function SingleChat({ navigation, route }) {
             if (seen) {
                 UpdateNotify(auth.currentUser.uid).catch(() => {
 
-                    Alert.alert("קרתה שגיה", "לא יכול לעדכן דאטה נא לנסה שוב", [{ text: "בסדר" }])
+                    Alert.alert("קרתה שגיה", "נכשל לעדכן דאטה נא לנסה שוב", [{ text: "בסדר" }])
                 });
                 IsSeenMessage(auth.currentUser.uid, route.params.selectedUser.id, status, 1).catch(() => {
 
-                    Alert.alert("קרתה שגיה", "לא יכול  דאטה נא לנסה שוב", [{ text: "בסדר" }])
+                    Alert.alert("קרתה שגיה", "נכשל  דאטה נא לנסה שוב", [{ text: "בסדר" }])
                 });
             } else {
                 UpdateNotify(route.params.selectedUser.id).catch(() => {
 
-                    Alert.alert("קרתה שגיה", "לא יכול לעדכן דאטה נא לנסה שוב", [{ text: "בסדר" }])
+                    Alert.alert("קרתה שגיה", "נכשל לעדכן דאטה נא לנסה שוב", [{ text: "בסדר" }])
                 });
                 IsSeenMessage(route.params.selectedUser.id, auth.currentUser.uid, status, 0).catch(() => {
 
-                    Alert.alert("קרתה שגיה", "לא יכול לעדכן דאטה נא לנסה שוב", [{ text: "בסדר" }])
+                    Alert.alert("קרתה שגיה", "נכשל לעדכן דאטה נא לנסה שוב", [{ text: "בסדר" }])
                 });
             }
 
 
         }).catch(() => {
 
-            Alert.alert("קרתה שגיה", "לא יכול לעדכן דאטה נא לנסה שוב", [{ text: "בסדר" }])
+            Alert.alert("קרתה שגיה", "נכשל לעדכן דאטה נא לנסה שוב", [{ text: "בסדר" }])
         });
 
 
@@ -108,7 +108,7 @@ export default function SingleChat({ navigation, route }) {
             await notifiction(1, false, false);
             UpdateMassage(route.params.chatRoomID, lastMessages, msg, route.params.MyData).catch(() => {
 
-                Alert.alert("קרתה שגיה", "לא יכול לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
+                Alert.alert("קרתה שגיה", "נכשל לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
             });
 
 

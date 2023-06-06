@@ -196,7 +196,7 @@ export default function EditPost({ navigation, route }) {
     navigation.navigate("UserPost", { updateBookJson: updateInfo, status: 'update' })
     updatePost(route.params.id, updateInfoDB, tempeDate).catch(() => {
 
-      Alert.alert("קרתה שגיה", "לא יכול לעדכן דאטה נא לנסה שוב", [{ text: "בסדר" }])
+      Alert.alert("קרתה שגיה", "נכשל לעדכן דאטה נא לנסה שוב", [{ text: "בסדר" }])
     });
 
 

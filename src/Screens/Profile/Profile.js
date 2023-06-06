@@ -37,7 +37,7 @@ export default function Profile({ navigation, route }) {
 
     }).catch(() => {
 
-      Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+      Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
     });
 
 
@@ -59,7 +59,7 @@ export default function Profile({ navigation, route }) {
       }
       updateUser(route.params?.updateUserJson).catch(() => {
 
-        Alert.alert("קרתה שגיה", "לא יכול לעדכן דאטה נא לנסה שוב", [{ text: "בסדר" }])
+        Alert.alert("קרתה שגיה", "נכשל לעדכן דאטה נא לנסה שוב", [{ text: "בסדר" }])
       });
 
       setCurrUserInfo(() => updateInfo);

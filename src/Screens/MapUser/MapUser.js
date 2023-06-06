@@ -122,7 +122,7 @@ export default function MapUser({ navigation, route }) {
     setRefreshingLoction(true)
     const locationObj = await fetchCurrentUserLoction(uid).catch(() => {
 
-      Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+      Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
     });;;
 
     if (locationObj) {
@@ -147,7 +147,7 @@ export default function MapUser({ navigation, route }) {
     } else {
 
       let { status } = await Location.requestForegroundPermissionsAsync().catch((error) => {
-        Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }] ) })
+        Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }] ) })
       if (status !== "granted") {
         Alert.alert('', "סירבת לאפליקציה הזו לגשת למיקום שלך, עליך לשנות זאת ולאפשר גישה על מנת לקבל ביצועים טובים יותר", [, , { text: "אישור" }]);
         setCurrUserInfo([]);
@@ -159,7 +159,7 @@ export default function MapUser({ navigation, route }) {
       let location;
       if (!longitude && !latitude) {
         location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Highest, maximumAge: 10000 }).catch((error) => {
-          Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }] ) })
+          Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }] ) })
         setLatitude(location.coords.latitude);
         setLongitude(location.coords.longitude);
 
@@ -187,7 +187,7 @@ export default function MapUser({ navigation, route }) {
         await fetchallUserLoctions();
         updateUserLoction(currUserLocation).catch(() => {
 
-          Alert.alert("קרתה שגיה", "לא יכול לעדכן מקום שלך נא לנסה שוב", [{ text: "בסדר" }])
+          Alert.alert("קרתה שגיה", "נכשל לעדכן מקום שלך נא לנסה שוב", [{ text: "בסדר" }])
         });
       }
 
@@ -202,7 +202,7 @@ export default function MapUser({ navigation, route }) {
     setIsLoading(true);
     setRefreshingLoction(true)
     let { status } = await Location.requestForegroundPermissionsAsync().catch((error) => {
-      Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+      Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
 
     });
     if (status !== "granted") {
@@ -216,7 +216,7 @@ export default function MapUser({ navigation, route }) {
     let location;
 
     location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Highest, maximumAge: 10000 }).catch((error) => {
-      Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }] ) })
+      Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }] ) })
     console.log("locationObj", location)
     setLatitude(location.coords.latitude);
     setLongitude(location.coords.longitude);
@@ -269,7 +269,7 @@ export default function MapUser({ navigation, route }) {
 
     }).catch(() => {
 
-      Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+      Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
     });
 
   }
@@ -291,7 +291,7 @@ export default function MapUser({ navigation, route }) {
     let result_array = [];
     let temp = await fetchBookLoction().catch(() => {
 
-      Alert.alert("קרתה שגיה", "לא יכול להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
+      Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
     });
 
     if (statusArray.length == 0 && languageArray.length == 0 && typeArray.length == 0) {
@@ -399,7 +399,7 @@ export default function MapUser({ navigation, route }) {
             labelStyle={styles.filterButtonFont}
             mode="Outlined"
             onPress={() => setDropsVisible(false) || setBooksVisible(false)}>
-            הציג בעלי ספרים
+            הצג בעלי ספרים
           </Button>
 
         </View>
