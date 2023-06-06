@@ -279,7 +279,7 @@ export default function UserPost({ navigation, route }) {
                     היסטוריה של בקשות
                 </Button>
             </View>
-        
+            <Text style = {styles.CounterFont}> {searchBookData.length} ספר</Text>
 
             <FlatList
 

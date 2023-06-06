@@ -13,7 +13,7 @@ import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import { nameValidator } from "../../helpers/nameValidator";
 
 // import PhoneInput from 'react-native-phone-number-input';
-import DateTimePicker from '@react-native-community/datetimepicker';
+
 import BackButton2 from "../../components/BackButton2/BackButton2";
 import LodingModel from "../../components/LodingModel/LodingModel";
 export default function EditUserProfile({ navigation, route }) {

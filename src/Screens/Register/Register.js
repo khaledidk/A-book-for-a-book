@@ -11,14 +11,12 @@ import { passwordValidator } from "../../helpers/passwordValidator";
 import { nameValidator } from '../../helpers/nameValidator';
 import { Button, Modal } from "react-native-paper";
 
-import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 
 import { Entypo, ModelIcon, MaterialCommunityIcons } from '@expo/vector-icons';
-import { CreatNewUser } from '../../config/RealTimeDB';
-import { addNewItem } from '../../config/FireStoreDB';
 
-import DropDownPicker from 'react-native-dropdown-picker'
+
 // import PhoneInput from 'react-native-phone-number-input';
 import createUser from '../../config/AuthDB'
 import LodingModel from '../../components/LodingModel/LodingModel';

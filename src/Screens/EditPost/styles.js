@@ -77,7 +77,8 @@ listItemContainer : {
 listItemContainerFont : {
   fontSize:15,
   color : "#ff914d",
-  fontWeight : '600'
+  fontWeight : '600',
+  textAlign:I18nManager.isRTL ? "left" : "right",
 },
 typeErrorFont : {
   alignSelf : 'flex-end',

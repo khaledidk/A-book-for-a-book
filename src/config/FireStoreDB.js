@@ -120,11 +120,8 @@ export async function addToRequestHistory(requestObj) {
       creat_date: requestObj.creat_date,
       FirstBook_ID: requestObj.FirstBook_ID,
       SecondBook_ID: requestObj.SecondBook_ID,
-
-      // FirstBook_title: requestObj.FirstBook_title,
-      // SecondBook_title: requestObj.SecondBook_title,
-      // FirstBook_image: requestObj.FirstBook_image,
-      // SecondBook_image: requestObj.SecondBook_image,
+      Date: Timestamp.fromDate(new Date()).toDate(),
+   
       accepted_date: requestObj.accepted_date,
 
     })
@@ -167,7 +164,8 @@ export async function addBookRequest(requestObj) {
       SecondBook_ID: requestObj.SecondBook_ID,
       sender_ID: requestObj.sender_ID,
       receive_ID: requestObj.receive_ID,
-      date: requestObj.date,
+      creat_date: requestObj.date,
+      Date: Timestamp.fromDate(new Date()).toDate(),
     })
 
   } catch (error) {
@@ -264,7 +262,7 @@ async function fetchFeedBack(userId) {
 export async function fetchMyBooksRequestsById(userId) {
 
   try {
-    const qry = query(collection(DBFire, 'BookRequest'), where('sender_ID', '==', userId));
+    const qry = query(collection(DBFire, 'BookRequest'), where('sender_ID', '==', userId) );
 
 
     const Mycollection = await getDocs(qry);
@@ -281,10 +279,12 @@ export async function fetchMyBooksRequestsById(userId) {
 
 
     });
+  
 
 
     return arr;
   } catch (error) {
+    console.log(error)
     throw new Error(error.message);
   }
 
@@ -294,7 +294,7 @@ export async function fetchRequestHistory() {
 
   try {
     const uid = auth.currentUser.uid
-    const qry1 = query(collection(DBFire, 'requestHistory'), where('sender_ID', '==', uid));
+    const qry1 = query(collection(DBFire, 'requestHistory'), where('sender_ID', '==', uid) );
     const qry2 = query(collection(DBFire, 'requestHistory'), where('receive_ID', '==', uid));
 
 
@@ -329,7 +329,7 @@ export async function fetchRequestHistory() {
     }
 
     resultArray = arr1.concat(arr2)
-    console.log("resultArray", resultArray)
+
 
     return resultArray;
   } catch (error) {
@@ -352,21 +352,21 @@ export async function fetchRequestHistoryAndUserData() {
       temp_sender_book = await fetchBookDataById(element.SecondBook_ID)
       element["receive_userName"] = temp_receive.userName;
       element["receive_userImage"] = temp_receive.userImage;
-
+   
       element["sender_userName"] = temp_sender.userName;
       element["sender_userImage"] = temp_sender.userImage;
-         
+
       element["FirstBook_image"] = temp_receive_book[0].image
       element["FirstBook_title"] = temp_receive_book[0].title
 
       element["SecondBook_image"] = temp_sender_book[0].image
       element["SecondBook_title"] = temp_sender_book[0].title
-
+  
       result_array.push(element)
 
     }
 
-    console.log(" result_array=========" ,  result_array)
+ 
     return result_array;
   } catch (error) {
     console.log("error:", error.message)
@@ -379,7 +379,7 @@ export async function fetchRequestHistoryAndUserData() {
 export async function fetchBooksRequestsById(userId) {
 
   try {
-    const qry = query(collection(DBFire, 'BookRequest'), where('receive_ID', '==', userId));
+    const qry = query(collection(DBFire, 'BookRequest'), where('receive_ID', '==', userId) );
 
 
     const Mycollection = await getDocs(qry);
@@ -433,14 +433,14 @@ export async function fetchMyBooksRequestsAndData(userId) {
         user_id2: temp2[0].user_id,
         user_image2: temp2[0].user_image,
         user_name2: temp2[0].user_name,
-        requestDate: requestArray[i].date,
+        requestDate: requestArray[i].creat_date,
       }]
 
       temp1[0]["bookId1"] = temp1[0].id
       temp1[0]["id"] = requestArray[i].id
-      temp1[0]["requestDate"] = requestArray[i].date,
+      temp1[0]["requestDate"] = requestArray[i].creat_date,
         temp1[0]["status"] = requestArray[i].status
-
+        temp1[0]["requestAT"] = requestArray[i].Date
       resultArray.push(temp1.concat(temp2obj))
     }
 
@@ -478,12 +478,13 @@ export async function fetchBooksRequestsAndData(userId) {
         user_id2: temp2[0].user_id,
         user_image2: temp2[0].user_image,
         user_name2: temp2[0].user_name,
-        requestDate: requestArray[i].date,
+        requestDate: requestArray[i].creat_date,
       }]
 
       temp1[0]["bookId1"] = temp1[0].id
       temp1[0]["id"] = requestArray[i].id
-      temp1[0]["requestDate"] = requestArray[i].date,
+      temp1[0]["requestAT"] = requestArray[i].Date
+      temp1[0]["requestDate"] = requestArray[i].creat_date,
         resultArray.push(temp1.concat(temp2obj))
     }
     // console.log("resultArray"  ,  resultArray)

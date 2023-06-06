@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
     },
     modelAnswer: {
         marginTop: 20,
-        flexDirection: 'row',
+        flexDirection:  I18nManager.isRTL ?  'row-reverse' : 'row',
         justifyContent: 'center'
 
     },

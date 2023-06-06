@@ -193,7 +193,12 @@ export default function MyChangeRequest({ navigation, route }) {
 
         setIsLoading(true)
         await fetchMyBooksRequestsAndData(auth.currentUser.uid).then((booksList) => {
-
+            booksList.sort(function(a,b){
+                // Turn your strings into dates, and then subtract them
+                // to get a value that is either negative, positive, or zero.
+               
+                return b[0].requestAT - a[0].requestAT  ;
+              });
             setBookRequestArray(() => booksList);
             setSearchBookData(() => booksList)
             setIsLoading(false)

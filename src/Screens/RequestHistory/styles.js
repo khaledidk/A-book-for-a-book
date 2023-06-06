@@ -120,6 +120,15 @@ const styles = StyleSheet.create({
         flex : 1,
        
     },
+    ChangeRequestText: {
+        fontSize: 18,
+        color: "#ff914d",
+        fontWeight: '900',
+        alignSelf: 'center',
+        marginTop: 10,
+
+
+    },
     itemUpper: {
         marginTop: 10,
         justifyContent: 'space-between',
@@ -135,6 +144,18 @@ const styles = StyleSheet.create({
 
 
     },
+    senderAndReceiveFont :{
+        justifyContent : 'space-between' , 
+        flexDirection : I18nManager.isRTL ? 'row-reverse' : 'row',
+         width : "100%",
+         marginTop : 10,
+        
+        },
+    txt2 : {
+        fontSize: 13,
+     
+        fontWeight: '900',
+    },
     title: {
 
         // backgroundColor : 'red',
@@ -142,7 +163,7 @@ const styles = StyleSheet.create({
         color: "#ff914d",
         fontWeight: '900',
         // alignSelf : 'flex-end',
-        textAlign: "right",
+         textAlign:  I18nManager.isRTL ? "left" : "right" ,
         //  flexWrap : 'wrap',
 
 

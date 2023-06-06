@@ -163,12 +163,12 @@ export default function ChatRoom({ navigation, route }) {
         return array;
 
     }
-  // this function handle when flatlist is empty
-  const listEmptyComponent = () => {
-    return (
-        <Text style={styles.emptyFont} >לא נמצא משתמשים</Text>
-    )
-}
+    // this function handle when flatlist is empty
+    const listEmptyComponent = () => {
+        return (
+            <Text style={styles.emptyFont} >לא נמצא משתמשים</Text>
+        )
+    }
 
     // this function fetch all chatrooms from DB
     const fetchChatRoomData = async () => {
@@ -209,14 +209,14 @@ export default function ChatRoom({ navigation, route }) {
 
                 <MaterialIcons style={[!I18nManager.isRTL && styles.searchIcon, I18nManager.isRTL && styles.searchIcon2]} name={"search"} size={30} color={"#ddb07f"} />
             </View>
-          <FlatList
+            <FlatList
                 data={searchUsersList}
                 refreshControl={<RefreshControl
                     colors={["#ff914d", "#ff914d"]}
                     refreshing={isRefreshing}
                     onRefresh={onRefresh} />}
                 renderItem={renderUser}
-             ListEmptyComponent = {listEmptyComponent}
+                ListEmptyComponent={listEmptyComponent}
                 style={[{ marginBottom: Platform.OS === "ios" ? getStatusBarHeight() + 40 : 65 }, styles.flatList]}
                 keyExtractor={item => item.chatroomId}
             />

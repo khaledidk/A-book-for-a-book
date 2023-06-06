@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FlatList, Text, View, Image, ImageBackground, I18nManager, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, ScrollView } from "react-native";
+import { FlatList, Text, View, Image, ImageBackground, I18nManager, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, ScrollView, Platform, Linking } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons, Entypo, Ionicons } from '@expo/vector-icons';
 import Checkbox from 'expo-checkbox';
 import TextInput from "../../components/TextInput/TextInput";
@@ -73,7 +73,7 @@ export default function ViewProfile({ navigation, route }) {
     await fetchCurrentUserInfo(uid).then((userInfo) => {
 
       let userJSONObj = { name: userInfo.name, image: userInfo.image === null ? profileDefaultImageUri : userInfo.image, email: userInfo.email, date: userInfo.date, phoneNumber: userInfo.phoneNumber === null ? "" : userInfo.phoneNumber };
-           console.log("currUserInfo" , userInfo)
+      console.log("currUserInfo", userInfo)
       setCurrUserInfo(() => userJSONObj);
 
     }).catch(() => {
@@ -105,7 +105,7 @@ export default function ViewProfile({ navigation, route }) {
 
 
   };
- 
+
 
   // this functoin calculate precise distance for current user and picker user
   const calculatePreciseDistance = async () => {
@@ -115,7 +115,7 @@ export default function ViewProfile({ navigation, route }) {
 
     const corOtherUser = await fetchCurrentUserLoction(OtherUser)
     const corCurrUser = await fetchCurrentUserLoction(currid)
-    console.log("corOtherUser" , corOtherUser)
+    console.log("corOtherUser", corOtherUser)
 
     if (corOtherUser && corCurrUser) {
       var tempPdis = getPreciseDistance(
@@ -129,6 +129,13 @@ export default function ViewProfile({ navigation, route }) {
     }
 
   };
+  const makeCall = () => {
+    if (Platform.OS === 'android') {
+      Linking.openURL("tel:" + currUserInfo.phoneNumber)
+    } else {
+      Linking.openURL("telprompt:" + currUserInfo.phoneNumber)
+    }
+  }
 
 
 
@@ -194,16 +201,16 @@ export default function ViewProfile({ navigation, route }) {
 
               />
               <View style={styles.nameAndFeedBack}>
-             
+
                 <Text style={styles.userName}> {currUserInfo.name}</Text>
-       
+
                 <Button
                   style={styles.ButtonFeedBack}
                   labelStyle={styles.buttonFeedBackFont}
                   mode="contained"
                   onPress={() => setIsModelVisible(true)}
                 >
-                  לעשות משוב 
+                  לעשות משוב
 
                 </Button>
               </View>
@@ -216,20 +223,20 @@ export default function ViewProfile({ navigation, route }) {
                 <Text style={styles.detailsFont}> {currUserInfo.email}</Text>
               </View> : null}
 
-              {currUserInfo.phoneNumber ? <View style={styles.Details}>
+              {currUserInfo.phoneNumber ? <TouchableOpacity style={styles.Details} onPress={makeCall}>
                 <MaterialCommunityIcons style={styles.icon} name={"phone"} size={40} color={"#ff914d"} />
-               
-                <Text style={styles.detailsFont}> {currUserInfo.phoneNumber}</Text>
-               
-              </View> : null}
 
-              {otherUserCor && currUserCor ? <View  style={styles.Details2}>
+                <Text style={styles.detailsFont}> {currUserInfo.phoneNumber}</Text>
+
+              </TouchableOpacity> : null}
+
+              {otherUserCor && currUserCor ? <View style={styles.Details2}>
                 <MaterialIcons style={styles.icon} name={"location-pin"} size={40} color={"#ff914d"} />
                 <Text style={styles.detailsFont}> {pdis / 1000} ק"מ</Text>
-                <TouchableOpacity  onPress={() => navigation.navigate("OtherUserMap", { otherUserInfo: currUserInfo, otherUserCor: otherUserCor, userId: route.params.userId })}>
-                <Entypo  name={"arrow-left"} size={40} color={"#ff914d"} />
-                 </TouchableOpacity>
-               
+                <TouchableOpacity onPress={() => navigation.navigate("OtherUserMap", { otherUserInfo: currUserInfo, otherUserCor: otherUserCor, userId: route.params.userId })}>
+                  <Entypo name={"arrow-left"} size={40} color={"#ff914d"} />
+                </TouchableOpacity>
+
               </View> : null}
 
               <View style={styles.buttonContiner}>

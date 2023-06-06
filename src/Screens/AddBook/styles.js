@@ -64,6 +64,15 @@ DropDown: {
  
 
 },
+RequestText: {
+  fontSize: 18,
+  color: "#ff914d",
+  fontWeight: '900',
+  alignSelf: 'center',
+  marginTop: 10,
+
+
+},
 listItemContainer : {
   borderColor: "#ddb07f",
   borderBottomWidth: 1,
@@ -73,8 +82,7 @@ listItemContainerFont : {
   fontSize:15,
   color : "#ff914d",
   fontWeight : '600',
-  // textAlign:"left",
-  // direction:'rtl',
+  textAlign:I18nManager.isRTL ? "left" : "right",
 },
 typeErrorFont : {
   alignSelf : 'flex-end',

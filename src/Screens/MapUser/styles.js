@@ -84,7 +84,8 @@ const styles = StyleSheet.create({
     listItemContainerFont: {
         fontSize: 15,
         color: "#ff914d",
-        fontWeight: '600'
+        fontWeight: '600',
+        textAlign:I18nManager.isRTL ? "left" : "right",
     },
     map: {
 

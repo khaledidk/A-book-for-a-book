@@ -32,17 +32,17 @@ export default function RequestHistory({ navigation, route }) {
             return;
         }
 
-        let searcheableFileds = ["FirstBook_title", "SecondBook_title" , "receive_userName" , "sender_userName" , "creat_date" , "accepted_date"];
+        let searcheableFileds = ["FirstBook_title", "SecondBook_title", "receive_userName", "sender_userName", "creat_date", "accepted_date"];
 
         let newBookList = [];
         let isSuitable = false;
-           console.log("searchRequestHistoryArray" , searchRequestHistoryArray)
+        console.log("searchRequestHistoryArray", searchRequestHistoryArray)
         requestHistoryArray.forEach((currBookInfoObj) => {
 
             isSuitable = false;
-               
+
             for (let i = 0; i < searcheableFileds.length; i++) {
-                    
+
 
                 if ((currBookInfoObj[searcheableFileds[i]]).toLowerCase().includes(searchString)) {
 
@@ -65,19 +65,24 @@ export default function RequestHistory({ navigation, route }) {
     const renderItem = ({ item }) => {
 
         return (
-            <Item title1={item.FirstBook_title} title2={item.SecondBook_title} image1={item.FirstBook_image} image2={item.SecondBook_image} sender_userImage={item.sender_userImage} sender_userName={item.sender_userName} receive_userImage={item.receive_userImage} receive_userName={item.receive_userName} creat_date={item.creat_date} accepted_date={item.accepted_date} sender_ID = {item.sender_ID} receive_ID = {item.receive_ID} />
+            <Item title1={item.FirstBook_title} title2={item.SecondBook_title} image1={item.FirstBook_image} image2={item.SecondBook_image} sender_userImage={item.sender_userImage} sender_userName={item.sender_userName} receive_userImage={item.receive_userImage} receive_userName={item.receive_userName} creat_date={item.creat_date} accepted_date={item.accepted_date} sender_ID={item.sender_ID} receive_ID={item.receive_ID} />
 
         );
     }
 
     // this function to disgin the requests like cards
-    const Item = ({ receive_ID , sender_ID ,title1, title2, image1, image2, sender_userImage, sender_userName, receive_userImage, receive_userName, creat_date, accepted_date }) => (
+    const Item = ({ receive_ID, sender_ID, title1, title2, image1, image2, sender_userImage, sender_userName, receive_userImage, receive_userName, creat_date, accepted_date }) => (
         <View style={styles.item}>
             <Text style={styles.txt}> הבקשה נוצרת: {creat_date} </Text>
             <Text style={styles.txt_accepted}> הבקשה נקבלת: {accepted_date}</Text>
+            <View style={styles.senderAndReceiveFont}>
+                <Text style={styles.txt2}>מקבל הבקשה:</Text>
+                <Text style={styles.txt2}>שולח הבקשה:</Text>
+
+            </View>
             <View style={styles.itemUpper} >
 
-            <TouchableOpacity style={styles.profile} onPress={() => PressOnUserProfileHandler(receive_ID)}  >
+                <TouchableOpacity style={styles.profile} onPress={() => PressOnUserProfileHandler(receive_ID)}  >
                     {receive_userImage ? <Image
                         style={styles.imageProfile}
                         source={{ uri: receive_userImage }}
@@ -88,11 +93,13 @@ export default function RequestHistory({ navigation, route }) {
                             style={styles.imageProfile}
                         />
                     }
-              <View style = {{  flex : 1, }}>
-  
-                    <Text style={styles.title}>{receive_userName}</Text>
+                    <View style={{ flex: 1, }}>
+
+                        <Text style={styles.title}>{receive_userName}</Text>
                     </View>
                 </TouchableOpacity>
+
+
                 <TouchableOpacity style={styles.profile} onPress={() => PressOnUserProfileHandler(sender_ID)}  >
                     {sender_userImage ? <Image
                         style={styles.imageProfile}
@@ -104,12 +111,12 @@ export default function RequestHistory({ navigation, route }) {
                             style={styles.imageProfile}
                         />
                     }
-     <View style = {{  flex : 1,  }}>
-                    <Text style={styles.title}>{sender_userName}</Text>
+                    <View style={{ flex: 1, }}>
+                        <Text style={styles.title}>{sender_userName}</Text>
                     </View>
                 </TouchableOpacity>
 
-               
+
             </View>
 
             <View style={styles.Books}>
@@ -166,7 +173,12 @@ export default function RequestHistory({ navigation, route }) {
 
         setIsLoading(true)
         await fetchRequestHistoryAndUserData().then((booksList) => {
-
+            booksList.sort(function (a, b) {
+                // Turn your strings into dates, and then subtract them
+                // to get a value that is either negative, positive, or zero.
+                console.log("diff", b.Date - a.Date)
+                return b.Date - a.Date;
+            });
             setRequestHistoryArray(() => booksList);
             setSearchRequestHistoryArray(() => booksList)
             setIsLoading(false)
@@ -240,7 +252,7 @@ export default function RequestHistory({ navigation, route }) {
 
                 <MaterialIcons style={[!I18nManager.isRTL && styles.searchIcon, I18nManager.isRTL && styles.searchIcon2]} name={"search"} size={30} color={"#ddb07f"} />
             </View>
-           
+            <Text style={styles.ChangeRequestText}>כל החלפות ספרים שעשית {requestHistoryArray.length}:</Text>
             <FlatList
 
                 refreshControl={<RefreshControl

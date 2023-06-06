@@ -135,13 +135,12 @@ export const TabStack = () => {
 
           fontSize: 10,
 
-          width: "100%"
+          width: "100%",
+
 
         },
-        tabBarItemStyle: {
-          borderColor: "black",
-          //  flexGrow: 1
-        }
+
+        //"20%"
 
       })}
 
@@ -160,9 +159,14 @@ export const TabStack = () => {
 
         options={{
 
-          tabBarLabel: "ספרים שלי",
+          tabBarLabel: "ספרים שלי/בקשות",
 
 
+          tabBarItemStyle: {
+
+
+            // backgroundColor :  "black",
+          }
 
         }}
 
