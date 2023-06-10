@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
         fontStyle: 'italic',
         fontSize : 17,
         textAlign :  I18nManager.isRTL ? "left" : "right",
+        margin : 10,
 
     },
     PhoneInputStyle: {

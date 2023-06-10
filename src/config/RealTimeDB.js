@@ -172,18 +172,21 @@ export async function AddFriend(userID) {
 
         if (otherUserData) {
 
-
+            const newChatroomId = getChatId(otherUserData.id)
+            chatRoom = getChatId(otherUserData.id)
 
             // create a chatroom and store the chatroom id
 
-            const newChatroomRef = push(ref(DBReal, 'chatrooms'), {
+            set(ref(DBReal, '/chatrooms/' + newChatroomId), {
                 firstUser: myData.id,
                 secondUser: otherUserData.id,
                 messages: [],
             });
 
-            const newChatroomId = newChatroomRef.key;
-            chatRoom = newChatroomRef.key;
+
+            // const newChatroomId = newChatroomRef.key;
+            // chatRoom = newChatroomRef.key;
+
 
             const myFriends = myData.friends || [];
             //add this user to my friend list
@@ -205,7 +208,16 @@ export async function AddFriend(userID) {
     }
 
 };
-
+export function getChatId(otherUserId) {
+    const user = auth.currentUser;
+    const Id = user.uid;
+    let newChatId = "z";
+    if (Id === otherUserId) {
+        throw new Error("Can't create a chat with the yourself");
+    } else if (Id > otherUserId) newChatId += Id + "" + otherUserId;
+    else newChatId += otherUserId + "" + Id;
+    return newChatId;
+}
 
 //*********************** fetch *********************************//
 
@@ -213,29 +225,29 @@ export async function AddFriend(userID) {
 export async function fetchMessages(chatRoomID, userID) {
 
     try {
-        console.log("userID", userID)
+        // console.log("userID", userID)
 
-        const checkOnListFriendsIndex = await FindUserOnFriendList(auth.currentUser.uid, userID, 0);
-        const checkOnListFriends = await FindUserOnFriendList(auth.currentUser.uid, userID, 1);
-        const checkOnOtherListFriends = await FindUserOnFriendList(userID, auth.currentUser.uid, 1);
-        console.log("checkOnOtherListFriends", checkOnOtherListFriends)
+        // const checkOnListFriendsIndex = await FindUserOnFriendList(auth.currentUser.uid, userID, 0);
+        // const checkOnListFriends = await FindUserOnFriendList(auth.currentUser.uid, userID, 1);
+        // const checkOnOtherListFriends = await FindUserOnFriendList(userID, auth.currentUser.uid, 1);
+        // console.log("checkOnOtherListFriends", checkOnOtherListFriends)
 
-        if (checkOnListFriends != null && checkOnOtherListFriends != null && checkOnOtherListFriends != checkOnListFriends) {
-            console.log("===============enter our bug===================")
+        // if (checkOnListFriends != null && checkOnOtherListFriends != null && checkOnOtherListFriends != checkOnListFriends) {
+        //     console.log("===============enter our bug===================")
 
-            update(ref(DBReal, '/users/' + auth.currentUser.uid + '/friends/' + checkOnListFriendsIndex), {
-
-
-
-                id: userID,
-                chatroomId: checkOnOtherListFriends,
-                lastMassage: "",
+        //     update(ref(DBReal, '/users/' + auth.currentUser.uid + '/friends/' + checkOnListFriendsIndex), {
 
 
 
-            });
+        //         id: userID,
+        //         chatroomId: checkOnOtherListFriends,
+        //         lastMassage: "",
 
-        }
+
+
+        //     });
+
+        // }
         const snapshot = await get(
             ref(DBReal, '/chatrooms/' + chatRoomID),
         );

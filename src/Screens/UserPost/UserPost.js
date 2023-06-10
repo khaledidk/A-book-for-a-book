@@ -126,7 +126,7 @@ export default function UserPost({ navigation, route }) {
 
 
     };
-    
+
 
 
     // this function fetch books on refresh flatlist then fill the bookData array and searckBookData array
@@ -140,7 +140,7 @@ export default function UserPost({ navigation, route }) {
         }).catch(() => {
 
             Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
-          });
+        });
     }
 
     // this function handle the search 
@@ -155,7 +155,7 @@ export default function UserPost({ navigation, route }) {
             return;
         }
 
-        let searcheableFileds = ["title", "author_name", "book_type", "book_status" , "book_language"];
+        let searcheableFileds = ["title", "author_name", "book_type", "book_status", "book_language"];
         let newBookList = [];
         let isSuitable = false;
 
@@ -203,7 +203,7 @@ export default function UserPost({ navigation, route }) {
             }).catch(() => {
 
                 Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
-              });
+            });
 
         } else {
             navigation.setParams({ status: "" })
@@ -279,7 +279,7 @@ export default function UserPost({ navigation, route }) {
                     היסטוריה של בקשות
                 </Button>
             </View>
-            <Text style = {styles.CounterFont}> {searchBookData.length} ספר</Text>
+            <Text style={styles.CounterFont}> {searchBookData.length} ספר שמופרסם</Text>
 
             <FlatList
 
@@ -290,12 +290,12 @@ export default function UserPost({ navigation, route }) {
                 data={searchBookData}
                 renderItem={renderItem}
                 keyExtractor={item => item.id}
-                ListEmptyComponent = {listEmptyComponent}
+                ListEmptyComponent={listEmptyComponent}
                 style={[{ marginBottom: Platform.OS === "ios" ? getStatusBarHeight() + 30 : 65 }, styles.flatList]}
 
             />
-                {/* {!searchBookData.length ? <Text style={styles.emptyFont} >לא נמצא ספרים</Text> : null} */}
-             
+            {/* {!searchBookData.length ? <Text style={styles.emptyFont} >לא נמצא ספרים</Text> : null} */}
+
             {!I18nManager.isRTL ?
                 <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate("AddBook")} >
                     <Ionicons size={50} name={"add"} color={"#ffffff"} />

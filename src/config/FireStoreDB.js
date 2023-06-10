@@ -121,7 +121,7 @@ export async function addToRequestHistory(requestObj) {
       FirstBook_ID: requestObj.FirstBook_ID,
       SecondBook_ID: requestObj.SecondBook_ID,
       Date: Timestamp.fromDate(new Date()).toDate(),
-   
+
       accepted_date: requestObj.accepted_date,
 
     })
@@ -185,7 +185,38 @@ export async function fetchBookSorted() {
     Mycollection.forEach(element => {
       let elementWithID = element.data();
       elementWithID["id"] = element.id //add ID to JSON 
+
+      if (element.data().visible === "false") {
+
+      } else {
+        arr.push(elementWithID);
+
+      }
+    });
+
+    return arr;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+
+}
+
+export async function fetchBookSorted2() {
+
+
+  try {
+    const qry = query(collection(DBFire, 'books'), orderBy('Date', "desc"))
+    const Mycollection = await getDocs(qry)
+    let arr = [];
+
+    Mycollection.forEach(element => {
+      let elementWithID = element.data();
+      elementWithID["id"] = element.id //add ID to JSON 
+
+
       arr.push(elementWithID);
+
+
     });
 
     return arr;
@@ -198,6 +229,19 @@ export async function fetchBookSorted() {
 export async function fetchBookDataById(bookId) {
   try {
     let booksArray = await fetchBookSorted()
+
+    let temp = booksArray.filter(element => element.id == bookId);
+
+    return temp;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+// this function fetch book data by book ID
+export async function fetchBookDataById2(bookId) {
+  try {
+    let booksArray = await fetchBookSorted2()
 
     let temp = booksArray.filter(element => element.id == bookId);
 
@@ -262,7 +306,7 @@ async function fetchFeedBack(userId) {
 export async function fetchMyBooksRequestsById(userId) {
 
   try {
-    const qry = query(collection(DBFire, 'BookRequest'), where('sender_ID', '==', userId) );
+    const qry = query(collection(DBFire, 'BookRequest'), where('sender_ID', '==', userId));
 
 
     const Mycollection = await getDocs(qry);
@@ -279,7 +323,7 @@ export async function fetchMyBooksRequestsById(userId) {
 
 
     });
-  
+
 
 
     return arr;
@@ -294,7 +338,7 @@ export async function fetchRequestHistory() {
 
   try {
     const uid = auth.currentUser.uid
-    const qry1 = query(collection(DBFire, 'requestHistory'), where('sender_ID', '==', uid) );
+    const qry1 = query(collection(DBFire, 'requestHistory'), where('sender_ID', '==', uid));
     const qry2 = query(collection(DBFire, 'requestHistory'), where('receive_ID', '==', uid));
 
 
@@ -343,16 +387,22 @@ export async function fetchRequestHistoryAndUserData() {
 
   try {
     let temp_array = await fetchRequestHistory();
+
     let result_array = [], element, temp_receive, temp_receive_book, temp_sender, temp_sender_book;
     for (let i = 0; i < temp_array.length; i++) {
       element = temp_array[i];
       temp_receive = await fetchtUserNameAndImage(element.receive_ID)
       temp_sender = await fetchtUserNameAndImage(element.sender_ID)
-      temp_receive_book = await fetchBookDataById(element.FirstBook_ID)
-      temp_sender_book = await fetchBookDataById(element.SecondBook_ID)
+
+      temp_receive_book = await fetchBookDataById2(element.FirstBook_ID)
+      temp_sender_book = await fetchBookDataById2(element.SecondBook_ID)
+      if (temp_receive_book.length == 0 || temp_sender_book.length == 0) {
+
+        continue;
+      }
       element["receive_userName"] = temp_receive.userName;
       element["receive_userImage"] = temp_receive.userImage;
-   
+
       element["sender_userName"] = temp_sender.userName;
       element["sender_userImage"] = temp_sender.userImage;
 
@@ -361,12 +411,12 @@ export async function fetchRequestHistoryAndUserData() {
 
       element["SecondBook_image"] = temp_sender_book[0].image
       element["SecondBook_title"] = temp_sender_book[0].title
-  
+
       result_array.push(element)
 
     }
 
- 
+
     return result_array;
   } catch (error) {
     console.log("error:", error.message)
@@ -379,7 +429,7 @@ export async function fetchRequestHistoryAndUserData() {
 export async function fetchBooksRequestsById(userId) {
 
   try {
-    const qry = query(collection(DBFire, 'BookRequest'), where('receive_ID', '==', userId) );
+    const qry = query(collection(DBFire, 'BookRequest'), where('receive_ID', '==', userId));
 
 
     const Mycollection = await getDocs(qry);
@@ -440,7 +490,7 @@ export async function fetchMyBooksRequestsAndData(userId) {
       temp1[0]["id"] = requestArray[i].id
       temp1[0]["requestDate"] = requestArray[i].creat_date,
         temp1[0]["status"] = requestArray[i].status
-        temp1[0]["requestAT"] = requestArray[i].Date
+      temp1[0]["requestAT"] = requestArray[i].Date
       resultArray.push(temp1.concat(temp2obj))
     }
 
@@ -529,13 +579,31 @@ export async function fetchByUserId(userId) {
     Mycollection.forEach(element => {
       let elementWithID = element.data();
       elementWithID["id"] = element.id //add ID to JSON
-      arr.push(elementWithID);
-    });
+      if (element.data().visible === "false") {
 
+      } else {
+        arr.push(elementWithID);
+
+      }
+    });
+    // console.log("arr1" , arr)
+    // let temp = arr.filter(removeValue );
+    //  console.log("temp" , temp)
     return arr
   } catch (error) {
+    console.log(error.message)
     throw new Error(error.message);
   }
+}
+function removeValue(value, index, arr) {
+  // If the value at the current array index matches the specified value (2)
+  if (value.visible == "false") {
+    // Removes the value from the original array
+    console.log("index", arr[index])
+    arr.splice(index, 1);
+    return true;
+  }
+  return false;
 }
 
 // this function fetch current user data
@@ -682,7 +750,24 @@ export async function checkUserInfo(phoneNumber) {
   } catch (error) {
     throw new Error(error.message);
   }
+}
+// check if the book is exists
+export async function checkBook(bookID) {
+  try {
+    const docRef = doc(DBFire, "books", bookID);
+    const docSnap = await getDoc(docRef);
 
+      console.log("docSnap.data()" , docSnap.data())
+    if (docSnap.data().visible == "false") {
+      console.log("=====docSnap.data()=============")
+      return false
+    } else {
+      return true
+    }
+  } catch (error) {
+    console.log("error.message", error.message)
+    throw new Error(error.message);
+  }
 
 
 }
@@ -741,10 +826,12 @@ export async function deletePost(documentID) {
     let docRef = doc(DBFire, "books", documentID);
     const docSnap = await getDoc(docRef);
     let itemImgName = docSnap.data()["image_name"];
-    deleteFileFromStorage(itemImgName)
-    deleteDoc(doc(DBFire, "books", documentID));
+    updateDoc(docRef, { visible: "false" })
+    // deleteFileFromStorage(itemImgName)
+    // deleteDoc(doc(DBFire, "books", documentID));
     deletBookRequest(documentID)
   } catch (error) {
+    console.log(error.message)
     throw new Error(error.message);
   }
 }
@@ -841,7 +928,9 @@ export async function updateBookRequest(requestId, updated_fields) {
   try {
     const userDocRef = doc(DBFire, 'BookRequest', requestId);
     const docSnap = await getDoc(userDocRef);
-    updateDoc(userDocRef, updated_fields)
+    if (docSnap.exists()) {
+      updateDoc(userDocRef, updated_fields)
+    }
   } catch (error) {
     throw new Error(error.message);
   }
