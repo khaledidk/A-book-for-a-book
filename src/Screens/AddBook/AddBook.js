@@ -208,7 +208,7 @@ export default function AddBook(props) {
         navigation.navigate("Home", { newBookJson: newBookJson, status: 'add' })
         setIsLoadingModel(false)
       }).catch(() => {
-
+        setIsLoadingModel(false)
         Alert.alert("קרתה שגיה", "נכשל לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
       });
 

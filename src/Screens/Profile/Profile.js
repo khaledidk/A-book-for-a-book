@@ -106,8 +106,8 @@ export default function Profile({ navigation, route }) {
               />
 
             }
-            <View style = {{  flex : 1,  alignItems : 'center',}}>
-            <Text style={styles.userName}> {currUserInfo.name}</Text>
+            <View style={{ flex: 1, alignItems: 'center', }}>
+              <Text style={styles.userName}> {currUserInfo.name}</Text>
             </View>
           </View>
           <View style={styles.userDetails}>
@@ -131,7 +131,7 @@ export default function Profile({ navigation, route }) {
 
               >
 
-                לראות משובים שלי
+                לראות משובים
               </Button>
               <Button
                 style={styles.signOutButton}

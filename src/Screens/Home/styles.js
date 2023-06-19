@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   },
   SearchInput: {
 
-    marginTop: getStatusBarHeight() + 10,
+    marginTop: getStatusBarHeight() + 30,
     fontSize: 20,
     fontWeight: "650",
     textAlign: "right",
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   },
   SearchInput2: {
 
-    marginTop: getStatusBarHeight() + 10,
+    marginTop: getStatusBarHeight() + 30,
     fontSize: 20,
     fontWeight: "650",
     textAlign: "right",
@@ -52,13 +52,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     zIndex: 1,
     right: 20,
-    top: getStatusBarHeight() + 30,
+    top: getStatusBarHeight() + 50,
   },
   searchIcon2: {
     position: "absolute",
     zIndex: 1,
     left: 20,
-    top: getStatusBarHeight() + 30,
+    top: getStatusBarHeight() + 50,
   },
 
   flatList: {
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginEnd: 20,
 
- 
+
 
   },
   userNameAndImage: {

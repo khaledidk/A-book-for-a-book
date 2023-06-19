@@ -50,7 +50,7 @@ export default function LoginWithPhone({ navigation }) {
 
             Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
         });
-       
+
         phoneProvider.verifyPhoneNumber(FormattedNumber, recaptchaVerifier.current)
             .then((res) => {
 
@@ -116,7 +116,7 @@ export default function LoginWithPhone({ navigation }) {
     };
 
     // this function implement when press on login button,then do login
-  
+
     const onLoginPressed = async () => {
 
         const CheckValidPhoneNumber = ValidatePhoneNumber(NumberValue);
@@ -155,13 +155,14 @@ export default function LoginWithPhone({ navigation }) {
                     ref={recaptchaVerifier}
 
                     firebaseConfig={{
-                        apiKey: "AIzaSyBOTSiaTFlWUqRJvEUa9v9AVy7OaprGkiA",
-                        authDomain: "bookforbook-7dec4.firebaseapp.com",
-                        projectId: "bookforbook-7dec4",
-                        storageBucket: "bookforbook-7dec4.appspot.com",
-                        messagingSenderId: "569934775016",
-                        appId: "1:569934775016:web:049be6c3cc4705276c7f5d",
-                        measurementId: "G-SQGXTR8PZ1"
+                        apiKey: "AIzaSyDxXALvwsTsRZpGZliusOq5ar9bfbl-LzM",
+                        authDomain: "a-book-for-a-book-7bb81.firebaseapp.com",
+                        databaseURL: "https://a-book-for-a-book-7bb81-default-rtdb.firebaseio.com",
+                        projectId: "a-book-for-a-book-7bb81",
+                        storageBucket: "a-book-for-a-book-7bb81.appspot.com",
+                        messagingSenderId: "133158748554",
+                        appId: "1:133158748554:web:7c14ea1828834ab03e4873",
+                        measurementId: "G-EKM93PKSWK"
                     }}
                 // attemptInvisibleVerification
                 // androidHardwareAccelerationDisabled

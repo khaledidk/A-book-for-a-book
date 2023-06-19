@@ -129,11 +129,13 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-
+    width: "60%"
   },
   buttonFeedBackFont: {
     fontSize: 14,
     fontWeight: '800',
+    width: "100%"
+
 
   },
   // iconFeedBack : {
@@ -295,6 +297,7 @@ const styles = StyleSheet.create({
   starRating: {
     flexDirection:  I18nManager.isRTL ? "row" :"row-reverse",
     marginTop: 20,
+ 
     
   },
   flatList: {

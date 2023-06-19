@@ -135,12 +135,11 @@ export const TabStack = () => {
 
           fontSize: 10,
 
-          width: "100%",
-
+          width: "150%",
 
         },
 
-        //"20%"
+
 
       })}
 
@@ -162,11 +161,25 @@ export const TabStack = () => {
           tabBarLabel: "ספרים שלי/בקשות",
 
 
+
           tabBarItemStyle: {
+            width: "200%",
+            flexGrow: 1,
+            flex: 1,
+
+          },
+
+          tabBarLabelStyle: {
 
 
-            // backgroundColor :  "black",
-          }
+            fontSize: 10,
+            // alignSelf : 'flex-end',
+            width: "150%",
+            paddingEnd: 10,
+            paddingStart: 10,
+
+          },
+
 
         }}
 

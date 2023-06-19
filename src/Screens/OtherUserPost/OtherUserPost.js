@@ -9,7 +9,7 @@ import TextInput from "../../components/TextInput/TextInput";
 import { MaterialIcons, Ionicons, FontAwesome, Entypo } from '@expo/vector-icons';
 
 import OurActivityIndicator from "../../components/OurActivityIndicator/OurActivityIndicator";
-import { fetchByUserId } from "../../config/FireStoreDB";
+import { checkBook, fetchByUserId } from "../../config/FireStoreDB";
 import { auth } from "../../config/firebase";
 import { I18nManager } from "react-native";
 import BackButton2 from "../../components/BackButton2/BackButton2";
@@ -33,6 +33,15 @@ export default function OtherUserPost({ navigation, route }) {
 
         );
     }
+    const checkBookExists = async (userId, id) => {
+        let check = await checkBook(id)
+    
+        if (check == true) {
+          navigation.navigate("ChooseBookToChange", { user_id: userId, firstBook_id: id })
+        } else {
+          Alert.alert("לצערי", "את/ה לא יכול לחליף עם הספר הזה כי הוא נמחק", [{ text: "בסדר" }])
+        }
+      }
 
     // this function to disgin the books and books details like cards
     const Item = ({ title, author, type, status, image, id }) => (
@@ -40,7 +49,7 @@ export default function OtherUserPost({ navigation, route }) {
 
 
 
-            {route.params.userId === auth.currentUser.uid ? null : <TouchableOpacity onPress={() => navigation.navigate("ChooseBookToChange", { user_id: route.params.userId, firstBook_id: id })} >
+            {route.params.userId === auth.currentUser.uid ? null : <TouchableOpacity onPress={() => checkBookExists(route.params.userId,  id)} >
                 <FontAwesome size={30} name={"exchange"} color={"#ff914d"} />
             </TouchableOpacity>}
             <View style={styles.itemImageAndeDerails} >

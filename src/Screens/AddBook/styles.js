@@ -82,14 +82,14 @@ listItemContainerFont : {
   fontSize:15,
   color : "#ff914d",
   fontWeight : '600',
-  textAlign:I18nManager.isRTL ? "left" : "right",
+ 
 },
 typeErrorFont : {
-  alignSelf : 'flex-end',
+  
   fontSize: 13,
   color: '#f13a59',
   paddingTop: 8,
-  alignSelf: 'flex-end'
+  textAlign:I18nManager.isRTL ? "left" : "right",
 },
 addButton: {
   backgroundColor: "#ff914d",

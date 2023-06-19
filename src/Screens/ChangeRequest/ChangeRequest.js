@@ -12,7 +12,7 @@ import BackButton from "../../components/BackButton/BackButton";
 import moment from 'moment-timezone';
 import 'moment/locale/he'
 import { Rating } from "react-native-rating-element";
-import { addFeedBack, addToRequestHistory, fetchBooksRequestsAndData, updateBookRequest } from "../../config/FireStoreDB";
+import { addFeedBack, addToRequestHistory, checkBook, fetchBooksRequestsAndData, updateBookRequest } from "../../config/FireStoreDB";
 import BackButton2 from "../../components/BackButton2/BackButton2";
 const profileDefaultImageUri = Image.resolveAssetSource(require('../../../assets/defult_Profile.png')).uri;
 export default function ChangeRequest({ navigation, route }) {
@@ -107,8 +107,8 @@ export default function ChangeRequest({ navigation, route }) {
                             style={styles.imageProfile}
                         />
                     }
-                   <View style = {{   flexShrink : 1,}}>
-                    <Text style={styles.title}>{userName}</Text>
+                    <View style={{ flexShrink: 1, }}>
+                        <Text style={styles.title}>{userName}</Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -146,36 +146,47 @@ export default function ChangeRequest({ navigation, route }) {
     }
 
     // this function implement when the user accept the request
-    const acceptChange = () => {
+    const acceptChange = async () => {
+
+        let check = await checkBookExists(item[1].bookId2)
+        if (check == true) {
+            let a = moment.tz('Asia/Jerusalem'); // hebrew
+            console.log("item,", item)
 
 
+            let requestObj = {
+                sender_ID: item[1].user_id2,
+                receive_ID: item[0].user_id,
+                creat_date: item[0].requestDate,
+                accepted_date: a.format("LL"),
+                FirstBook_ID: item[0].bookId1,
+                SecondBook_ID: item[1].bookId2,
 
-        let a = moment.tz('Asia/Jerusalem'); // hebrew
-        console.log("item,", item)
+            }
 
 
-        let requestObj = {
-            sender_ID: item[1].user_id2,
-            receive_ID: item[0].user_id,
-            creat_date: item[0].requestDate,
-            accepted_date: a.format("LL"),
-            FirstBook_ID: item[0].bookId1,
-            SecondBook_ID: item[1].bookId2,
-          
+            addToRequestHistory(requestObj).catch(() => {
+
+                Alert.alert("קרתה שגיה", "נכשל לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
+                return;
+            });
+            updateBookRequest(requestId, { status: "מקובל" })
+            bookRequestArray.splice(getPostIndex(requestId), 1);
+            setBookRequestArray(() => bookRequestArray);
+            setSearchBookData(() => bookRequestArray);
+            setIsAlertVisible1(false)
+            setIsFeedBackModelVisible(true)
         }
+    }
+    const checkBookExists = async (id) => {
+        let check = await checkBook(id)
 
-       
-        addToRequestHistory(requestObj).catch(() => {
+        if (check == false) {
 
-            Alert.alert("קרתה שגיה", "נכשל לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
-            return;
-        });
-        updateBookRequest(requestId, { status: "מקובל" })
-        bookRequestArray.splice(getPostIndex(requestId), 1);
-        setBookRequestArray(() => bookRequestArray);
-        setSearchBookData(() => bookRequestArray);
-        setIsAlertVisible1(false)
-        setIsFeedBackModelVisible(true)
+            Alert.alert("לצערי", "את/ה לא יכול לחליף עם הספר הזה כי הוא נמחק", [{ text: "בסדר" }])
+            return false;
+        }
+        return true;
     }
 
     // this function implement after the user accept or reject the request, to do feedback
@@ -192,6 +203,7 @@ export default function ChangeRequest({ navigation, route }) {
 
     // this function implement when the user reject the request
     const rejectChange = () => {
+
 
         updateBookRequest(requestId, { status: "נדחה" }).catch(() => {
 
@@ -228,12 +240,12 @@ export default function ChangeRequest({ navigation, route }) {
         setIsLoading(true)
 
         await fetchBooksRequestsAndData(auth.currentUser.uid).then((booksList) => {
-            booksList.sort(function(a,b){
+            booksList.sort(function (a, b) {
                 // Turn your strings into dates, and then subtract them
                 // to get a value that is either negative, positive, or zero.
-          
-                return  b[0].requestAT - a[0].requestAT  ;
-              });
+
+                return b[0].requestAT - a[0].requestAT;
+            });
             setBookRequestArray(() => booksList);
             setSearchBookData(() => booksList)
             setIsLoading(false)
@@ -447,7 +459,10 @@ export default function ChangeRequest({ navigation, route }) {
 
                         {isCheckedYes &&
                             <View style={styles.starRating}>
-                                <Text style={styles.ratingText} >הדירוג שלך ל{currUserName}:</Text>
+                                <View style={{ flex: 1 }}>
+
+                                    <Text style={styles.ratingText} >הדירוג שלך ל{currUserName}:</Text>
+                                </View>
                                 {I18nManager.isRTL ? <Rating
 
                                     rated={starRating}
@@ -464,7 +479,7 @@ export default function ChangeRequest({ navigation, route }) {
 
                                         rated={starRating}
                                         totalCount={5}
-                                        size={25}
+                                        size={23}
                                         icon="ios-star"
                                         direction="row"
                                         onIconTap={(position) => setStarRating(position)}

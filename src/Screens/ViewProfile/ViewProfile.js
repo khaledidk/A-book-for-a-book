@@ -341,12 +341,14 @@ export default function ViewProfile({ navigation, route }) {
 
                 {isCheckedYes &&
                   <View style={styles.starRating}>
+                    <View style={{ flex : 1}}>
                     <Text style={styles.ratingText} >הדירוג שלך ל{currUserInfo.name}:</Text>
+                    </View>
                     {I18nManager.isRTL ? <Rating
 
                       rated={starRating}
                       totalCount={5}
-                      size={25}
+                      size={23}
                       icon="ios-star"
                       direction="row-reverse"
                       onIconTap={(position) => setStarRating(position)}

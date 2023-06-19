@@ -7,7 +7,7 @@ import { Button, Modal } from "react-native-paper";
 import TextInput from "../../components/TextInput/TextInput";
 import * as ImagePicker from 'expo-image-picker';
 import BackButton from "../../components/BackButton/BackButton";
-
+import { checkUserInfo } from "../../config/FireStoreDB";
 import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 
 import { nameValidator } from "../../helpers/nameValidator";
@@ -16,6 +16,7 @@ import { nameValidator } from "../../helpers/nameValidator";
 
 import BackButton2 from "../../components/BackButton2/BackButton2";
 import LodingModel from "../../components/LodingModel/LodingModel";
+import { useEffect } from "react";
 export default function EditUserProfile({ navigation, route }) {
 
 
@@ -27,6 +28,7 @@ export default function EditUserProfile({ navigation, route }) {
     const [NumberValue, setNumberValue] = useState(route.params.phoneNumber);
     const [ValidNumber, setValidNumber] = useState(false);
     const [PhoneInputerror, setPhoneInputerror] = useState("");
+    const [checkUserByPhone, setCheckUserByPhone] = useState(false);
 
     const [isLoadingModel, setIsLoadingModel] = useState(false);
 
@@ -126,6 +128,12 @@ export default function EditUserProfile({ navigation, route }) {
         navigation.navigate("Profile", { updateUserJson: updateUserJson })
 
     };
+    useEffect(() => {
+        checkUserInfo(NumberValue).then((boolean) => {
+            setCheckUserByPhone(boolean)
+        })
+
+    }, []);
 
     return (
         <KeyboardAvoidingView style={{ flex: 1 }}
@@ -186,7 +194,7 @@ export default function EditUserProfile({ navigation, route }) {
 
                                 />
                                 {/* <View style={styles.inputContainer2}> */}
-                                <TextInput
+                                {!checkUserByPhone && <TextInput
                                     value={NumberValue}
                                     onChangeText={(userPhone) => setNumberValue(userPhone)}
                                     label="טלפון נייד"
@@ -194,11 +202,11 @@ export default function EditUserProfile({ navigation, route }) {
                                     autoCapitalize="none"
                                     autoCorrect={false}
                                     phoneIcon='phone'
-                                    style={[I18nManager.isRTL && styles.PhoneInputStyle2 ,!I18nManager.isRTL && styles.PhoneInputStyle]}
+                                    style={[I18nManager.isRTL && styles.PhoneInputStyle2, !I18nManager.isRTL && styles.PhoneInputStyle]}
                                     error={!!PhoneInputerror}
                                     errorText={PhoneInputerror}
-                                />
-                              <Text style = {[I18nManager.isRTL && styles.phoneStart2 ,!I18nManager.isRTL && styles.phoneStart]}>+972</Text>
+                                />}
+                                {!checkUserByPhone && <Text style={[I18nManager.isRTL && styles.phoneStart2, !I18nManager.isRTL && styles.phoneStart]}>+972</Text>}
 
 
                                 <Button

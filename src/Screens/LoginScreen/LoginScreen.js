@@ -14,7 +14,7 @@ import { SignInWithProvider, signInWithGoogle } from '../../config/AuthDB';
 import { SignIn } from '../../config/AuthDB';
 import { sendEmailVerification } from "firebase/auth";
 import { auth } from '../../config/firebase';
-import { MaterialCommunityIcons ,Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import LodingModel from '../../components/LodingModel/LodingModel';
 import { useEffect } from 'react';
 export default function LoginScreen({ navigation }) {
@@ -182,19 +182,19 @@ export default function LoginScreen({ navigation }) {
                 התחבר
               </Button>
               <View>
-              <Button
-                style={styles.ButtonLoginWithPhone}
-                labelStyle={styles.ButtonLoginFont}
-                mode="contained"
-                onPress={() => navigation.navigate("LoginWithPhone")}
+                <Button
+                  style={styles.ButtonLoginWithPhone}
+                  labelStyle={styles.ButtonLoginFont}
+                  mode="contained"
+                  onPress={() => navigation.navigate("LoginWithPhone")}
 
-              >
+                >
 
-                התחבר עם הטלפון 
-            
-              </Button>
+                  התחבר עם מס' טלפון
 
-              <Ionicons style = {[!I18nManager.isRTL &&styles.phoneIcon , I18nManager.isRTL && styles.phoneIcon2]} name={"phone-portrait-outline"} size={30} color={"#ffffff"} />
+                </Button>
+
+                <Ionicons style={[!I18nManager.isRTL && styles.phoneIcon, I18nManager.isRTL && styles.phoneIcon2]} name={"phone-portrait-outline"} size={30} color={"#ffffff"} />
               </View>
             </View>
 
