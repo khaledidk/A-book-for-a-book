@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
   },
   SearchInput: {
 
-    marginTop: getStatusBarHeight(),
+    marginTop: getStatusBarHeight() ,
     fontSize: 20,
     fontWeight: "650",
     textAlign: "right",

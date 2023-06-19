@@ -134,12 +134,12 @@ export const TabStack = () => {
 
 
           fontSize: 10,
-          // flexShrink: 1,
-            width : "150%",
+
+          width: "150%",
 
         },
-       
-        //"20%"
+
+
 
       })}
 
@@ -159,15 +159,27 @@ export const TabStack = () => {
         options={{
 
           tabBarLabel: "ספרים שלי/בקשות",
-         
 
 
-          tabBarItemStyle : {
+
+          tabBarItemStyle: {
             width: "200%",
             flexGrow: 1,
             flex: 1,
-          }
-  
+
+          },
+
+          tabBarLabelStyle: {
+
+
+            fontSize: 10,
+            // alignSelf : 'flex-end',
+            width: "150%",
+            paddingEnd: 10,
+            paddingStart: 10,
+
+          },
+
 
         }}
 
@@ -176,7 +188,7 @@ export const TabStack = () => {
         options={{
 
           tabBarLabel: "איזור אישי",
-         
+
 
         }} />
       <Tab.Screen name='MapUser' component={MapUserScreen}

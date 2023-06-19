@@ -757,7 +757,7 @@ export async function checkBook(bookID) {
     const docRef = doc(DBFire, "books", bookID);
     const docSnap = await getDoc(docRef);
 
-      console.log("docSnap.data()" , docSnap.data())
+    console.log("docSnap.data()", docSnap.data())
     if (docSnap.data().visible == "false") {
       console.log("=====docSnap.data()=============")
       return false
