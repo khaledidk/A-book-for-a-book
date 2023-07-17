@@ -392,7 +392,7 @@ export default function MapUser({ navigation, route }) {
             labelStyle={styles.filterButtonFont}
             mode="Outlined"
             onPress={() => setDropsVisible(!dropsVisible)}>
-            חיפוש לפי ספרים
+            חיבוש לפי ספרים
           </Button>
           <Button
             style={styles.filterButton}

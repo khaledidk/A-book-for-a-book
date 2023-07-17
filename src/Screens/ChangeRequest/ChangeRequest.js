@@ -170,7 +170,7 @@ export default function ChangeRequest({ navigation, route }) {
                 Alert.alert("קרתה שגיה", "נכשל לטעון דאטה נא לנסה שוב", [{ text: "בסדר" }])
                 return;
             });
-            updateBookRequest(requestId, { status: "מקובל" })
+            updateBookRequest(requestId, { status: "התקבלה" })
             bookRequestArray.splice(getPostIndex(requestId), 1);
             setBookRequestArray(() => bookRequestArray);
             setSearchBookData(() => bookRequestArray);
@@ -205,7 +205,7 @@ export default function ChangeRequest({ navigation, route }) {
     const rejectChange = () => {
 
 
-        updateBookRequest(requestId, { status: "נדחה" }).catch(() => {
+        updateBookRequest(requestId, { status: "נדחתה" }).catch(() => {
 
             Alert.alert("קרתה שגיה", "נכשל לעדכן דאטה נא לנסה שוב", [{ text: "בסדר" }])
         });

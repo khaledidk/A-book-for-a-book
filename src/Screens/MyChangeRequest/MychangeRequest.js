@@ -63,7 +63,7 @@ export default function MyChangeRequest({ navigation, route }) {
 
             }
 
-           
+
 
         });
 
@@ -71,31 +71,31 @@ export default function MyChangeRequest({ navigation, route }) {
 
     };
 
-   // this function display the requests on screen
+    // this function display the requests on screen
     const renderItem = ({ item }) => {
 
         return (
-            <Item item={item} status={item[0].status} requestId={item[0].id} bookId1={item[0].bookId1} bookId2={item[1].bookId2} title1={item[0].title} title2={item[1].title2} image1={item[0].image} image2={item[1].image2} userImage={item[0].user_image} userName={item[0].user_name} userId={item[0].user_id} requestDate = {item[0].requestDate} />
+            <Item item={item} status={item[0].status} requestId={item[0].id} bookId1={item[0].bookId1} bookId2={item[1].bookId2} title1={item[0].title} title2={item[1].title2} image1={item[0].image} image2={item[1].image2} userImage={item[0].user_image} userName={item[0].user_name} userId={item[0].user_id} requestDate={item[0].requestDate} />
 
         );
     }
 
-  // this function to disgin the requests like cards
-    const Item = ({ item, status, title1, title2, image1, image2,requestDate , userImage, userName, userId, requestId, bookId1, bookId2 }) => (
+    // this function to disgin the requests like cards
+    const Item = ({ item, status, title1, title2, image1, image2, requestDate, userImage, userName, userId, requestId, bookId1, bookId2 }) => (
         <View style={styles.item}>
-              <Text style={styles.txt}> {requestDate}</Text>
+            <Text style={styles.txt}> {requestDate}</Text>
             <View style={styles.itemUpper} >
-          
+
                 <View style={styles.itemIcons}>
-             
-                    {status === 'מקובל'  ? <TouchableOpacity onPress={() => setIsFeedBackModelVisible(true) || setRequestId(requestId) || setCurrUserName(userName) || setCurrUserID(userId)} >
+
+                    {status === 'התקבלה' ? <TouchableOpacity onPress={() => setIsFeedBackModelVisible(true) || setRequestId(requestId) || setCurrUserName(userName) || setCurrUserID(userId)} >
                         <Entypo name={"circle-with-cross"} size={30} color={"red"} />
                     </TouchableOpacity> :
                         <TouchableOpacity onPress={() => setIsAlertVisible2(true) || setRequestId(requestId)} >
                             <Entypo name={"circle-with-cross"} size={30} color={"red"} />
                         </TouchableOpacity>}
 
-                     
+
 
                 </View>
                 <TouchableOpacity style={styles.profile} onPress={() => PressOnUserProfileHandler(userId)}  >
@@ -109,8 +109,8 @@ export default function MyChangeRequest({ navigation, route }) {
                             style={styles.imageProfile}
                         />
                     }
-           <View style = {{   flexShrink : 1,}}>
-                    <Text style={styles.title}>{userName}</Text>
+                    <View style={{ flexShrink: 1, }}>
+                        <Text style={styles.title}>{userName}</Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -128,8 +128,8 @@ export default function MyChangeRequest({ navigation, route }) {
                 </TouchableOpacity>
             </View>
             {status === 'בתהליך' && <Text style={styles.status1} >{status}</Text>}
-            {status === 'מקובל' && <Text style={styles.status2}>{status}</Text>}
-            {status === 'נדחה' && <Text style={styles.status3}>{status}</Text>}
+            {status === 'התקבלה' && <Text style={styles.status2}>{status}</Text>}
+            {status === 'נדחתה' && <Text style={styles.status3}>{status}</Text>}
 
 
         </View>
@@ -148,7 +148,7 @@ export default function MyChangeRequest({ navigation, route }) {
         return -1;
     }
 
-   // this function implement after the user accept or reject the request, to do feedback
+    // this function implement after the user accept or reject the request, to do feedback
     const sendFeedBack = async () => {
         const uid = currUserID;
         const user = auth.currentUser;
@@ -170,12 +170,12 @@ export default function MyChangeRequest({ navigation, route }) {
         deleteRequest(requestId).catch(() => {
 
             Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
-          });
+        });
         setIsAlertVisible2(false)
         setIsFeedBackModelVisible(false)
     }
 
-     // this function handler navigation when press on user profile
+    // this function handler navigation when press on user profile
     const PressOnUserProfileHandler = (userId) => {
         const user = auth.currentUser;
         const uid = user.uid;
@@ -193,12 +193,12 @@ export default function MyChangeRequest({ navigation, route }) {
 
         setIsLoading(true)
         await fetchMyBooksRequestsAndData(auth.currentUser.uid).then((booksList) => {
-            booksList.sort(function(a,b){
+            booksList.sort(function (a, b) {
                 // Turn your strings into dates, and then subtract them
                 // to get a value that is either negative, positive, or zero.
-               
-                return b[0].requestAT - a[0].requestAT  ;
-              });
+
+                return b[0].requestAT - a[0].requestAT;
+            });
             setBookRequestArray(() => booksList);
             setSearchBookData(() => booksList)
             setIsLoading(false)
@@ -206,10 +206,10 @@ export default function MyChangeRequest({ navigation, route }) {
         }).catch(() => {
 
             Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
-          });
+        });
     };
 
-      // this function fetch request on refresh flatlist then fill the bookRequestArray array and searchBookData array
+    // this function fetch request on refresh flatlist then fill the bookRequestArray array and searchBookData array
     const onRefresh = async () => {
 
 
@@ -221,25 +221,25 @@ export default function MyChangeRequest({ navigation, route }) {
 
             setBookRequestArray(() => booksList);
             setSearchBookData(() => booksList)
-          
+
             setIsRefreshing(false);
         }).catch(() => {
 
             Alert.alert("קרתה שגיה", "נכשל להביא דאטה נא לנסה שוב", [{ text: "בסדר" }])
-          });
+        });
 
 
 
     }
-      // this function handle when flatlist is empty
-  const listEmptyComponent = () => {
-    return (
-        <Text style={styles.emptyFont} >לא נמצא בקשות</Text>
-    )
-}
+    // this function handle when flatlist is empty
+    const listEmptyComponent = () => {
+        return (
+            <Text style={styles.emptyFont} >לא נמצא בקשות</Text>
+        )
+    }
 
 
- // this useEffect fetch the data when open screen
+    // this useEffect fetch the data when open screen
     useEffect(() => {
         fetchAllBooksRequests()
 
@@ -272,8 +272,8 @@ export default function MyChangeRequest({ navigation, route }) {
 
                 <MaterialIcons style={[!I18nManager.isRTL && styles.searchIcon, I18nManager.isRTL && styles.searchIcon2]} name={"search"} size={30} color={"#ddb07f"} />
             </View>
-           {searchBookData.length > 0 && <Text style={styles.ChangeRequestText}>כל הבקשות שאני מציע:</Text>}
-           <FlatList
+            {searchBookData.length > 0 && <Text style={styles.ChangeRequestText}>כל הבקשות שאני מציע:</Text>}
+            <FlatList
 
                 refreshControl={<RefreshControl
                     colors={["#ff914d", "#ff914d"]}
@@ -282,11 +282,11 @@ export default function MyChangeRequest({ navigation, route }) {
                 data={searchBookData}
                 renderItem={renderItem}
                 keyExtractor={item => item[0].id}
-                ListEmptyComponent = {listEmptyComponent}
+                ListEmptyComponent={listEmptyComponent}
 
                 style={[{ marginBottom: Platform.OS === "ios" ? getStatusBarHeight() + 20 : 20 }, styles.flatList]}
 
-            /> 
+            />
 
 
 

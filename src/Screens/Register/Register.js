@@ -58,8 +58,8 @@ export default function Register(props) {
 
     }
 
-// check if the cell phone number is valid for israel
-    function ValidatePhoneNumber(phoneNumber) { 
+    // check if the cell phone number is valid for israel
+    function ValidatePhoneNumber(phoneNumber) {
         var regex = /^05\d([-]{0,1})\d{7}$/;
         var phone = phoneNumber.match(regex);
         if (!phoneNumber) {
@@ -71,10 +71,10 @@ export default function Register(props) {
         return false;
     }
 
- 
 
-  // this function implement when press on Register button, they check the validation of  details 
-  // then upload the data to DB and creat new user
+
+    // this function implement when press on Register button, they check the validation of  details 
+    // then upload the data to DB and creat new user
     const onRegisterPressed = () => {
 
         setIsLoadingModel(true)
@@ -91,7 +91,7 @@ export default function Register(props) {
 
 
         if (emailError || passwordError || NameError || ConfirmPasswordError || (!CheckValidPhoneNumber)) {
-        
+
             if (!CheckValidPhoneNumber) {
                 setPhoneInputerror("* מספר טלפון אינו נכון")
 
@@ -106,7 +106,7 @@ export default function Register(props) {
 
         }
         // setIsDateEmpty(false)
-        createUser(email.value, password.value, UserName.value, FormattedNumber).then(() => {
+        createUser(email.value, password.value, UserName.value, userPhone).then(() => {
             setAlertContent("שלחנו אליך הודעת אימות, נא לוודא לדוא״ל שלך.")
             setIsLoadingModel(false)
             setIsAlertVisible(true)
@@ -133,7 +133,7 @@ export default function Register(props) {
             behavior={Platform.OS === "ios" ? "padding" : ""}
 
         >
-            {I18nManager.isRTL ? <BackButton2 goBack={navigation.goBack}/>: <BackButton goBack={navigation.goBack} />   }
+            {I18nManager.isRTL ? <BackButton2 goBack={navigation.goBack} /> : <BackButton goBack={navigation.goBack} />}
 
             <ScrollView
                 style={styles.container}
@@ -194,7 +194,7 @@ export default function Register(props) {
                                     errorText={PhoneInputerror}
                                 />
 
-                     
+
 
                                 <TextInput
                                     label="סיסמה"
@@ -275,7 +275,7 @@ export default function Register(props) {
                 </Modal>
 
             </ScrollView>
-            <LodingModel isModelVisible = {isLoadingModel}/>
+            <LodingModel isModelVisible={isLoadingModel} />
         </KeyboardAvoidingView>
 
 

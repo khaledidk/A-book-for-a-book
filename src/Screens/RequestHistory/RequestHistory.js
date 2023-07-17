@@ -74,7 +74,7 @@ export default function RequestHistory({ navigation, route }) {
     const Item = ({ receive_ID, sender_ID, title1, title2, image1, image2, sender_userImage, sender_userName, receive_userImage, receive_userName, creat_date, accepted_date }) => (
         <View style={styles.item}>
             <Text style={styles.txt}> הבקשה נוצרת: {creat_date} </Text>
-            <Text style={styles.txt_accepted}> הבקשה נקבלת: {accepted_date}</Text>
+            <Text style={styles.txt_accepted}>הבקשה התקבלה: {accepted_date}</Text>
             <View style={styles.senderAndReceiveFont}>
                 <Text style={styles.txt2}>מקבל הבקשה:</Text>
                 <Text style={styles.txt2}>שולח הבקשה:</Text>
